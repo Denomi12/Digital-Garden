@@ -1,7 +1,7 @@
 .MainDisplay {
   display: flex;
-  justify-content: center; /* centriranje po vodoravni osi */
-  align-items: center; /* centriranje po navpični osi */
+  justify-content: center;
+  align-items: center;
   height: 100vh;
 }
 
@@ -29,4 +29,51 @@
 
 .GardenCell:hover {
   background-color: blue;
+}
+
+.GardenWrapper {
+  position: relative;
+  padding: 20px;
+  border: 2px dashed rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.PlusButton {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.PlusTop {
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.PlusBottom {
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.PlusLeft {
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.PlusRight {
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.GardenButton {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
