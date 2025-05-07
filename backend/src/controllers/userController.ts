@@ -1,5 +1,5 @@
 // controllers/userController.ts
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 
 const list = async (req: Request, res: Response): Promise<void> => {
@@ -63,10 +63,49 @@ const remove = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.authenticate(username, password);
+
+    if (!user) {
+      const error = new Error("Wrong username or password");
+
+      error.status = 401;
+      return next(error);
+    }
+
+    req.session.userId = user._id;
+    res.json({ message: "Successfully logged in", user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const logout = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      } else {
+        res.status(200).json({ message: "Successfully logged out" });
+      }
+    });
+  } else {
+    res.status(400).json({ message: "No active session" });
+  }
+};
+
 export default {
   list,
   show,
   create,
   update,
   remove,
+  login,
+  logout,
 };

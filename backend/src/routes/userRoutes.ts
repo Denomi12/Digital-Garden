@@ -11,11 +11,13 @@ router.get("/", userController.list);
  * GET
  */
 router.get("/:id", userController.show);
+router.get("/logout", userController.logout);
 
 /*
  * POST
  */
 router.post("/", userController.create);
+router.post("/login", userController.login);
 
 /*
  * PUT
