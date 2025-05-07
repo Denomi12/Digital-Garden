@@ -1,0 +1,23 @@
+.GardenMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 30px;
+  background-color: beige;
+  padding: 10px;
+}
+
+.MenuButton {
+  padding: 10px 20px;
+  background-color: #6ab04c;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.MenuButton:hover {
+  background-color: #4caf50;
+}
