@@ -1,24 +1,23 @@
-import 'dotenv/config';
-import http from 'http';
-import app from '../app'
+import "dotenv/config";
+import http from "http";
+import app from "../app";
 
-const PORT = normalizePort(process.env.PORT || '3001');
+const PORT = normalizePort(process.env.PORT || "3001");
 
-app.set('port', PORT);
+app.set("port", PORT);
 
 const server = http.createServer(app);
 
 server.listen(PORT);
 
-server.on('error', onError);
-server.on('listening', onListening);
-
+server.on("error", onError);
+server.on("listening", onListening);
 
 /**
  * PORT normalizer helper
  */
 function normalizePort(val: string | number): number {
-  const port = typeof val === 'string' ? parseInt(val, 10) : val;
+  const port = typeof val === "string" ? parseInt(val, 10) : val;
   return isNaN(port) ? 3001 : port;
 }
 
@@ -26,16 +25,16 @@ function normalizePort(val: string | number): number {
  * Called if server fails to start
  */
 function onError(error: NodeJS.ErrnoException): void {
-  if (error.syscall !== 'listen') throw error;
+  if (error.syscall !== "listen") throw error;
 
-  const bind = typeof PORT === 'string' ? 'Pipe ' + PORT : 'Port ' + PORT;
+  const bind = typeof PORT === "string" ? "Pipe " + PORT : "Port " + PORT;
 
   switch (error.code) {
-    case 'EACCES':
+    case "EACCES":
       console.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
-    case 'EADDRINUSE':
+    case "EADDRINUSE":
       console.error(`${bind} is already in use`);
       process.exit(1);
       break;
@@ -49,6 +48,6 @@ function onError(error: NodeJS.ErrnoException): void {
  */
 function onListening(): void {
   const addr = server.address();
-  const bind = typeof addr === 'string' ? addr : `port ${(addr as any).port}`;
+  const bind = typeof addr === "string" ? addr : `port ${(addr as any).port}`;
   console.log(`Listening on ${bind}`);
 }
