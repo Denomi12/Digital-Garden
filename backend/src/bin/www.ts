@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import http from 'http';
 import app from '../app'
 
 const PORT = normalizePort(process.env.PORT || '3001');
+
 app.set('port', PORT);
 
 const server = http.createServer(app);
