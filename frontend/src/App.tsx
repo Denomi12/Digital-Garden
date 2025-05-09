@@ -16,6 +16,7 @@ function App() {
       : null
   );
 
+  // v local storage shrani podatke o uporabniku
   const updateUserData = (userInfo: User | null) => {
     if (userInfo) {
       localStorage.setItem("user", JSON.stringify(userInfo));

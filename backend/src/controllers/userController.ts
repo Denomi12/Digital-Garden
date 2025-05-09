@@ -1,6 +1,8 @@
 // controllers/userController.ts
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import User from "../models/User";
+import { generateToken } from "../utils/jwt";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -27,6 +29,15 @@ const show = async (req: Request, res: Response): Promise<void> => {
 const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      res
+        .status(400)
+        .json({ message: "User with this username or email already exists" });
+      return;
+    }
+
     const user = new User({ username, password, email });
     const savedUser = await user.save();
     res.status(201).json(savedUser);
@@ -63,41 +74,27 @@ const remove = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
-    const user = await User.authenticate(username, password);
 
-    if (!user) {
-      const error = new Error("Wrong username or password");
-
-      error.status = 401;
-      return next(error);
+    if (!username || !password) {
+      res.status(400).json({ message: "Username and password are required" });
+      return;
     }
 
-    req.session.userId = user._id;
-    res.json({ message: "Successfully logged in", user });
-  } catch (error) {
-    next(error);
-  }
-};
+    const user = await User.authenticate(username, password);
+    if (!user) {
+      res.status(401).json({ message: "Invalid credentials" });
+      return;
+    }
 
-const logout = (req: Request, res: Response, next: NextFunction): void => {
-  if (req.session) {
-    req.session.destroy((err) => {
-      if (err) {
-        return next(err);
-      } else {
-        res.status(200).json({ message: "Successfully logged out" });
-      }
-    });
-  } else {
-    res.status(400).json({ message: "No active session" });
-  }
+    const token = generateToken({ id: user.id, username: user.username });
+
+    const { password: _password, ...userWithoutPassword } = user.toObject();
+
+    res.json({ token, userWithoutPassword });
+  } catch (error) {}
 };
 
 export default {
@@ -107,5 +104,4 @@ export default {
   update,
   remove,
   login,
-  logout,
 };
