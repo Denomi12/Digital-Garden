@@ -1,0 +1,14 @@
+.headerHero {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1rem 2rem;
+    gap: 1.5rem;
+}
+
+.headerHero a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+}

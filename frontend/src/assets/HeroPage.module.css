@@ -1,0 +1,5 @@
+.heroPageContainer {
+    background: linear-gradient(to bottom, #B7E3C7, #D8F3DD);
+    min-height: 100vh;
+    width: 100%;
+}
