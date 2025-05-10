@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/dls.iml" filepath="$PROJECT_DIR$/dls.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dsl.iml" filepath="$PROJECT_DIR$/dsl.iml" />
     </modules>
   </component>
 </project>
