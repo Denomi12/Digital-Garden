@@ -32,6 +32,12 @@ function Header({ title }: HeaderProps) {
             </>
           )}
         </ul>
+        {user ?
+        <div>
+          Logged in User: {user.username}
+        </div>
+        : null}
+        
       </nav>
     </header>
   );

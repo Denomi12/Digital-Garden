@@ -19,7 +19,7 @@ function Login() {
     const { user } = res.data;
 
     if (user?._id) {
-      await userContext.setUserContext({
+      userContext.setUserContext({
         username: user.username,
         id: user._id,
         email: user.email,

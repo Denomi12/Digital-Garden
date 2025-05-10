@@ -40,7 +40,21 @@ const create = async (req: Request, res: Response): Promise<void> => {
 
     const user = new User({ username, password, email });
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+
+    const token = generateToken({
+      id: savedUser.id,
+      username: savedUser.username,
+    });
+    const { password: _password, ...userWithoutPassword } =
+      savedUser.toObject();
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .status(201)
+      .json({ user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ message: "Error when creating user", error });
   }
@@ -90,7 +104,6 @@ const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = generateToken({ id: user.id, username: user.username });
-
     const { password: _password, ...userWithoutPassword } = user.toObject();
     res
       .cookie("token", token, {
@@ -102,6 +115,16 @@ const login = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {}
 };
 
+const logout = async (req: Request, res: Response): Promise<void> => {
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
+};
+
 export default {
   list,
   show,
@@ -109,4 +132,5 @@ export default {
   update,
   remove,
   login,
+  logout,
 };

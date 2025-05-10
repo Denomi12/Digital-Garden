@@ -1,30 +1,43 @@
-import { useState } from "react";
+import axios from "axios";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const userContext = useContext(UserContext);
+  const navigate = useNavigate();
 
-  async function Register(e: { preventDefault: () => void }) {
+  async function handleRegister(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:3001/users", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        username: username,
-        password: password,
-      }),
-    });
-    const data = await res.json();
-    if (data._id !== undefined) {
-      window.location.href = "/";
-    } else {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BACKEND_URL}/user`,
+        {
+          email,
+          username,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      const user = res.data.user;
+
+      if (user !== undefined) {
+        userContext.setUserContext({
+          username: user.username,
+          id: user._id,
+          email: user.email,
+        });
+        navigate("/");
+      } else {
+        throw new Error("Registration failed");
+      }
+    } catch (err) {
       setUsername("");
       setPassword("");
       setEmail("");
@@ -33,7 +46,7 @@ function Register() {
   }
 
   return (
-    <form onSubmit={Register}>
+    <form onSubmit={handleRegister}>
       <input
         type="text"
         name="email"
