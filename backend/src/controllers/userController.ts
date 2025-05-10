@@ -1,6 +1,8 @@
 // controllers/userController.ts
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import User from "../models/User";
+import { generateToken } from "../utils/jwt";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -27,9 +29,33 @@ const show = async (req: Request, res: Response): Promise<void> => {
 const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      res
+        .status(400)
+        .json({ message: "User with this username or email already exists" });
+      return;
+    }
+
     const user = new User({ username, password, email });
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+
+    // ob uspešni prijavi generira JWT token, da se lahko uporabnik takoj prijavi na FE
+    const token = generateToken({
+      id: savedUser.id,
+      username: savedUser.username,
+    });
+    const { password: _password, ...userWithoutPassword } =
+      savedUser.toObject();
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .status(201)
+      .json({ user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ message: "Error when creating user", error });
   }
@@ -63,10 +89,50 @@ const remove = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const login = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      res.status(400).json({ message: "Username and password are required" });
+      return;
+    }
+
+    const user = await User.authenticate(username, password);
+    if (!user) {
+      res.status(401).json({ message: "Invalid credentials" });
+      return;
+    }
+
+    const token = generateToken({ id: user.id, username: user.username });
+    const { password: _password, ...userWithoutPassword } = user.toObject();
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .json({ user: userWithoutPassword });
+  } catch (error) {}
+};
+
+const logout = async (req: Request, res: Response): Promise<void> => {
+  // izbriše JWT token z uporabnikovega clienta
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
+};
+
 export default {
   list,
   show,
   create,
   update,
   remove,
+  login,
+  logout,
 };
