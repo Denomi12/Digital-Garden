@@ -131,7 +131,7 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 
 const me = async (req: Request, res: Response): Promise<void> => {
   // vrne dekodirane podatke iz JWT žetona
-  res.status(200).json({ message: "You exist!", decodedToken: res.locals.user});
+  res.status(200).json({ message: "You exist!", user: res.locals.user});
 };
 
 export default {
