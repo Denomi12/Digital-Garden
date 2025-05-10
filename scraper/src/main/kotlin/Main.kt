@@ -17,14 +17,14 @@ data class MonthlyPlanting(
     val sections: List<PlantingSection>
 )
 
-//data class PlantingCalendar(
-//    val months: List<MonthlyPlanting>
-//)
+fun extractVegetables(text: String): List<String> {
+    val parts = text.split(Regex("\\b(Korenina|List|Cvet|Plod):|,"))
+
+    return parts.map { it.trim() }
+        .filter { it.isNotEmpty() && it !in listOf("Korenina", "List", "Cvet", "Plod") }
+}
 
 fun scrapeVegetables(): List<MonthlyPlanting>{
-
-    println("========== scraping - extracting example ==========")
-
     val extractedData = skrape(HttpFetcher) {
         request {
             url = "https://www.sam.si/baza-znanja/vrt-in-okolica/koledar-setev-in-sajenj-po-mesecih"
@@ -32,7 +32,6 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
 
         extract {
             htmlDocument {
-                // Seznam za shranjevanje sekcij
                 val sections = mutableListOf<PlantingSection>()
                 val monthlyPlanting = mutableListOf<MonthlyPlanting>()
                 val months = mutableListOf<String>()
@@ -42,7 +41,7 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
 
                 div {
                     withClass = "content"
-                    println("Div content found!")
+//                    println("Div content found!")
 
                     h3 {
                         findAll {
@@ -56,13 +55,13 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
                     }
 
                     table {
-                        println("Table found!")
+//                        println("Table found!")
 
-                        // Poiscemo vse vrstice v tabeli (tr)
+                        // Poiščemo vse vrstice v tabeli (tr)
                         findAll {
-                            println("Rows found: $size")
+//                            println("Rows found: $size")
                             forEach { tableElement ->
-                                // Poiscemo vse vrstice (tr) znotraj tabele
+                                // Poiščemo vse vrstice (tr) znotraj tabele
                                 tableElement.tr {
 
                                     findAll {
@@ -82,14 +81,14 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
                                                     }
                                                 }
                                             } else if (cells.size >= 2) {
+
                                                 for (i in 0..2) {
                                                     val type = tempTypes[i]
-                                                    val vegetables =
-                                                        cells[i].split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                                                    val vegetables = extractVegetables(cells[i])
                                                     sections.add(PlantingSection(type, vegetables))
                                                     addMonthAndSectionCounter++
 
-                                                    println("Added section: $type -> $vegetables")
+//                                                    println("Added section: $type -> $vegetables")
                                                 }
 
                                             }
@@ -123,7 +122,7 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
         }
     }
 
-    println("========== izpisanih sekcij ==========")
+    println("========== izpis ==========")
     extractedData.forEach { monthly ->
         println("Mesec: ${monthly.month}")
         monthly.sections.forEach { section ->
@@ -136,7 +135,81 @@ fun scrapeVegetables(): List<MonthlyPlanting>{
     return extractedData
 }
 
+data class GoodNeighbours(
+    val vegetable: String,
+    val goodNeighbours: String,
+    val badNeighbours: String,
+)
+
+fun scrapeGoodNeighbours(){
+    var remainingCells = mutableListOf<String>()
+    val GoodNeighboursList = mutableListOf<GoodNeighbours>()
+
+    val extractedData = skrape(HttpFetcher) {
+        request {
+            url = "https://www.okusnivrt.com/novice/dobri-slabi-sosedje/"
+        }
+
+        extract {
+            htmlDocument {
+
+                table{
+                    withClass = "table"
+                    findAll{
+                        forEach { tableElement ->
+                            // Poiščemo vse vrstice (tr) znotraj tabele
+                            tableElement.tr {
+                                findAll {
+                                    val temp = th { findAll { map { it.text.trim() } } }
+                                    remainingCells = temp.drop(3).toMutableList()
+                                    remainingCells.removeAt(3)
+                                    remainingCells.removeAt(7)
+
+                                    val dataCells = td { findAll { map { it.text.trim() } } }.toMutableList()
+                                    dataCells.removeAt(8)
+                                    dataCells.removeAt(8)
+                                    dataCells.removeAt(8)
+                                    dataCells.removeAt(21)
+                                    dataCells.removeAt(21)
+                                    dataCells.removeAt(21)
+                                    dataCells.removeAt(39)
+                                    dataCells.removeAt(18)
+
+                                    var whileCounter = 0
+                                    var i = 0
+                                    var veggieIndex = 0
+                                    while (whileCounter < remainingCells.size) {
+                                        val veg = remainingCells[veggieIndex]
+                                        val good = dataCells[i]
+                                        val bad = dataCells[i+1]
+
+                                        GoodNeighboursList.add(GoodNeighbours(veg, good, bad))
+
+                                        i += 3
+
+                                        veggieIndex++
+                                        whileCounter++
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    println("\n\n========== izpis ==========")
+
+    GoodNeighboursList.forEach { element ->
+        println(" Zelenjava: ${element.vegetable}")
+        println("    Dobri sosedje: ${element.goodNeighbours}")
+        println("    Slabi sosedje: ${element.badNeighbours}")
+    }
+}
+
 fun main() {
 
-    val temp = scrapeVegetables()
+    scrapeVegetables()
+    scrapeGoodNeighbours()
 }
