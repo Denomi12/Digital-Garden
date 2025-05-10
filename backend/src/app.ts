@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./utils/db";
 import userRoutes from "./routes/userRoutes"; // Adjust path as needed
 // import { env } from "process";
@@ -6,6 +7,11 @@ import userRoutes from "./routes/userRoutes"; // Adjust path as needed
 // dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173", // your frontend origin
+  credentials: true, // allow cookies and headers
+}));
 
 app.use(express.json()); // Parse application/json
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded (for forms)
@@ -18,16 +24,5 @@ app.get("/", (req, res) => {
 });
 
 connectDB();
-
-// var session = require("express-session");
-// var MongoStore = require("connect-mongo");
-// app.use(
-//   session({
-//     secret: "work hard",
-//     resave: true,
-//     saveUninitialized: false,
-//     store: MongoStore.create({ mongoUrl: env.MONGO_URI }),
-//   })
-// );
 
 export default app;

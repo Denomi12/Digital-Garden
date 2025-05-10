@@ -92,8 +92,13 @@ const login = async (req: Request, res: Response): Promise<void> => {
     const token = generateToken({ id: user.id, username: user.username });
 
     const { password: _password, ...userWithoutPassword } = user.toObject();
-
-    res.json({ token, userWithoutPassword });
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .json({ user: userWithoutPassword });
   } catch (error) {}
 };
 

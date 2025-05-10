@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
@@ -10,11 +10,10 @@ import Login from "./components/Login";
 import { User } from "./types/User";
 
 function App() {
-  const [user, setUser] = useState<User | null>(
-    localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user")!)
-      : null
-  );
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   // v local storage shrani podatke o uporabniku
   const updateUserData = (userInfo: User | null) => {

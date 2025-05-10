@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import axios from "axios";
 import { UserContext } from "../UserContext";
 import { Navigate } from "react-router-dom";
 
@@ -8,29 +9,34 @@ function Login() {
   const [error, setError] = useState("");
   const userContext = useContext(UserContext);
 
-  async function Login(e: { preventDefault: () => void }) {
+  async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
-    const res = await fetch("http://localhost:3001/user/login", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    });
-    const data = await res.json();
-    if (data._id !== undefined) {
-      userContext.setUserContext(data);
+    const res = await axios.post(
+       `${import.meta.env.VITE_API_BACKEND_URL}/user/login`,
+      { username, password },
+      { withCredentials: true }
+    );
+    const { user } = res.data;
+
+    if (user?._id) {
+      await userContext.setUserContext({
+        username: user.username,
+        id: user._id,
+        email: user.email,
+      });
     } else {
       setUsername("");
       setPassword("");
       setError("Invalid username or password");
     }
+
+    if (userContext.user) {
+      return <Navigate replace to="/" />;
+    }
   }
 
   return (
-    <form onSubmit={Login}>
+    <form onSubmit={handleLogin}>
       {userContext.user ? <Navigate replace to="/" /> : ""}
       <input
         type="text"
@@ -46,7 +52,7 @@ function Login() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <input type="submit" name="submit" value="Log in" />
+      <input type="submit" value="Log in" />
       <label>{error}</label>
     </form>
   );
