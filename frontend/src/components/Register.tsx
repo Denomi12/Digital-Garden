@@ -27,7 +27,8 @@ function Register() {
 
       const user = res.data.user;
 
-      if (user !== undefined) {
+      if (user) {
+        // ob registraciji prijavi uporabnika
         userContext.setUserContext({
           username: user.username,
           id: user._id,

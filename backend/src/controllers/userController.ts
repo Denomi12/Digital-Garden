@@ -41,6 +41,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     const user = new User({ username, password, email });
     const savedUser = await user.save();
 
+    // ob uspešni prijavi generira JWT token, da se lahko uporabnik takoj prijavi na FE
     const token = generateToken({
       id: savedUser.id,
       username: savedUser.username,
@@ -116,6 +117,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 const logout = async (req: Request, res: Response): Promise<void> => {
+  // izbriše JWT token z uporabnikovega clienta
   res
     .clearCookie("token", {
       httpOnly: true,
