@@ -113,11 +113,13 @@ const login = async (req: Request, res: Response): Promise<void> => {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       })
       .json({ user: userWithoutPassword });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const logout = async (req: Request, res: Response): Promise<void> => {
-  // izbriše JWT token z uporabnikovega clienta
   res
     .clearCookie("token", {
       httpOnly: true,
@@ -125,6 +127,10 @@ const logout = async (req: Request, res: Response): Promise<void> => {
     })
     .status(200)
     .json({ message: "Logged out successfully" });
+};
+
+const me = async (req: Request, res: Response): Promise<void> => {
+  res.status(200).json({ message: "You exist!", token: req.cookies.token});
 };
 
 export default {
@@ -135,4 +141,5 @@ export default {
   remove,
   login,
   logout,
+  me,
 };

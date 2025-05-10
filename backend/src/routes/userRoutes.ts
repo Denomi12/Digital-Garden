@@ -1,11 +1,13 @@
 import express from "express";
 const router = express.Router();
 import userController from "../controllers/userController";
+import { requireAuth } from "../middleware/authMiddleware";
 
 /*
  * GET
  */
 router.get("/", userController.list);
+router.get("/me", requireAuth, userController.me);
 
 /*
  * GET
