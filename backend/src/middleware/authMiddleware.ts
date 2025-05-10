@@ -10,7 +10,8 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     next();
 }
   try {
-    jwt.verify(token, process.env.JWT_SECRET!); // throws if invalid
+    const decoded =jwt.verify(token, process.env.JWT_SECRET!); // throws if invalid
+    res.locals.user = decoded;
     next();
   } catch (err) {
     console.error(err)

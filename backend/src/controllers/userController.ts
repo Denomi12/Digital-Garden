@@ -130,7 +130,8 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 };
 
 const me = async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ message: "You exist!", token: req.cookies.token});
+  // vrne dekodirane podatke iz JWT žetona
+  res.status(200).json({ message: "You exist!", decodedToken: res.locals.user});
 };
 
 export default {
