@@ -6,6 +6,10 @@ import Garden from "./components/Garden";
 import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+/>;
 
 import { User } from "./types/User";
 
