@@ -1,11 +1,12 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { UserInstance } from "./UserModel";
+import { Tile, tileSchema } from "./TileModel";
 
 export interface GardenInstance extends Document {
   name: string;
   owner: UserInstance;
   location: string;
-  elements: string[];
+  elements: Tile[];
 }
 
 var gardenSchema = new Schema<GardenInstance>(
@@ -17,7 +18,9 @@ var gardenSchema = new Schema<GardenInstance>(
       required: true,
     },
     location: { type: String, default: "" },
-    elements: { type: [String], default: [] },
+    elements: [
+      { type: tileSchema, default: [] },
+    ],
   },
   { timestamps: true }
 );

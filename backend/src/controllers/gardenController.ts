@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Garden from "../models/gardenModel";
+import Garden from "../models/GardenModel";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -12,7 +12,9 @@ const list = async (req: Request, res: Response): Promise<void> => {
 
 const show = async (req: Request, res: Response): Promise<void> => {
   try {
-    const garden = await Garden.findById(req.params.id);
+    const garden = await Garden.findById(req.params.id).populate(
+      "elements.crop"
+    );
     if (!garden) {
       res.status(404).json({ message: "No such garden" });
       return;
@@ -43,7 +45,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ message: "Name is required" });
       return;
     }
-    
+
     const existingGarden = await Garden.findOne({ name });
     if (existingGarden) {
       res.status(400).json({ message: "Garden with this name already exists" });
