@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GardenMenu from "./GardenMenu";
-import styles from "./stylesheets/Garden.module.css";
+import styles from "../../stylesheets/Garden.module.css";
 
 function Garden() {
   const [width, setWidth] = useState<number>(0);
