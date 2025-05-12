@@ -19,7 +19,9 @@ export const tileSchema = new Schema<Tile>(
       ref: "Crop",
       required: false,
     },
-    plantedDate: { type: Date, required: true },
+    plantedDate: { type: Date, required: function (this: Tile) {
+        return this.crop != null;
+      }, },
   },
   { id: false }
 );
