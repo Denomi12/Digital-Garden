@@ -38,8 +38,8 @@ const stores: Store[] = [
     id: 4,
     name: "Kalia Celje",
     location: "Teharje 7, 3000 Celje",
-    latitude: 46.238,
-    longitude: 15.267,
+    latitude: 46.232831446764806,
+    longitude: 15.297988842327026,
   },
   {
     id: 5,
