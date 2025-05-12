@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./utils/db";
 import userRoutes from "./routes/userRoutes"; // Adjust path as needed
+import gardenRoutes from "./routes/gardenRoutes";
 // import { env } from "process";
 // import dotenv from "dotenv";
 // dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded (for forms
 
 // ROUTERS
 app.use("/user", userRoutes);
+app.use("/garden", gardenRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API is running" });
