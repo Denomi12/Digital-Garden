@@ -7,6 +7,9 @@ import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
 import Map from "./components/Map";
+import Sidebar from "./components/Sidebar";
+import styles from "./App.module.css";
+
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -38,15 +41,18 @@ function App() {
           setUserContext: updateUserData,
         }}
       >
-        <div className="App">
-          <Header title="Garden - nevem" />
-          <Routes>
-            <Route path="/" element={<Map />} />
-            <Route path="/garden" element={<Garden />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/logout" element={<Logout />} />
-          </Routes>
+        <div className={styles.fullScreen}>
+          <Sidebar />
+          <div className={styles.mainContent}>
+            <Header title="Garden - nevem" />
+            <Routes>
+              <Route path="/" element={<Map />} />
+              <Route path="/garden" element={<Garden />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/logout" element={<Logout />} />
+            </Routes>
+          </div>
         </div>
       </UserContext.Provider>
     </BrowserRouter>

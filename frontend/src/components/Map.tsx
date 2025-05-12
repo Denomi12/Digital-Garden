@@ -185,7 +185,6 @@ function Map() {
     setAddGarden(false);
   };
 
-  // ✅ Prava funkcija za navigacijo
   const handleNavigation = (lat: number, lng: number) => {
     console.log("Navigacija do:", lat, lng);
     navigate("/garden", { state: { lat, lng } });
