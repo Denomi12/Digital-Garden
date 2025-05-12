@@ -1,7 +1,6 @@
 // controllers/userController.ts
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import User from "../models/User";
+import User from "../models/UserModel";
 import { generateToken } from "../utils/jwt";
 
 const list = async (req: Request, res: Response): Promise<void> => {
