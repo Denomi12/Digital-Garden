@@ -7,6 +7,6 @@ import Map from "./components/Map.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
-    <Map />
+    {/* <Map /> */}
   </StrictMode>
 );

@@ -6,6 +6,7 @@ import Garden from "./components/Garden";
 import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
+import Map from "./components/Map";
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -40,7 +41,8 @@ function App() {
         <div className="App">
           <Header title="Garden - nevem" />
           <Routes>
-            <Route path="/" element={<Garden />} />
+            <Route path="/" element={<Map />} />
+            <Route path="/garden" element={<Garden />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
