@@ -2,7 +2,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
 // 1. Vmesnik za instanco uporabnika (dokument)
-export interface IUser extends Document {
+export interface UserInstance extends Document {
   username: string;
   password: string;
   email: string;
@@ -10,14 +10,14 @@ export interface IUser extends Document {
 }
 
 // 2. Vmesnik za model, kjer definiramo tudi `authenticate`
-export interface IUserModel extends Model<IUser> {
-  authenticate(username: string, password: string): Promise<IUser | null>;
+export interface UserModel extends Model<UserInstance> {
+  authenticate(username: string, password: string): Promise<UserInstance | null>;
 }
 
 // 3. Shema
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<UserInstance>(
   {
-    username: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
   },
@@ -55,6 +55,6 @@ userSchema.statics.authenticate = async function (
 };
 
 // 7. Model
-const User = mongoose.model<IUser, IUserModel>("User", userSchema);
+const User = mongoose.model<UserInstance, UserModel>("User", userSchema);
 
 export default User;
