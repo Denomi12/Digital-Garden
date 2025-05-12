@@ -26,6 +26,3 @@ export const tileSchema = new Schema<Tile>(
   { id: false }
 );
 
-const TileModel = mongoose.model<Tile>("Tile", tileSchema);
-
-export default TileModel;

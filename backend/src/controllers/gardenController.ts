@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Garden from "../models/gardenModel";
+import Garden from "../models/GardenModel";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {

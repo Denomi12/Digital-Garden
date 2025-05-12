@@ -1,4 +1,4 @@
-import styles from "./stylesheets/GardenMenu.module.css";
+import styles from "../../stylesheets/GardenMenu.module.css";
 
 // Določimo tip za setSelectedTool kot funkcijo, ki sprejme string
 type GardenMenuProps = {
