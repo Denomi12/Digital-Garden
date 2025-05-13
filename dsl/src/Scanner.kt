@@ -25,7 +25,7 @@ class Scanner(private val input: String) {
                         currentChar.isLetter() -> {
                             currentState = State.IDENTIFIER
                         }
-                        currentChar.isDigit() -> {
+                        currentChar.isDigit() || currentChar == '-' -> {
                             currentState = State.NUMBER
                         }
                         currentChar == '(' -> {
@@ -60,22 +60,36 @@ class Scanner(private val input: String) {
                 // double števila oblike 12.34, 34, -5.43
                 State.NUMBER -> {
                     val start = pos
-                    // omogočanje negativnih števil
-                    if (input[pos] == '-') pos++
-                    var dotSeen = false
+                    var isDouble = false
 
-                    // loopamo dokler ne naletimo več na število
-                    while (pos < length && (input[pos].isDigit() || input[pos] == '.')) {
-                        // preverimo, če že imamo piko v številu, drugače breakamo
-                        if (input[pos] == '.') {
-                            if (dotSeen == true) break
-                            dotSeen = true
-                        }
+                    // handlanje negativnih števil
+                    if (input[pos] == '-') {
                         pos++
                     }
 
+                    // števke pred piko
+                    while (pos < length && input[pos].isDigit()) {
+                        pos++
+                    }
+
+                    // preverjanje decimalne pike
+                    if (pos < length && input[pos] == '.') {
+                        isDouble = true
+                        pos++
+                        // števke po piki
+                        while (pos < length && input[pos].isDigit()) {
+                            pos++
+                        }
+                    }
+
                     currentState = State.START
-                    return Token("double", input.substring(start,pos))
+                    val number = input.substring(start, pos)
+
+                    return if (isDouble) {
+                        Token("double", number)
+                    } else {
+                        Token("int", number)
+                    }
                 }
                 State.IDENTIFIER -> {
                     val start = pos
@@ -146,4 +160,3 @@ class Scanner(private val input: String) {
         return null
     }
 }
-
