@@ -12,7 +12,7 @@ const list = async (req: Request, res: Response): Promise<void> => {
 
 const create = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name } = req.body;
+    const { name, goodCompanions, plantingMonth } = req.body;
 
     const existingCrop = await Crop.findOne({ name });
     if (existingCrop) {
@@ -20,7 +20,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const crop = new Crop({ name });
+    const crop = new Crop({ name, goodCompanions, plantingMonth });
     const savedCrop = await crop.save();
 
     res.status(201).json(savedCrop);
