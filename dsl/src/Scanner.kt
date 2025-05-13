@@ -3,12 +3,12 @@ class Scanner(private val input: String) {
     private val length = input.length
 
     private enum class State {
-        START, IDENTIFIER, NUMBER, LPAREN, RPAREN, LCURLY, RCURLY, COLON, COMMA, ASSIGN, SEMI, ERROR
+        START, IDENTIFIER, NUMBER, LPAREN, RPAREN, LCURLY, RCURLY, COLON, COMMA, ASSIGN, SEMI, DIVIDE, ERROR
     }
 
     private var currentState = State.START
 
-    private val keywords = setOf("park", "koordinate", "koordinata", "drevo", "klop", "koš", "ribnik", "pot", "for", "to", "begin", "end")
+    private val keywords = setOf("park", "koordinate", "koordinata", "drevo", "klop", "koš", "ribnik", "pot", "drevored", "for", "in", "range", "start", "end", "loop", "count", "interpolate")
 
     fun getNextToken() : Token? {
         while (pos < length) {
@@ -25,7 +25,7 @@ class Scanner(private val input: String) {
                         currentChar.isLetter() -> {
                             currentState = State.IDENTIFIER
                         }
-                        currentChar.isDigit() -> {
+                        currentChar.isDigit() || currentChar == '-' -> {
                             currentState = State.NUMBER
                         }
                         currentChar == '(' -> {
@@ -52,6 +52,9 @@ class Scanner(private val input: String) {
                         currentChar == ';' -> {
                             currentState = State.SEMI
                         }
+                        currentChar == '/' -> {
+                            currentState = State.DIVIDE
+                        }
                         else -> {
                             throw IllegalArgumentException("Unknown character: $currentChar")
                         }
@@ -60,22 +63,36 @@ class Scanner(private val input: String) {
                 // double števila oblike 12.34, 34, -5.43
                 State.NUMBER -> {
                     val start = pos
-                    // omogočanje negativnih števil
-                    if (input[pos] == '-') pos++
-                    var dotSeen = false
+                    var isDouble = false
 
-                    // loopamo dokler ne naletimo več na število
-                    while (pos < length && (input[pos].isDigit() || input[pos] == '.')) {
-                        // preverimo, če že imamo piko v številu, drugače breakamo
-                        if (input[pos] == '.') {
-                            if (dotSeen == true) break
-                            dotSeen = true
-                        }
+                    // handlanje negativnih števil
+                    if (input[pos] == '-') {
                         pos++
                     }
 
+                    // števke pred piko
+                    while (pos < length && input[pos].isDigit()) {
+                        pos++
+                    }
+
+                    // preverjanje decimalne pike
+                    if (pos < length && input[pos] == '.') {
+                        isDouble = true
+                        pos++
+                        // števke po piki
+                        while (pos < length && input[pos].isDigit()) {
+                            pos++
+                        }
+                    }
+
                     currentState = State.START
-                    return Token("double", input.substring(start,pos))
+                    val number = input.substring(start, pos)
+
+                    return if (isDouble) {
+                        Token("double", number)
+                    } else {
+                        Token("int", number)
+                    }
                 }
                 State.IDENTIFIER -> {
                     val start = pos
@@ -138,6 +155,11 @@ class Scanner(private val input: String) {
                     currentState = State.START
                     return Token("semi", ";")
                 }
+                State.DIVIDE -> {
+                    pos++
+                    currentState = State.START
+                    return Token("divide", "/")
+                }
                 else -> {
                     throw IllegalStateException("Unexpected state: $currentState")
                 }
@@ -146,4 +168,3 @@ class Scanner(private val input: String) {
         return null
     }
 }
-

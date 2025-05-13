@@ -1,0 +1,17 @@
+drevored {
+    start: { (1.0, 2.0) },
+    end: { (3.0, 4.0) },
+    count: 10,
+    loop: {
+        for i in range(count) {
+            for j in range(5) {
+                drevo {
+                    koordinata: { interpolate(start, end, j/5) }
+                }
+            }
+            drevo {
+                koordinata: { interpolate(start, end, i/count) }
+            }
+        }
+    }
+}
