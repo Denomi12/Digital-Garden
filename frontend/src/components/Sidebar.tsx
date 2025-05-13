@@ -4,12 +4,12 @@ import styles from "./stylesheets/Sidebar.module.css";
 
 function Sidebar() {
   const { user } = useContext(UserContext);
-  const [expanded, setExpanded] = useState(false);
-  const [rotated, setRotated] = useState(false); // Dodamo stanje za vrtenje
+  const [expanded, setExpanded] = useState(true);
+  const [rotated, setRotated] = useState(false);
 
   const toggleSidebar = () => {
     setExpanded(!expanded);
-    setRotated(!rotated); // Ko kliknemo na puščico, se stanje za vrtenje spremeni
+    setRotated(!rotated);
   };
 
   return (
@@ -50,7 +50,12 @@ function Sidebar() {
         </div>
       </div>
 
-      {user ? <div>{user.username}</div> : null}
+      {user && (
+        <div className={styles.user}>
+          <img className={styles.person} src="/public/assets/person.png" />
+          {expanded && <div>{user.username}</div>}
+        </div>
+      )}
     </div>
   );
 }

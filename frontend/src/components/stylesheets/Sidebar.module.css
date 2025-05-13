@@ -6,10 +6,11 @@
   align-items: center;
   width: 100px;
   transition: width 0.3s ease;
+  position: relative;
 }
 
 .sidebar.expanded {
-  width: 200px; /* Spremeni širino sidebara, ko je razširjen */
+  width: 200px;
 }
 
 .toggleArrow {
@@ -48,14 +49,15 @@
 .trowel,
 .discussion,
 .home,
-.plant {
+.plant,
+.person {
   width: 30px;
   height: 30px;
 }
 
 .text {
   font-size: 16px;
-  margin-left: 15px; /* Razmik med ikono in besedilom */
+  margin-left: 15px;
   display: inline-block;
 }
 
@@ -80,7 +82,7 @@
 .toggleArrow {
   width: 100%;
   margin-bottom: 30px;
-  min-height: 60px; /* ali koliko pač potrebuješ */
+  min-height: 60px;
   display: flex;
   align-items: center;
 }
@@ -108,4 +110,14 @@
 .toggleArrowCollapsed {
   display: flex;
   justify-content: center;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+  margin-bottom: 30px;
+  width: 100%;
+  margin-left: 70px;
 }

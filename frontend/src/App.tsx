@@ -8,6 +8,7 @@ import Logout from "./components/Logout";
 import Login from "./components/Login";
 import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
+import HomePage from "./components/HomePage";
 import styles from "./App.module.css";
 
 <link
@@ -44,9 +45,10 @@ function App() {
         <div className={styles.fullScreen}>
           <Sidebar />
           <div className={styles.mainContent}>
-            <Header title="Garden - nevem" />
+            <Header title="Garden" />
             <Routes>
-              <Route path="/" element={<Map />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/map" element={<Map />} />
               <Route path="/garden" element={<Garden />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
