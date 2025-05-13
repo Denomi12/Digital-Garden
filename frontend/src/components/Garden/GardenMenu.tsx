@@ -1,30 +1,34 @@
 import styles from "../../stylesheets/GardenMenu.module.css";
+import { GardenElement } from "./types";
 
 // Določimo tip za setSelectedTool kot funkcijo, ki sprejme string
 type GardenMenuProps = {
-  setSelectedTool: (tool: string) => void;
+  setSelectedElement: (element: GardenElement) => void;
 };
 
-const GardenMenu = ({ setSelectedTool }: GardenMenuProps) => {
+const GardenMenu = ({
+  setSelectedElement: setSelectedElement,
+}: GardenMenuProps) => {
+
   return (
     <div className={styles.GardenMenu}>
       <button
         className={styles.MenuButton}
-        onClick={() => setSelectedTool("Greda")}
+        onClick={() => setSelectedElement(GardenElement.GardenBed)}
       >
-        Greda
+        {GardenElement.GardenBed}
       </button>
       <button
         className={styles.MenuButton}
-        onClick={() => setSelectedTool("Potka")}
+        onClick={() => setSelectedElement(GardenElement.Path)}
       >
-        Potka
+        {GardenElement.Path}
       </button>
       <button
         className={styles.MenuButton}
-        onClick={() => setSelectedTool("Visoka greda")}
+        onClick={() => setSelectedElement(GardenElement.RaisedBed)}
       >
-        Visoka greda
+        {GardenElement.RaisedBed}
       </button>
     </div>
   );
