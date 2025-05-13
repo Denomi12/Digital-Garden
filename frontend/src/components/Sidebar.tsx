@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../UserContext";
 import styles from "./stylesheets/Sidebar.module.css";
 
-const Sidebar: React.FC = () => {
+function Sidebar() {
+  const { user } = useContext(UserContext);
   const [expanded, setExpanded] = useState(false);
   const [rotated, setRotated] = useState(false); // Dodamo stanje za vrtenje
 
@@ -32,7 +34,7 @@ const Sidebar: React.FC = () => {
 
       <div className={styles.iconContainer}>
         <div className={styles.iconItem}>
-          <img className={styles.home} src="/public/assets/building.png" />
+          <img className={styles.home} src="/public/assets/buildingBlack.png" />
           {expanded && <span className={styles.text}>Home</span>}
         </div>
         <div className={styles.iconItem}>
@@ -47,8 +49,10 @@ const Sidebar: React.FC = () => {
           {expanded && <span className={styles.text}>Forum</span>}
         </div>
       </div>
+
+      {user ? <div>{user.username}</div> : null}
     </div>
   );
-};
+}
 
 export default Sidebar;

@@ -80,6 +80,9 @@
 .toggleArrow {
   width: 100%;
   margin-bottom: 30px;
+  min-height: 60px; /* ali koliko pač potrebuješ */
+  display: flex;
+  align-items: center;
 }
 
 .toggleArrowExpanded {
@@ -88,7 +91,6 @@
   justify-content: space-between;
   width: 100%;
   padding: 0 15px;
-  margin-bottom: 30px;
   margin-left: 20px;
 }
 
