@@ -3,12 +3,12 @@ class Scanner(private val input: String) {
     private val length = input.length
 
     private enum class State {
-        START, IDENTIFIER, NUMBER, LPAREN, RPAREN, LCURLY, RCURLY, COLON, COMMA, ASSIGN, SEMI, ERROR
+        START, IDENTIFIER, NUMBER, LPAREN, RPAREN, LCURLY, RCURLY, COLON, COMMA, ASSIGN, SEMI, DIVIDE, ERROR
     }
 
     private var currentState = State.START
 
-    private val keywords = setOf("park", "koordinate", "koordinata", "drevo", "klop", "koš", "ribnik", "pot", "for", "to", "begin", "end")
+    private val keywords = setOf("park", "koordinate", "koordinata", "drevo", "klop", "koš", "ribnik", "pot", "drevored", "for", "in", "range", "start", "end", "loop", "count", "interpolate")
 
     fun getNextToken() : Token? {
         while (pos < length) {
@@ -51,6 +51,9 @@ class Scanner(private val input: String) {
                         }
                         currentChar == ';' -> {
                             currentState = State.SEMI
+                        }
+                        currentChar == '/' -> {
+                            currentState = State.DIVIDE
                         }
                         else -> {
                             throw IllegalArgumentException("Unknown character: $currentChar")
@@ -151,6 +154,11 @@ class Scanner(private val input: String) {
                     pos++
                     currentState = State.START
                     return Token("semi", ";")
+                }
+                State.DIVIDE -> {
+                    pos++
+                    currentState = State.START
+                    return Token("divide", "/")
                 }
                 else -> {
                     throw IllegalStateException("Unexpected state: $currentState")

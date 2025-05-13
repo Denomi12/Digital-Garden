@@ -22,4 +22,12 @@ fun main() {
     }
 
     println(tokens.joinToString("\n") { it.toString() })
+
+    val parser = Parser(tokens)
+    if (parser.parse()) {
+        println("ACCEPT")
+    } else {
+        println("REJECT")
+    }
+
 }
