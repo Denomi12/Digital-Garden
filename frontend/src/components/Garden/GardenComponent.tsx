@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import GardenMenu from "./GardenMenu";
 import styles from "../../stylesheets/Garden.module.css";
 import { Garden, GardenElement } from "./types";
+import axios from "axios";
+import { UserContext } from "../../UserContext";
 
 function GardenComponent() {
+  const { user } = useContext(UserContext);
   const [garden, setGarden] = useState<Garden | null>(null);
   const [selectedElement, setSelectedElement] = useState<GardenElement>(
     GardenElement.None
@@ -12,13 +15,21 @@ function GardenComponent() {
   const createGarden = () => {
     const widthInput = prompt("Enter the width of the garden:");
     const heightInput = prompt("Enter the height of the garden:");
+    const nameInput = prompt("Enter garden name:");
 
     if (widthInput && heightInput) {
       const w = parseInt(widthInput, 10);
       const h = parseInt(heightInput, 10);
 
-      if (!isNaN(w) && !isNaN(h)) {
-        const newGarden = new Garden(w, h);
+      if (!isNaN(w) && !isNaN(h) && nameInput) {
+        const newGarden = new Garden(
+          w,
+          h,
+          nameInput,
+          null,
+          undefined,
+          user?.id
+        );
         setGarden(newGarden);
       } else {
         alert("Please enter valid numbers for both width and height.");
@@ -28,35 +39,89 @@ function GardenComponent() {
     }
   };
 
+  async function saveGarden() {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_BACKEND_URL}/garden`,
+      garden?.toJson(),
+      { withCredentials: true }
+    );
+    console.log(res);
+  }
+
   const handleCellClick = (row: number, col: number) => {
-    if (!garden || !selectedElement) return;
+    if (!garden) return;
 
     garden.setElement(row, col, selectedElement);
-    setGarden(new Garden(garden.width, garden.height, garden.grid));
+    setGarden(
+      new Garden(
+        garden.width,
+        garden.height,
+        garden.name,
+        garden.grid,
+        garden.location,
+        garden.user
+      )
+    );
   };
 
   const handleTopClick = () => {
     if (!garden) return;
     garden.addRowTop();
-    setGarden(new Garden(garden.width, garden.height, garden.grid));
+    setGarden(
+      new Garden(
+        garden.width,
+        garden.height,
+        garden.name,
+        garden.grid,
+        garden.location,
+        garden.user
+      )
+    );
   };
 
   const handleBottomClick = () => {
     if (!garden) return;
     garden.addRowBottom();
-    setGarden(new Garden(garden.width, garden.height, garden.grid));
+    setGarden(
+      new Garden(
+        garden.width,
+        garden.height,
+        garden.name,
+        garden.grid,
+        garden.location,
+        garden.user
+      )
+    );
   };
 
   const handleLeftClick = () => {
     if (!garden) return;
     garden.addColumnLeft();
-    setGarden(new Garden(garden.width, garden.height, garden.grid));
+    setGarden(
+      new Garden(
+        garden.width,
+        garden.height,
+        garden.name,
+        garden.grid,
+        garden.location,
+        garden.user
+      )
+    );
   };
 
   const handleRightClick = () => {
     if (!garden) return;
     garden.addColumnRight();
-    setGarden(new Garden(garden.width, garden.height, garden.grid));
+    setGarden(
+      new Garden(
+        garden.width,
+        garden.height,
+        garden.name,
+        garden.grid,
+        garden.location,
+        garden.user
+      )
+    );
   };
 
   return (
@@ -64,7 +129,7 @@ function GardenComponent() {
       <div>
         <button onClick={createGarden}>Create Garden</button>
       </div>
-
+      {JSON.stringify(garden)}
       <div className={styles.MainDisplay}>
         {garden && (
           <div className={styles.GardenWrapper}>
@@ -103,7 +168,7 @@ function GardenComponent() {
                       style={{ backgroundColor: cell.color }}
                       onClick={() => handleCellClick(rowIndex, colIndex)}
                     >
-                      {`${cell.row}-${cell.col}`}
+                      {`${cell.y}-${cell.x}`}
                     </div>
                   ))}
                 </div>
@@ -111,9 +176,12 @@ function GardenComponent() {
             </div>
           </div>
         )}
-        {selectedElement}
         {garden && (
-          <GardenMenu setSelectedElement={setSelectedElement} />
+          <GardenMenu
+            selectedElement={selectedElement}
+            setSelectedElement={setSelectedElement}
+            saveGarden={saveGarden}
+          />
         )}
       </div>
     </>

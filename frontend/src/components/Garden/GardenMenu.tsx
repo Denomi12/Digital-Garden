@@ -1,34 +1,43 @@
 import styles from "../../stylesheets/GardenMenu.module.css";
-import { GardenElement } from "./types";
+import { Garden, GardenElement } from "./types";
 
 // Določimo tip za setSelectedTool kot funkcijo, ki sprejme string
 type GardenMenuProps = {
+  selectedElement: GardenElement;
   setSelectedElement: (element: GardenElement) => void;
+  saveGarden: () => void;
 };
 
 const GardenMenu = ({
+  selectedElement,
   setSelectedElement: setSelectedElement,
+  saveGarden: saveGarden,
 }: GardenMenuProps) => {
+  const elements = [
+    GardenElement.GardenBed,
+    GardenElement.Path,
+    GardenElement.RaisedBed,
+  ];
 
   return (
     <div className={styles.GardenMenu}>
-      <button
-        className={styles.MenuButton}
-        onClick={() => setSelectedElement(GardenElement.GardenBed)}
-      >
-        {GardenElement.GardenBed}
-      </button>
-      <button
-        className={styles.MenuButton}
-        onClick={() => setSelectedElement(GardenElement.Path)}
-      >
-        {GardenElement.Path}
-      </button>
-      <button
-        className={styles.MenuButton}
-        onClick={() => setSelectedElement(GardenElement.RaisedBed)}
-      >
-        {GardenElement.RaisedBed}
+      {elements.map((element) => (
+        <button
+          key={element}
+          className={`${styles.MenuButton} ${
+            selectedElement === element ? styles.SelectedButton : ""
+          }`}
+          onClick={() =>
+            setSelectedElement(
+              element != selectedElement ? element : GardenElement.None
+            )
+          }
+        >
+          {element}
+        </button>
+      ))}
+      <button className={styles.MenuButton} onClick={saveGarden}>
+        Save garden
       </button>
     </div>
   );
