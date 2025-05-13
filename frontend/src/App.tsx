@@ -14,6 +14,7 @@ import Map from "./components/Map";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
+import AddCrop from "./components/AddCrop";
 
 function App() {
   const [user, setUser] = useState<User | null>(() => {
@@ -49,6 +50,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>
+          <AddCrop/>
         </div>
       </UserContext.Provider>
     </BrowserRouter>
