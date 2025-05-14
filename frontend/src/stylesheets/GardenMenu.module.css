@@ -21,3 +21,7 @@
 .MenuButton:hover {
   background-color: #4caf50;
 }
+
+.SelectedButton {
+  border: 1px solid black;
+}

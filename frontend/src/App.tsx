@@ -2,12 +2,13 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
-import Garden from "./components/Garden";
 import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
-
+import Map from "./components/Map";
 import { User } from "./types/User";
+import HomePage from "./components/HomePage";
+import GardenComponent from "./components/Garden/GardenComponent";
 
 function App() {
   const [user, setUser] = useState<User | null>(() => {
@@ -33,10 +34,12 @@ function App() {
           setUserContext: updateUserData,
         }}
       >
-        <div className="App">
+        <div className="App" style={{ backgroundColor: 'lightgreen' }}>
           <Header title="Garden - nevem" />
           <Routes>
-            <Route path="/" element={<Garden />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/map" element={<Map />} />
+            <Route path="/garden" element={<GardenComponent />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />

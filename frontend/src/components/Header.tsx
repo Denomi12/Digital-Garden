@@ -17,6 +17,12 @@ function Header({ title }: HeaderProps) {
           <li>
             <Link to="/">Home</Link>
           </li>
+          <li>
+            <Link to="/map">Map</Link>
+          </li>
+          <li>
+            <Link to="/garden">Garden</Link>
+          </li>
           {user ? (
             <li>
               <Link to="/logout">Logout</Link>
@@ -32,12 +38,7 @@ function Header({ title }: HeaderProps) {
             </>
           )}
         </ul>
-        {user ?
-        <div>
-          Logged in User: {user.username}
-        </div>
-        : null}
-        
+        {user ? <div>Logged in User: {user.username}</div> : null}
       </nav>
     </header>
   );
