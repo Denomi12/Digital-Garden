@@ -20,11 +20,6 @@ function Header({ title }: HeaderProps) {
         <div className={styles.title}>{title}</div>
         <nav>
           <ul className={styles.navList}>
-            <li>
-              <Link className={styles.navButton} to="/">
-                Home
-              </Link>
-            </li>
             {user ? (
               <li>
                 <Link className={styles.navButton} to="/logout">

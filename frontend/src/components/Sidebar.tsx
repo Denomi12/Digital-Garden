@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
 import styles from "./stylesheets/Sidebar.module.css";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   const { user } = useContext(UserContext);
@@ -33,21 +34,48 @@ function Sidebar() {
       </div>
 
       <div className={styles.iconContainer}>
-        <div className={styles.iconItem}>
-          <img className={styles.home} src="/public/assets/buildingBlack.png" />
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `${styles.iconItem} ${isActive ? styles.active : ""}`
+          }
+        >
+          <img className={styles.home} src="/public/assets/home.png" />
           {expanded && <span className={styles.text}>Home</span>}
-        </div>
-        <div className={styles.iconItem}>
+        </NavLink>
+
+        <NavLink
+          to="/garden"
+          className={({ isActive }) =>
+            `${styles.iconItem} ${isActive ? styles.active : ""}`
+          }
+        >
           <img className={styles.trowel} src="/public/assets/trowel.png" />
           {expanded && <span className={styles.text}>Garden</span>}
-        </div>
-        <div className={styles.iconItem}>
+        </NavLink>
+
+        <NavLink
+          to="/map"
+          className={({ isActive }) =>
+            `${styles.iconItem} ${isActive ? styles.active : ""}`
+          }
+        >
+          <img className={styles.map} src="/public/assets/map.png" />
+          {expanded && <span className={styles.text}>Map</span>}
+        </NavLink>
+
+        <NavLink
+          to="/forum"
+          className={({ isActive }) =>
+            `${styles.iconItem} ${isActive ? styles.active : ""}`
+          }
+        >
           <img
             className={styles.discussion}
             src="/public/assets/discussion.png"
           />
           {expanded && <span className={styles.text}>Forum</span>}
-        </div>
+        </NavLink>
       </div>
 
       {user && (

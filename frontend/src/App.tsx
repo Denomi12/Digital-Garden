@@ -3,13 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
 import Garden from "./components/Garden";
-import Register from "./components/Register";
 import Logout from "./components/Logout";
-import Login from "./components/Login";
 import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./components/HomePage";
 import styles from "./App.module.css";
+import Forum from "./components/Forum";
 
 <link
   rel="stylesheet"
@@ -50,9 +49,8 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/map" element={<Map />} />
               <Route path="/garden" element={<Garden />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/forum" element={<Forum />} />
             </Routes>
           </div>
         </div>
