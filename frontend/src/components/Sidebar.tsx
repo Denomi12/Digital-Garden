@@ -22,14 +22,14 @@ function Sidebar() {
       >
         {expanded && (
           <div className={styles.title}>
-            <img className={styles.plant} src="/public/assets/plant.png" />
+            <img className={styles.plant} src="/assets/plant.png" />
             <p className={styles.titleText}>Garden</p>
           </div>
         )}
         <img
           onClick={toggleSidebar}
           className={`${styles.rArrow} ${rotated ? styles.rotated : ""}`}
-          src="/public/assets/Rarrow.png"
+          src="/assets/Rarrow.png"
         />
       </div>
 
@@ -40,7 +40,7 @@ function Sidebar() {
             `${styles.iconItem} ${isActive ? styles.active : ""}`
           }
         >
-          <img className={styles.home} src="/public/assets/home.png" />
+          <img className={styles.home} src="/assets/home.png" />
           {expanded && <span className={styles.text}>Home</span>}
         </NavLink>
 
@@ -50,7 +50,7 @@ function Sidebar() {
             `${styles.iconItem} ${isActive ? styles.active : ""}`
           }
         >
-          <img className={styles.trowel} src="/public/assets/trowel.png" />
+          <img className={styles.trowel} src="/assets/trowel.png" />
           {expanded && <span className={styles.text}>Garden</span>}
         </NavLink>
 
@@ -60,7 +60,7 @@ function Sidebar() {
             `${styles.iconItem} ${isActive ? styles.active : ""}`
           }
         >
-          <img className={styles.map} src="/public/assets/map.png" />
+          <img className={styles.map} src="/assets/map.png" />
           {expanded && <span className={styles.text}>Map</span>}
         </NavLink>
 
@@ -70,17 +70,14 @@ function Sidebar() {
             `${styles.iconItem} ${isActive ? styles.active : ""}`
           }
         >
-          <img
-            className={styles.discussion}
-            src="/public/assets/discussion.png"
-          />
+          <img className={styles.discussion} src="/assets/discussion.png" />
           {expanded && <span className={styles.text}>Forum</span>}
         </NavLink>
       </div>
 
       {user && (
         <div className={styles.user}>
-          <img className={styles.person} src="/public/assets/person.png" />
+          <img className={styles.person} src="/assets/person.png" />
           {expanded && <div>{user.username}</div>}
         </div>
       )}
