@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../UserContext";
 import { Navigate } from "react-router-dom";
-import styles from "./stylesheets/Header.module.css";
+import styles from "../stylesheets/Header.module.css";
 
 //za popup pri loginu
 type LoginProps = {

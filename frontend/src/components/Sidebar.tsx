@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
-import styles from "./stylesheets/Sidebar.module.css";
+import styles from "../stylesheets/Sidebar.module.css";
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {

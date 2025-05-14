@@ -2,20 +2,15 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
-import Garden from "./components/Garden";
 import Logout from "./components/Logout";
 import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
-import HomePage from "./components/HomePage";
 import styles from "./App.module.css";
 import Forum from "./components/Forum";
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-/>;
-
 import { User } from "./types/User";
+import HomePage from "./components/HomePage";
+import GardenComponent from "./components/Garden/GardenComponent";
 
 function App() {
   const [user, setUser] = useState<User | null>(() => {
@@ -48,7 +43,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/map" element={<Map />} />
-              <Route path="/garden" element={<Garden />} />
+              <Route path="/garden" element={<GardenComponent />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/forum" element={<Forum />} />
             </Routes>

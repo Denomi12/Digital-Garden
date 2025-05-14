@@ -7,6 +7,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
   if (!token) {
     res.status(401).json({ message: "Unauthorized: No token" });
+    return;
 }
   try {
     const decoded =jwt.verify(token, process.env.JWT_SECRET!); // throws if invalid

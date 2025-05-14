@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
-import styles from "./stylesheets/Header.module.css";
+import styles from "../stylesheets/Header.module.css";
 import Register from "./Register";
 import Login from "./Login";
 
