@@ -1,0 +1,132 @@
+.sidebar {
+  background-color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.sidebar.expanded {
+  width: 200px;
+}
+
+.toggleArrow {
+  margin-bottom: 30px;
+}
+
+.rArrow,
+.lArrow {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  margin-right: 5px;
+}
+
+.rArrow.rotated {
+  transform: rotate(180deg);
+}
+
+.iconContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.iconItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+  justify-content: flex-start;
+  margin-left: 30px;
+  text-decoration: none;
+  color: black;
+}
+
+.trowel,
+.discussion,
+.home,
+.plant,
+.person,
+.map {
+  width: 30px;
+  height: 30px;
+}
+
+.text {
+  font-size: 16px;
+  margin-left: 15px;
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+}
+
+.test {
+  background-color: aqua;
+  width: 200px;
+  height: 100vh;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  margin: 0%;
+}
+
+.sidebar.expanded + .mainContent {
+  margin-left: 250px;
+}
+
+.toggleArrow {
+  width: 100%;
+  margin-bottom: 30px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.toggleArrowExpanded {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 15px;
+  margin-left: 20px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+}
+
+.titleText {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.toggleArrowCollapsed {
+  display: flex;
+  justify-content: center;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+  margin-bottom: 30px;
+  width: 100%;
+  margin-left: 70px;
+}
+
+.active span {
+  color: green;
+}
