@@ -20,6 +20,9 @@ function Header({ title }: HeaderProps) {
           <li>
             <Link to="/map">Map</Link>
           </li>
+          <li>
+            <Link to="/garden">Garden</Link>
+          </li>
           {user ? (
             <li>
               <Link to="/logout">Logout</Link>
