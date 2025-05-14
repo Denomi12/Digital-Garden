@@ -208,8 +208,68 @@ fun scrapeGoodNeighbours(){
     }
 }
 
+data class WaterRequirement(
+    val plant: String,
+    val minInchesPerWeek: Double,
+    val maxInchesPerWeek: Double
+)
+
+fun scrapeWaterRequirements(): List<WaterRequirement> {
+    return skrape(HttpFetcher) {
+        request {
+            url = "https://extension.usu.edu/yardandgarden/research/water-recommendations-for-vegetables"
+        }
+
+        extract {
+            htmlDocument {
+                val waterRequirements = mutableListOf<WaterRequirement>()
+
+                table {
+                    withClass = "table"
+
+
+                    tbody {
+                        tr {
+                            findAll {
+                                forEach { row ->
+                                    val cells = row.td {
+                                        findAll {
+                                            map { it.text.trim().replace(",", ".") }
+                                        }
+                                    }
+
+                                    if (cells.size == 3) {
+                                        val plant = cells[0]
+                                        val min = cells[1].toDoubleOrNull() ?: 0.0
+                                        val max = cells[2].toDoubleOrNull() ?: 0.0
+
+                                        waterRequirements.add(
+                                            WaterRequirement(plant, min, max)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                println("========== Zalivanje ==========")
+                waterRequirements.forEach {
+                    println("${it.plant}: ${it.minInchesPerWeek} - ${it.maxInchesPerWeek} palcev/teden")
+                }
+
+                waterRequirements
+            }
+        }
+    }
+}
+
+
+
 fun main() {
 
     scrapeVegetables()
     scrapeGoodNeighbours()
+    scrapeWaterRequirements()
+
 }
