@@ -4,6 +4,7 @@ import styles from "../../stylesheets/Garden.module.css";
 import { Garden, GardenElement } from "./types";
 import axios from "axios";
 import { UserContext } from "../../UserContext";
+import AddCrop from "./AddCrop";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -183,6 +184,8 @@ function GardenComponent() {
             saveGarden={saveGarden}
           />
         )}
+          <AddCrop/>
+
       </div>
     </>
   );

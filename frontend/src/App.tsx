@@ -2,19 +2,12 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
-import Garden from "./components/Garden/GardenComponent";
 import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
 import Map from "./components/Map";
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-/>;
-
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
-import AddCrop from "./components/AddCrop";
 import GardenComponent from "./components/Garden/GardenComponent";
 
 function App() {
@@ -41,7 +34,7 @@ function App() {
           setUserContext: updateUserData,
         }}
       >
-        <div className="App">
+        <div className="App" style={{ backgroundColor: 'lightgreen' }}>
           <Header title="Garden - nevem" />
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -51,7 +44,6 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>
-          <AddCrop/>
         </div>
       </UserContext.Provider>
     </BrowserRouter>

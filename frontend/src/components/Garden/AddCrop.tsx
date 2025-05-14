@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import { Navigate } from "react-router-dom";
 
 interface CropOption {
@@ -27,7 +27,9 @@ function AddCrop() {
   useEffect(() => {
     const fetchCrops = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BACKEND_URL}/crop`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BACKEND_URL}/crop`
+        );
         setAvailableCrops(response.data);
         setIsLoadingCrops(false);
       } catch (error) {
@@ -95,8 +97,10 @@ function AddCrop() {
         setPlantingMonth("");
         setWateringFrequency("");
         setWateringAmount("");
-        
-        const response = await axios.get(`${import.meta.env.VITE_API_BACKEND_URL}/crop`);
+
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BACKEND_URL}/crop`
+        );
         setAvailableCrops(response.data);
       }
     } catch (error: any) {
@@ -153,7 +157,6 @@ function AddCrop() {
         required
       />
 
-
       <div style={{ marginTop: "12px" }}>
         <label htmlFor="goodCompanion">Dodaj dobrega soseda:</label>
         <br />
@@ -165,17 +168,19 @@ function AddCrop() {
         >
           <option value="">-- Izberi rastlino --</option>
           {availableCrops
-            .filter(crop => !companions.includes(crop._id))
+            .filter((crop) => !companions.includes(crop._id))
             .map((crop) => (
               <option key={crop._id} value={crop._id}>
                 {crop.name}
               </option>
             ))}
         </select>
-        <button 
-          type="button" 
-          onClick={addCompanion} 
-          disabled={!companionInput || isLoadingCrops || availableCrops.length === 0}
+        <button
+          type="button"
+          onClick={addCompanion}
+          disabled={
+            !companionInput || isLoadingCrops || availableCrops.length === 0
+          }
         >
           dodaj
         </button>
@@ -189,16 +194,18 @@ function AddCrop() {
         {companions.length === 0 ? (
           <p>Ni dodanih dobrih sosedov</p>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {companions.map((companionId) => {
-              const companion = availableCrops.find(c => c._id === companionId);
+              const companion = availableCrops.find(
+                (c) => c._id === companionId
+              );
               return (
                 <li key={companionId} style={{ marginBottom: "4px" }}>
                   <span style={{ marginRight: "8px" }}>
-                    {companion ? companion.name : 'Neznana rastlina'}
+                    {companion ? companion.name : "Neznana rastlina"}
                   </span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => removeCompanion(companionId)}
                     style={{ marginLeft: "8px" }}
                   >
@@ -222,22 +229,26 @@ function AddCrop() {
         >
           <option value="">-- Izberi rastlino --</option>
           {availableCrops
-            .filter(crop => !badCompanions.includes(crop._id))
+            .filter((crop) => !badCompanions.includes(crop._id))
             .map((crop) => (
               <option key={crop._id} value={crop._id}>
                 {crop.name}
               </option>
             ))}
         </select>
-        <button 
-          type="button" 
-          onClick={addBadCompanion} 
-          disabled={!badCompanionInput || isLoadingCrops || availableCrops.length === 0}
+        <button
+          type="button"
+          onClick={addBadCompanion}
+          disabled={
+            !badCompanionInput || isLoadingCrops || availableCrops.length === 0
+          }
         >
           dodaj
         </button>
         {availableCrops.length === 0 && (
-          <p style={{ color: 'gray' }}>Najprej dodajte nekaj rastlin, da jih lahko izberete kot sosede</p>
+          <p style={{ color: "gray" }}>
+            Najprej dodajte nekaj rastlin, da jih lahko izberete kot sosede
+          </p>
         )}
       </div>
 
@@ -246,16 +257,18 @@ function AddCrop() {
         {badCompanions.length === 0 ? (
           <p>Ni dodanih slabih sosedov</p>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {badCompanions.map((badCompanionId) => {
-              const badCompanion = availableCrops.find(c => c._id === badCompanionId);
+              const badCompanion = availableCrops.find(
+                (c) => c._id === badCompanionId
+              );
               return (
                 <li key={badCompanionId} style={{ marginBottom: "4px" }}>
                   <span style={{ marginRight: "8px" }}>
-                    {badCompanion ? badCompanion.name : 'Neznana rastlina'}
+                    {badCompanion ? badCompanion.name : "Neznana rastlina"}
                   </span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => removeBadCompanion(badCompanionId)}
                     style={{ marginLeft: "8px" }}
                   >
@@ -322,10 +335,7 @@ function AddCrop() {
       {error && <p>{error}</p>}
       {successMessage && <p>{successMessage}</p>}
 
-      <button 
-        type="submit" 
-        style={{ marginTop: "16px", padding: "8px 16px" }}
-      >
+      <button type="submit" style={{ marginTop: "16px", padding: "8px 16px" }}>
         Dodaj rastlino
       </button>
     </form>
