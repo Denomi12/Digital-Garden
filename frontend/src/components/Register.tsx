@@ -2,8 +2,14 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import styles from "../stylesheets/Header.module.css";
 
-function Register() {
+//za popup pri registeru
+type LoginProps = {
+  onSuccess: () => void;
+};
+
+function Register({ onSuccess }: LoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -35,6 +41,7 @@ function Register() {
           email: user.email,
         });
         navigate("/");
+        onSuccess();
       } else {
         throw new Error("Registration failed");
       }
@@ -47,31 +54,34 @@ function Register() {
   }
 
   return (
-    <form onSubmit={handleRegister}>
-      <input
-        type="text"
-        name="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <input type="submit" name="submit" value="Register" />
-      <label>{error}</label>
-    </form>
+    <>
+      <div className={styles.formHeader}>Start Your Journey!</div>
+      <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          name="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <input type="submit" name="submit" value="Register" />
+        {error && <label>{error}</label>}
+      </form>
+    </>
   );
 }
 

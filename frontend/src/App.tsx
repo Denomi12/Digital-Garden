@@ -2,10 +2,12 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
-import Register from "./components/Register";
 import Logout from "./components/Logout";
-import Login from "./components/Login";
 import Map from "./components/Map";
+import Sidebar from "./components/Sidebar";
+import styles from "./App.module.css";
+import Forum from "./components/Forum";
+
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
 import GardenComponent from "./components/Garden/GardenComponent";
@@ -34,16 +36,18 @@ function App() {
           setUserContext: updateUserData,
         }}
       >
-        <div className="App" style={{ backgroundColor: 'lightgreen' }}>
-          <Header title="Garden - nevem" />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/map" element={<Map />} />
-            <Route path="/garden" element={<GardenComponent />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/logout" element={<Logout />} />
-          </Routes>
+        <div className={styles.fullScreen}>
+          <Sidebar />
+          <div className={styles.mainContent}>
+            <Header title="Garden" />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/map" element={<Map />} />
+              <Route path="/garden" element={<GardenComponent />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/forum" element={<Forum />} />
+            </Routes>
+          </div>
         </div>
       </UserContext.Provider>
     </BrowserRouter>
