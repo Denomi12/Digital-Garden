@@ -7,6 +7,7 @@ import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import styles from "./App.module.css";
 import Forum from "./components/Forum";
+import WeatherForecast from "./components/WeatherForecast";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
@@ -46,6 +47,7 @@ function App() {
               <Route path="/garden" element={<GardenComponent />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/forum" element={<Forum />} />
+              <Route path="/weather" element={<WeatherForecast />} />
             </Routes>
           </div>
         </div>
