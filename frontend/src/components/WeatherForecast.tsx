@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchWeatherApi } from "openmeteo";
+import styles from "../stylesheets/WeatherForecast.module.css";
 
 //kasneje pridobimo lat in lng od vrta
 var lat = 46.573158;
@@ -78,32 +79,32 @@ function WeatherForecast() {
   return (
     <div>
       <h2>Vremenska napoved</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Čas</th>
             <th>Temp (°C)</th>
             <th>Rel. vlaga (%)</th>
             <th>Dež (mm)</th>
-            <th>Snežna odeja (cm)</th>
+            {/* <th>Snežna odeja (cm)</th>
             <th>Sneženje (cm)</th>
             <th>Plohe (mm)</th>
             <th>Temp. tal 0 cm (°C)</th>
-            <th>Vlaga tal 0–1 cm</th>
+            <th>Vlaga tal 0–1 cm</th> */}
           </tr>
         </thead>
         <tbody>
           {weatherData.time.map((t, i) => (
-            <tr key={i}>
+            <tr>
               <td>{t.toLocaleString()}</td>
               <td>{weatherData.temperature2m[i]}</td>
               <td>{weatherData.relativeHumidity2m[i]}</td>
               <td>{weatherData.rain[i]}</td>
-              <td>{weatherData.snowDepth[i]}</td>
+              {/* <td>{weatherData.snowDepth[i]}</td>
               <td>{weatherData.snowfall[i]}</td>
               <td>{weatherData.showers[i]}</td>
               <td>{weatherData.soilTemperature0cm[i]}</td>
-              <td>{weatherData.soilMoisture0To1cm[i]}</td>
+              <td>{weatherData.soilMoisture0To1cm[i]}</td> */}
             </tr>
           ))}
         </tbody>
