@@ -5,6 +5,18 @@ export enum GardenElement {
   None = "",
 }
 
+export interface Crop {
+  name: string;
+  latinName: string;
+  goodCompanions: Crop[];
+  badCompanions: Crop[];
+  plantingMonth: string;
+  watering: {
+    frequency: string;
+    amount: number;
+  };
+}
+
 export type Tile = {
   x: number;
   y: number;
@@ -62,15 +74,18 @@ export class Garden {
       width: this.width,
       height: this.height,
       location: this.location,
-      elements: this.grid.flat().filter((tile) => tile.type != GardenElement.None).map((tile) => ({
-        x: tile.x,
-        y: tile.y,
-        type: tile.type,
-        crop: tile.crop,
-        plantedDate: tile.plantedDate
-          ? tile.plantedDate.toISOString()
-          : undefined,
-      })),
+      elements: this.grid
+        .flat()
+        .filter((tile) => tile.type != GardenElement.None)
+        .map((tile) => ({
+          x: tile.x,
+          y: tile.y,
+          type: tile.type,
+          crop: tile.crop,
+          plantedDate: tile.plantedDate
+            ? tile.plantedDate.toISOString()
+            : undefined,
+        })),
     };
   }
 

@@ -5,6 +5,7 @@ import { Garden, GardenElement } from "./types";
 import axios from "axios";
 import { UserContext } from "../../UserContext";
 import AddCrop from "./AddCrop";
+import ShowCrops from "./ShowCrops";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -131,6 +132,7 @@ function GardenComponent() {
         <button onClick={createGarden}>Create Garden</button>
       </div>
       {JSON.stringify(garden)}
+      <ShowCrops/>
       <div className={styles.MainDisplay}>
         {garden && (
           <div className={styles.GardenWrapper}>
@@ -186,6 +188,7 @@ function GardenComponent() {
         )}
           <AddCrop/>
 
+        <div className={styles.GardenActions}></div>
       </div>
     </>
   );
