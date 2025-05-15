@@ -1,58 +1,52 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import androidx.compose.material.Icon
-import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 
 
 @Composable
-@Preview
-fun SideBar() {
+fun MenuRow(label: String, icon: ImageVector, onClick: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .height(50.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Icon(icon, contentDescription = label)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = label)
+    }
+}
+
+
+@Composable
+fun SideBar(setTab: (String) -> Unit) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 30.dp)
-            ) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add person")
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Add person")
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Icon(Icons.Rounded.List, contentDescription = "People")
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "People")
-            }
+        Column {
+            MenuRow("Add person", Icons.Rounded.Add) { setTab("Add person") }
+            MenuRow("People", Icons.Rounded.List) { setTab("People") }
         }
+
 
         Divider(
             color = Color.Gray,
@@ -60,42 +54,16 @@ fun SideBar() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(16.dp)
-                .padding(top = 8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 30.dp)
-            ) {
-                Icon(Icons.Rounded.Share, contentDescription = "Scraper")
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Scraper")
-            }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Icon(Icons.Rounded.Build, contentDescription = "Generator")
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Generator")
-            }
+        Column {
+            MenuRow("Scraper", Icons.Rounded.Share) { setTab("Scraper") }
+            MenuRow("Generator", Icons.Rounded.Build) { setTab("Generator") }
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(Icons.Rounded.Info, contentDescription = "About")
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "About")
-            }
+
+        Column {
+            MenuRow("About", Icons.Rounded.Info) { setTab("About") }
         }
     }
 }
@@ -103,16 +71,45 @@ fun SideBar() {
 
 @Composable
 @Preview
-fun MainSection(){
-    Text(
-        text = "nevem2",
-        modifier = Modifier.padding(16.dp)
-    )
+fun MainSection(tab: String) {
+    if (tab == "Home") {
+        Text(
+            text = "Home",
+            modifier = Modifier.padding(16.dp)
+        )
+    } else if (tab == "Add person") {
+        Text(
+            text = "Add person",
+            modifier = Modifier.padding(16.dp)
+        )
+    } else if (tab == "People") {
+        Text(
+            text = "People",
+            modifier = Modifier.padding(16.dp)
+        )
+    } else if (tab == "Scraper") {
+        Text(
+            text = "Scraper",
+            modifier = Modifier.padding(16.dp)
+        )
+    } else if (tab == "Generator") {
+        Text(
+            text = "Generator",
+            modifier = Modifier.padding(16.dp)
+        )
+    } else {
+        Text(
+            text = "About",
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Composable
 @Preview
 fun App() {
+    var tab by remember { mutableStateOf("Home") }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +123,7 @@ fun App() {
                 .padding(end = 8.dp),
             shape = RoundedCornerShape(4.dp),
         ) {
-            SideBar()
+            SideBar(setTab = { tab = it })
         }
 
         Card(
@@ -136,7 +133,7 @@ fun App() {
                 .padding(start = 8.dp),
             shape = RoundedCornerShape(4.dp),
         ) {
-            MainSection()
+            MainSection(tab = tab)
         }
     }
 }
