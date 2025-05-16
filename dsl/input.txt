@@ -1,17 +1,18 @@
-drevored {
-    start: { (1.0, 2.0) },
-    end: { (3.0, 4.0) },
-    count: 10,
-    loop: {
-        for i in range(count) {
-            for j in range(5) {
-                drevo {
-                    koordinata: { interpolate(start, end, j/5) }
-                }
-            }
-            drevo {
-                koordinata: { interpolate(start, end, i/count) }
-            }
-        }
-    }
+var x := 3.14
+if x > 2 {
+    park
+    drevo
+    klop
+    kos
+    // To je komentar
+    pot
+    ellip
+    polygon
+    line
+    bent_line
+    x := x + 1.0
+} else {
+    y := x - 1
+
 }
+
