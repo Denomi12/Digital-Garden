@@ -1,51 +1,33 @@
-export enum GardenElement {
-  GardenBed = "Greda",
-  RaisedBed = "Visoka greda",
-  Path = "Potka",
-  None = "",
-}
-
-export interface Crop {
-  name: string;
-  latinName: string;
-  goodCompanions: Crop[];
-  badCompanions: Crop[];
-  plantingMonth: string;
-  watering: {
-    frequency: string;
-    amount: number;
-  };
-}
-
-export type Tile = {
-  x: number;
-  y: number;
-  type?: GardenElement;
-  crop?: string;
-  plantedDate?: Date;
-  color?: string;
-};
+import { Tile, GardenElement } from "./elements";
 
 export class Garden {
   width: number;
   height: number;
   name: string;
   grid: Tile[][];
-  location?: string;
+  latitude?: number;
+  longitude?: number;
   user?: string;
+
+  private createTile(x: number, y: number): Tile {
+    return { x, y, type: GardenElement.None, color: undefined };
+  }
 
   constructor(
     width: number,
     height: number,
     name: string,
     grid: Tile[][] | null = null,
-    location?: string,
+    latitude?: number,
+    longitude?: number,
+
     user?: string
   ) {
     this.width = width;
     this.height = height;
     this.name = name;
-    this.location = this.location;
+    this.latitude = latitude;
+    this.longitude = longitude;
     this.user = user;
 
     if (grid) {
@@ -58,12 +40,7 @@ export class Garden {
     }
 
     this.grid = Array.from({ length: height }, (_, y) =>
-      Array.from({ length: width }, (_, x) => ({
-        x,
-        y,
-        type: GardenElement.None,
-        color: undefined,
-      }))
+      Array.from({ length: width }, (_, x) => this.createTile(x, y))
     );
   }
 
@@ -73,7 +50,8 @@ export class Garden {
       owner: this.user,
       width: this.width,
       height: this.height,
-      location: this.location,
+      latitude: this.latitude,
+      longitude: this.longitude,
       elements: this.grid
         .flat()
         .filter((tile) => tile.type != GardenElement.None)
@@ -82,9 +60,7 @@ export class Garden {
           y: tile.y,
           type: tile.type,
           crop: tile.crop,
-          plantedDate: tile.plantedDate
-            ? tile.plantedDate.toISOString()
-            : undefined,
+          plantedDate: tile.plantedDate?.toISOString(),
         })),
     };
   }
@@ -101,6 +77,7 @@ export class Garden {
       tile.plantedDate = undefined;
       tile.type = GardenElement.None;
       tile.color = undefined;
+      tile.imageSrc = undefined;
       return;
     }
 
@@ -110,6 +87,7 @@ export class Garden {
     switch (element) {
       case GardenElement.GardenBed:
         tile.color = "#8B4513";
+        tile.imageSrc = `/assets/Greda.png`;
         break;
       case GardenElement.RaisedBed:
         tile.color = "#D2B48C";
@@ -123,12 +101,9 @@ export class Garden {
   }
 
   addRowTop() {
-    const newRow: Tile[] = Array.from({ length: this.width }, (_, x) => ({
-      x,
-      y: 0,
-      element: GardenElement.None,
-      color: undefined,
-    }));
+    const newRow: Tile[] = Array.from({ length: this.width }, (_, x) =>
+      this.createTile(x, 0)
+    );
 
     this.grid.unshift(newRow);
 
@@ -147,12 +122,9 @@ export class Garden {
   }
 
   addRowBottom() {
-    const newRow: Tile[] = Array.from({ length: this.width }, (_, x) => ({
-      x,
-      y: this.height,
-      element: GardenElement.None,
-      color: undefined,
-    }));
+    const newRow: Tile[] = Array.from({ length: this.width }, (_, x) =>
+      this.createTile(x, this.height)
+    );
 
     this.grid.push(newRow);
 
@@ -165,12 +137,7 @@ export class Garden {
         this.grid[rowIndex][colIndex].x += 1;
       }
 
-      const newCell: Tile = {
-        x: 0,
-        y: rowIndex,
-        type: GardenElement.None,
-        color: undefined,
-      };
+      const newCell = this.createTile(0, rowIndex);
 
       this.grid[rowIndex].unshift(newCell);
     }
@@ -180,12 +147,7 @@ export class Garden {
 
   addColumnRight() {
     for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
-      const newCell: Tile = {
-        x: this.width,
-        y: rowIndex,
-        type: GardenElement.None,
-        color: undefined,
-      };
+      const newCell = this.createTile(this.width, rowIndex);
 
       this.grid[rowIndex].push(newCell);
     }

@@ -1,6 +1,6 @@
-import styles from "../../stylesheets/Garden.module.css";
-import { Garden } from "./types";
-
+import styles from "../../stylesheets/GardenGrid.module.css";
+import GardenCell from "./GardenCell";
+import { Garden } from "./Types/Garden";
 interface GardenGridProps {
   garden: Garden;
   onCellClick: (row: number, col: number) => void;
@@ -22,30 +22,48 @@ export default function GardenGrid({
     <div className={styles.GardenWrapper}>
       <div className={styles.GardenGrid}>
         <button
-            className={`${styles.PlusButton} ${styles.PlusTop}`}
-            onClick={onTopClick}
-          >
-            +
-          </button>
-          <button
-            className={`${styles.PlusButton} ${styles.PlusBottom}`}
-            onClick={onBottomClick}
-          >
-            +
-          </button>
-          <button
-            className={`${styles.PlusButton} ${styles.PlusLeft}`}
-            onClick={onLeftClick}
-          >
-            +
-          </button>
-          <button
-            className={`${styles.PlusButton} ${styles.PlusRight}`}
-            onClick={onRightClick}
-          >
-            +
-          </button>
-        <div className={styles.GardenGridScrollArea}>
+          className={`${styles.PlusButton} ${styles.PlusTop}`}
+          onClick={onTopClick}
+        >
+          +
+        </button>
+        <button
+          className={`${styles.PlusButton} ${styles.PlusBottom}`}
+          onClick={onBottomClick}
+        >
+          +
+        </button>
+        <button
+          className={`${styles.PlusButton} ${styles.PlusLeft}`}
+          onClick={onLeftClick}
+        >
+          +
+        </button>
+        <button
+          className={`${styles.PlusButton} ${styles.PlusRight}`}
+          onClick={onRightClick}
+        >
+          +
+        </button>
+
+        <div className={styles.ElementsGrid}>
+          {garden.grid.map((row, rowIndex) => (
+            <div key={rowIndex} className={styles.GridRow}>
+              {row.map((cell, colIndex) => (
+                <span key={`${rowIndex}-${colIndex}`}>
+                  <GardenCell
+                    row={rowIndex}
+                    col={colIndex}
+                    cell={cell}
+                    handleCellClik={() => onCellClick(rowIndex, colIndex)}
+                  />
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* <div className={styles.GardenGridScrollArea}>
           <div className={styles.GardenColumn}>
             {garden.grid.map((row, rowIndex) => (
               <div key={rowIndex} className={styles.GardenRow}>
@@ -62,7 +80,7 @@ export default function GardenGrid({
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

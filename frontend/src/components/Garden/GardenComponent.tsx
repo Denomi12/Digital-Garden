@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import GardenMenu from "./GardenMenu";
-import styles from "../../stylesheets/Garden.module.css";
-import { Garden, GardenElement } from "./types";
+import styles from "../../stylesheets/GardenComponent.module.css";
 import axios from "axios";
 import { UserContext } from "../../UserContext";
-import AddCrop from "./AddCrop";
 import ShowCrops from "./ShowCrops";
+import GardenGrid from "./GardenGrid";
+import { Garden } from "./Types/Garden";
+import { GardenElement } from "./Types/elements";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -29,6 +30,7 @@ function GardenComponent() {
           h,
           nameInput,
           null,
+          undefined,
           undefined,
           user?.id
         );
@@ -60,7 +62,8 @@ function GardenComponent() {
         garden.height,
         garden.name,
         garden.grid,
-        garden.location,
+        garden.latitude,
+        garden.longitude,
         garden.user
       )
     );
@@ -75,7 +78,8 @@ function GardenComponent() {
         garden.height,
         garden.name,
         garden.grid,
-        garden.location,
+         garden.latitude,
+        garden.longitude,
         garden.user
       )
     );
@@ -90,7 +94,8 @@ function GardenComponent() {
         garden.height,
         garden.name,
         garden.grid,
-        garden.location,
+         garden.latitude,
+        garden.longitude,
         garden.user
       )
     );
@@ -105,7 +110,8 @@ function GardenComponent() {
         garden.height,
         garden.name,
         garden.grid,
-        garden.location,
+         garden.latitude,
+        garden.longitude,
         garden.user
       )
     );
@@ -120,7 +126,8 @@ function GardenComponent() {
         garden.height,
         garden.name,
         garden.grid,
-        garden.location,
+         garden.latitude,
+        garden.longitude,
         garden.user
       )
     );
@@ -128,70 +135,102 @@ function GardenComponent() {
 
   return (
     <>
-      <div>
-        <button onClick={createGarden}>Create Garden</button>
-      </div>
-      {JSON.stringify(garden)}
-      <ShowCrops/>
-      <div className={styles.MainDisplay}>
-        {garden && (
-          <div className={styles.GardenWrapper}>
-            <button
-              className={`${styles.PlusButton} ${styles.PlusTop}`}
-              onClick={() => handleTopClick()}
-            >
-              +
-            </button>
-            <button
-              className={`${styles.PlusButton} ${styles.PlusBottom}`}
-              onClick={() => handleBottomClick()}
-            >
-              +
-            </button>
-            <button
-              className={`${styles.PlusButton} ${styles.PlusLeft}`}
-              onClick={() => handleLeftClick()}
-            >
-              +
-            </button>
-            <button
-              className={`${styles.PlusButton} ${styles.PlusRight}`}
-              onClick={() => handleRightClick()}
-            >
-              +
-            </button>
+      <div className={styles.Container}>
+        <button onClick={createGarden} className={styles.CreateButton}>
+          Create Garden
+        </button>
 
-            <div className={styles.GardenColumn}>
-              {garden.grid.map((row, rowIndex) => (
-                <div key={rowIndex} className={styles.GardenRow}>
-                  {row.map((cell, colIndex) => (
-                    <div
-                      key={`${rowIndex}-${colIndex}`}
-                      className={styles.GardenCell}
-                      style={{ backgroundColor: cell.color }}
-                      onClick={() => handleCellClick(rowIndex, colIndex)}
-                    >
-                      {`${cell.y}-${cell.x}`}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+        <div className={styles.MainLayout}>
+          <div className={styles.SidePanel}>
+            <ShowCrops />
           </div>
-        )}
-        {garden && (
-          <GardenMenu
-            selectedElement={selectedElement}
-            setSelectedElement={setSelectedElement}
-            saveGarden={saveGarden}
-          />
-        )}
-          <AddCrop/>
 
-        <div className={styles.GardenActions}></div>
+          <div className={styles.GridContainer}>
+            {garden && (
+              <GardenGrid
+                garden={garden}
+                onCellClick={handleCellClick}
+                onTopClick={handleTopClick}
+                onBottomClick={handleBottomClick}
+                onLeftClick={handleLeftClick}
+                onRightClick={handleRightClick}
+              />
+            )}
+          </div>
+
+          <div className={styles.SidePanel}>
+            <GardenMenu
+              selectedElement={selectedElement}
+              setSelectedElement={setSelectedElement}
+              saveGarden={saveGarden}
+            />
+          </div>
+        </div>
       </div>
     </>
   );
 }
 
 export default GardenComponent;
+
+// <div>
+//   <button onClick={createGarden}>Create Garden</button>
+// </div>
+// {JSON.stringify(garden)}
+// <ShowCrops/>
+// <div className={styles.MainDisplay}>
+//   {garden && (
+//     <div className={styles.GardenWrapper}>
+//       <button
+//         className={`${styles.PlusButton} ${styles.PlusTop}`}
+//         onClick={() => handleTopClick()}
+//       >
+//         +
+//       </button>
+//       <button
+//         className={`${styles.PlusButton} ${styles.PlusBottom}`}
+//         onClick={() => handleBottomClick()}
+//       >
+//         +
+//       </button>
+//       <button
+//         className={`${styles.PlusButton} ${styles.PlusLeft}`}
+//         onClick={() => handleLeftClick()}
+//       >
+//         +
+//       </button>
+//       <button
+//         className={`${styles.PlusButton} ${styles.PlusRight}`}
+//         onClick={() => handleRightClick()}
+//       >
+//         +
+//       </button>
+
+//       <div className={styles.GardenColumn}>
+//         {garden.grid.map((row, rowIndex) => (
+//           <div key={rowIndex} className={styles.GardenRow}>
+//             {row.map((cell, colIndex) => (
+//               <div
+//                 key={`${rowIndex}-${colIndex}`}
+//                 className={styles.GardenCell}
+//                 style={{ backgroundColor: cell.color }}
+//                 onClick={() => handleCellClick(rowIndex, colIndex)}
+//               >
+//                 {`${cell.y}-${cell.x}`}
+//               </div>
+//             ))}
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   )}
+//   {garden && (
+//     <GardenMenu
+//       selectedElement={selectedElement}
+//       setSelectedElement={setSelectedElement}
+//       saveGarden={saveGarden}
+//     />
+//   )}
+//     <AddCrop/>
+
+//   <div className={styles.GardenActions}></div>

@@ -28,6 +28,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       badCompanions,
       plantingMonth,
       watering,
+      imageSrc,
     } = req.body;
 
     if (goodCompanions && goodCompanions > 0) {
@@ -67,6 +68,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       badCompanions,
       plantingMonth,
       watering,
+      imageSrc,
     });
     const savedCrop = await crop.save();
 

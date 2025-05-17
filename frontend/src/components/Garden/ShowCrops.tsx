@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Crop } from "./types";
+import { Crop } from "./Types/elements";
 
 function ShowCrops() {
   const [crops, setCrops] = useState<Crop[] | null>(null);
@@ -31,6 +31,7 @@ function ShowCrops() {
       <ul>
         {crops.map((crop, index) => (
           <li key={index} style={{ marginBottom: "1rem" }}>
+            <img src={crop.imageSrc}></img>
             <strong>{crop.name}</strong> (<em>{crop.latinName}</em>)<br />
             <strong>Planting Month:</strong> {crop.plantingMonth}
             <br />
