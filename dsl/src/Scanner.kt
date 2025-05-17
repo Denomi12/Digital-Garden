@@ -24,25 +24,26 @@ class Scanner (
     private val tPolygon = 11
     private val tLine = 12
     private val tBent_line = 13
-    private val tLbrace = 14
-    private val tRbrace = 15
-    private val tLparen = 16
-    private val tRparen = 17
-    private val tComma = 18
-    private val tColon = 19
-    private val tAssign = 20
-    private val tPlus = 21
-    private val tMinus = 22
-    private val tTimes = 23
-    private val tDivide = 24
-    private val tGt = 25
-    private val tLt = 26
-    private val tGe = 27
-    private val tLe = 28
-    private val tEq = 29
-    private val tNe = 30
-    private val tWhiteSpace = 31
-    private val tComment = 32
+    private val tBoundary = 14
+    private val tLbrace = 15
+    private val tRbrace = 16
+    private val tLparen = 17
+    private val tRparen = 18
+    private val tComma = 19
+    private val tColon = 20
+    private val tAssign = 21
+    private val tPlus = 22
+    private val tMinus = 23
+    private val tTimes = 24
+    private val tDivide = 25
+    private val tGt = 26
+    private val tLt = 27
+    private val tGe = 28
+    private val tLe = 29
+    private val tEq = 30
+    private val tNe = 31
+    private val tWhiteSpace = 32
+    private val tComment = 33
 
     init {
 
@@ -132,59 +133,69 @@ class Scanner (
         automata[49]['n'.code] = 50
         automata[50]['e'.code] = 51
 
+        // BOUNDARY
+        automata[43]['o'.code] = 52
+        automata[52]['u'.code] = 53
+        automata[53]['n'.code] = 54
+        automata[54]['d'.code] = 55
+        automata[55]['a'.code] = 56
+        automata[56]['r'.code] = 57
+        automata[57]['y'.code] = 58
+
+
         // SIMBOLI
         // {
-        automata[0]['{'.code] = 52
+        automata[0]['{'.code] = 59
         // }
-        automata[0]['}'.code] = 53
+        automata[0]['}'.code] = 60
         // (
-        automata[0]['('.code] = 54
+        automata[0]['('.code] = 61
         // )
-        automata[0][')'.code] = 55
+        automata[0][')'.code] = 62
         // ,
-        automata[0][','.code] = 56
+        automata[0][','.code] = 63
         // :
-        automata[0][':'.code] = 57
+        automata[0][':'.code] = 64
         // :=
-        automata[57]['='.code] = 58
+        automata[64]['='.code] = 65
         // +
-        automata[0]['+'.code] = 59
+        automata[0]['+'.code] = 66
         // -
-        automata[0]['-'.code] = 60
+        automata[0]['-'.code] = 67
         // *
-        automata[0]['*'.code] = 61
+        automata[0]['*'.code] = 68
         // /
-        automata[0]['/'.code] = 62
+        automata[0]['/'.code] = 69
         // >
-        automata[0]['>'.code] = 63
+        automata[0]['>'.code] = 70
         // >=
-        automata[63]['='.code] = 64
+        automata[70]['='.code] = 71
         // <
-        automata[0]['<'.code] = 65
+        automata[0]['<'.code] = 72
         // <=
-        automata[65]['='.code] = 66
+        automata[72]['='.code] = 73
         // ==
-        automata[0]['='.code] = 67
-        automata[67]['='.code] = 68
+        automata[0]['='.code] = 74
+        automata[74]['='.code] = 75
         // !=
-        automata[0]['!'.code] = 69
-        automata[69]['='.code] = 70
+        automata[0]['!'.code] = 76
+        automata[76]['='.code] = 77
 
         // WHITESPACES
-        automata[0][' '.code] = 71
-        automata[0]['\t'.code] = 71
-        automata[0]['\n'.code] = 71
-        automata[0]['\r'.code] = 71
-        automata[71][' '.code] = 71
-        automata[71]['\t'.code] = 71
-        automata[71]['\n'.code] = 71
-        automata[71]['\r'.code] = 71
+        automata[0][' '.code] = 78
+        automata[0]['\t'.code] = 78
+        automata[0]['\n'.code] = 78
+        automata[0]['\r'.code] = 78
+        automata[78][' '.code] = 78
+        automata[78]['\t'.code] = 78
+        automata[78]['\n'.code] = 78
+        automata[78]['\r'.code] = 78
 
         // KOMENTAR
-        automata[62]['/'.code] = 72
+        automata[69]['/'.code] = 79
         for (i in 0..255) {
             if (i != '\n'.code) {
-                automata[72][i] = 72
+                automata[79][i] = 79
             }
         }
 
@@ -219,25 +230,26 @@ class Scanner (
         finalStates[38] = tPolygon
         finalStates[42] = tLine
         finalStates[51] = tBent_line
-        finalStates[52] = tLbrace
-        finalStates[53] = tRbrace
-        finalStates[54] = tLparen
-        finalStates[55] = tRparen
-        finalStates[56] = tComma
-        finalStates[57] = tColon
-        finalStates[58] = tAssign
-        finalStates[59] = tPlus
-        finalStates[60] = tMinus
-        finalStates[61] = tTimes
-        finalStates[62] = tDivide
-        finalStates[63] = tGt
-        finalStates[64] = tGe
-        finalStates[65] = tLt
-        finalStates[66] = tLe
-        finalStates[68] = tEq
-        finalStates[70] = tNe
-        finalStates[71] = tWhiteSpace
-        finalStates[72] = tComment
+        finalStates[58] = tBoundary
+        finalStates[59] = tLbrace
+        finalStates[60] = tRbrace
+        finalStates[61] = tLparen
+        finalStates[62] = tRparen
+        finalStates[63] = tComma
+        finalStates[64] = tColon
+        finalStates[65] = tAssign
+        finalStates[66] = tPlus
+        finalStates[67] = tMinus
+        finalStates[68] = tTimes
+        finalStates[69] = tDivide
+        finalStates[70] = tGt
+        finalStates[71] = tGe
+        finalStates[72] = tLt
+        finalStates[73] = tLe
+        finalStates[75] = tEq
+        finalStates[77] = tNe
+        finalStates[78] = tWhiteSpace
+        finalStates[79] = tComment
     }
 
     private fun  identifyLexemType(lexem: String): String {
@@ -254,6 +266,7 @@ class Scanner (
             "polygon" -> "polygon"
             "line" -> "line"
             "bent_line" -> "bent_line"
+            "boundary" -> "boundary"
             "{" -> "lbrace"
             "}" -> "rbrace"
             "(" -> "lparen"
