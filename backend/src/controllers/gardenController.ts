@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Garden from "../models/gardenModel";
+import Garden from "../models/GardenModel";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -39,7 +39,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { name, location, elements } = req.body;
+    const { name, latitude, longitude, elements } = req.body;
 
     if (!name) {
       res.status(400).json({ message: "Name is required" });
@@ -52,7 +52,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const garden = new Garden({ name, owner, location, elements });
+    const garden = new Garden({ name, owner, latitude, longitude, elements });
     const savedGarden = await garden.save();
 
     res.status(201).json(savedGarden);

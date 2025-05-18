@@ -1,0 +1,43 @@
+.Container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  padding: 25px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+}
+
+.CreateButton {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  align-self: flex-start;
+}
+
+.MainLayout {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.SidePanel {
+  width: 20%;
+  min-width: 180px;
+  background-color: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.GridContainer {
+  flex: 1;
+  background-color: #e9ecef;
+  padding: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}

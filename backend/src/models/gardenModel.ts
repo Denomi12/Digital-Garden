@@ -7,7 +7,8 @@ export interface GardenInstance extends Document {
   owner: UserInstance;
   width: number;
   height: number;
-  location: string;
+  latitude: number,
+  longitude: number,
   elements: Tile[];
 }
 
@@ -21,7 +22,8 @@ var gardenSchema = new Schema<GardenInstance>(
     },
     width: {type: Number},
     height: {type: Number},
-    location: { type: String, default: "" },
+    latitude: {type: Number},
+    longitude: {type: Number},
     elements: [
       { type: tileSchema, default: [] },
     ],

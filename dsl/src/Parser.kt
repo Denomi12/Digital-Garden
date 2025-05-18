@@ -1,265 +1,515 @@
-// PROGRAM ::= QUERY
+//  PROGRAM ::= QUERY
+//  QUERY ::= PARK
+//  PARK ::= park ime { boundary: { POLYGON } ELEMENTS_OPT }
 //
-// QUERY ::= PARK | DREVO | KLOP | KOŠ | RIBNIK | POT | DREVORED
+//  ELEMENTS_OPT ::= ELEMENTS | ε
+//  ELEMENTS ::= ELEMENT ELEMENTS_OPT
+//  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK
 //
-// PARK ::= park IME { koordinate : { KOORDINATE } }
 //
-// KOORDINATE ::= KOORDINATA KOORDINATA`
+//  VARIABLE_DECLARATION ::= var ID = VALUE
+//  ID ::= [a-zA-Z_][a-zA-Z0-9_]*
 //
-// KOORDINATA ::= KOORDINATA KOORDINATA | ε
+//  VALUE ::= EXPR_VALUE | POLYGON_VALUE
+//  EXPR_VALUE ::= EXPR | KOORDINATA
+//  POLYGON_VALUE ::= polygon { POLYGON }
 //
-// KOORDINATA ::= ( DOUBLE , DOUBLE )
+//  DREVO ::= drevo { KOORDINATA }
+//  KLOP ::= klop { KOORDINATA }
+//  KOŠ ::= koš { KOORDINATA }
+//  POT ::= pot { TIP_POTI }
+//  TIP_POTI ::= LINE | BENT_LINE
+//  LINE ::= line ( KOORDINATA , KOORDINATA )
+//  BENT_LINE ::= bent_line ( KOORDINATA , KOORDINATA , ANGLE )
+//  SIMPLE_LAKE ::= ellip ( KOORDINATA , AXIS , AXIS )
 //
-// DREVO ::= drevo { koordinata : { KOORDINATA } }
+//  POLYGON ::= KOORDINATA KOORDINATA KOORDINATA KOORDINATE_OPT
+//  KOORDINATE_OPT ::= KOORDINATA KOORDINATE_OPT | ε
+//  KOORDINATA ::= ( EXPR , EXPR ) | ID
+//  ANGLE ::= EXPR
+//  AXIS ::= EXPR
 //
-// KLOP ::= klop { koordinata : { KOORDINATA } }
+//  EXPR ::= ADDITIVE
+//  ADDITIVE ::= MULTIPLICATIVE ADDITIVE'
+//  ADDITIVE' ::= plus MULTIPLICATIVE ADDITIVE' | minus MULTIPLICATIVE ADDITIVE' | ε
+//  MULTIPLICATIVE ::= UNARY MULTIPLICATIVE'
+//  MULTIPLICATIVE' ::= times UNARY MULTIPLICATIVE' | divide UNARY MULTIPLICATIVE' | ε
+//  UNARY ::= plus PRIMARY | minus PRIMARY | PRIMARY
+//  PRIMARY ::= double | ID | lparen EXPR rparen
 //
-// KOŠ ::= koš { koordinata : { KOORDINATA } }
-//
-// RIBNIK ::= ribnik { koordinate : { KOORDINATE } }
-//
-// POT ::= "pot" { TIP_POTI }
-//
-// TIP_POTI ::= LINE | BENT_LINE
-//
-// LINE ::= ( KOORDINATA, KOORDINATA )
-//
-// BENT_LINE ::= ( KOORDINATA, KOORDINATA, DOUBLE )
-//
-// DREVORED ::= drevored {
-//                  start : { KOORDINATA },
-//                  end : { KOORDINATA },
-//                  count : int,
-//                  loop : { LOOP }
-//             }
-//
-// LOOP ::= for i in range (int) { DREVO_INTERPOLATED | LOOP}
-//
-// DREVO_INTERPOLATED ::= drevo {
-//                          koordinata : {
-//                              interpolate ( start, end, i/int )
-//                          }
-//                      }
+//  IF_STAVEK ::= if COND { ELEMENTS_OPT } ELSE
+//  ELSE ::= else { ELEMENTS_OPT } | ε
+//  COND ::= EXPR COMP EXPR
+//  COMP ::= > | < | >= | <= | == | !=
 
 
-class Parser(private val tokens: List<Token>) {
-    private var pos = 0
+class Parser(
+    private val tokens: MutableList<Pair<String, String>> = mutableListOf()
+) {
+    private var tokenCounter = 0
+    private var currentToken: Pair<String, String>? = null
 
-    private fun currentToken(): Token? = if (pos < tokens.size) tokens[pos] else null
-    private fun nextToken() {
-        if (pos < tokens.size) pos++
-    }
-
-    private fun match(type: String): Boolean {
-        return if (currentToken()?.type == type) {
-            nextToken()
-            true
+    private fun getNextToken(): Pair<String, String>? {
+        return if (tokenCounter < tokens.size) {
+            tokens[tokenCounter++]
         } else {
-            false
+            null
         }
     }
 
-    fun parse(): Boolean {
-        return PROGRAM() && pos == tokens.size
-    }
-
-    private fun PROGRAM(): Boolean {
-        return QUERY()
-    }
-
-    private fun QUERY(): Boolean {
-        val startPos = pos
-        return when (currentToken()?.value) {
-            "park" -> PARK()
-            "drevo" -> DREVO()
-            "klop" -> KLOP()
-            "koš" -> KOS()
-            "ribnik" -> RIBNIK()
-            "pot" -> POT()
-            "drevored" -> DREVORED()
-            else -> false
-        }.also {
-            if (!it) pos = startPos
+    fun parse() {
+        currentToken = getNextToken()
+        if (procedureProgram() && currentToken == null) {
+            println("ACCEPT")
+        } else {
+            println("REJECT")
         }
     }
 
-    private fun PARK(): Boolean {
-        return match("park") &&
-                IME() &&
-                match("lcurly") &&
-                match("koordinate") &&
-                match("colon") &&
-                match("lcurly") &&
-                KOORDINATE() &&
-                match("rcurly") &&
-                match("rcurly")
+    private fun procedureProgram(): Boolean {
+        return procedureQuery()
     }
 
-    private fun IME(): Boolean {
-        return match("variable")
+    private fun procedureQuery(): Boolean {
+        return procedurePark()
     }
 
-    private fun KOORDINATE(): Boolean {
-            val startPos = pos
-            if (!KOORDINATA()) return false
-
-            // KOORDINATE' je lahko prazna (epsilon)
-            while (KOORDINATA()) {}
-
-            return true
-    }
-
-    private fun KOORDINATA(): Boolean {
-        return match("lparen") &&
-                match("double") &&
-                match("comma") &&
-                match("double") &&
-                match("rparen")
-    }
-
-    private fun DREVO(): Boolean {
-        return match("drevo") &&
-                match("lcurly") &&
-                match("koordinata") &&
-                match("colon") &&
-                match("lcurly") &&
-                KOORDINATA() &&
-                match("rcurly") &&
-                match("rcurly")
-    }
-
-    private fun KLOP(): Boolean {
-        return match("klop") &&
-                match("lcurly") &&
-                match("koordinata") &&
-                match("colon") &&
-                match("lcurly") &&
-                KOORDINATA() &&
-                match("rcurly") &&
-                match("rcurly")
-    }
-
-    private fun KOS(): Boolean {
-        return match("koš") &&
-                match("lcurly") &&
-                match("koordinata") &&
-                match("colon") &&
-                match("lcurly") &&
-                KOORDINATA() &&
-                match("rcurly") &&
-                match("rcurly")
-    }
-
-    private fun RIBNIK(): Boolean {
-        return match("ribnik") &&
-                match("lcurly") &&
-                match("koordinate") &&
-                match("colon") &&
-                match("lcurly") &&
-                KOORDINATE() &&
-                match("rcurly") &&
-                match("rcurly")
-    }
-
-    private fun POT(): Boolean {
-        return match("pot") &&
-                match("lcurly") &&
-                TIP_POTI() &&
-                match("rcurly")
-    }
-
-    private fun TIP_POTI(): Boolean {
-        val startPos = pos
-        return (LINE() || BENT_LINE()).also {
-            if (!it) pos = startPos
-        }
-    }
-
-    private fun LINE(): Boolean {
-        return match("lparen") &&
-                KOORDINATA() &&
-                match("comma") &&
-                KOORDINATA() &&
-                match("rparen")
-    }
-
-    private fun BENT_LINE(): Boolean {
-        return match("lparen") &&
-                KOORDINATA() &&
-                match("comma") &&
-                KOORDINATA() &&
-                match("comma") &&
-                match("double") &&
-                match("rparen")
-    }
-
-    private fun DREVORED(): Boolean {
-        return match("drevored") &&
-                match("lcurly") &&
-                match("start") && match("colon") && match("lcurly") && KOORDINATA() && match("rcurly") &&
-                match("comma") &&
-                match("end") && match("colon") && match("lcurly") && KOORDINATA() && match("rcurly") &&
-                match("comma") &&
-                match("count") && match("colon") && match("integer") &&
-                match("comma") &&
-                match("loop") && match("colon") && match("lcurly") &&
-                LOOP() &&
-                match("rcurly") &&
-                match("rcurly")
-    }
-
-    private fun LOOP(): Boolean {
-        val startPos = pos
-        return (match("for") &&
-                match("variable") &&
-                match("in") &&
-                match("range") &&
-                match("lparen") &&
-                (match("integer") || match("count")) &&  // Število ali referenca na count
-                match("rparen") &&
-                match("lcurly") &&
-                // Gnezdene zanke ali drevesa
-                LOOP_BODY() &&
-                match("rcurly")).also { if (!it) pos = startPos }
-    }
-
-    private fun LOOP_BODY(): Boolean {
-        while (true) {
-            val savedPos = pos
-            when {
-                // Rekurzivno kliče LOOP za gnezdene zanke
-                currentToken()?.value == "for" -> {
-                    if (!LOOP()) {
-                        pos = savedPos
-                        break
+    private fun procedurePark(): Boolean {
+        if (currentToken?.first == "park") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "id") {
+                currentToken = getNextToken()
+                if (currentToken?.first == "lbrace") {
+                    currentToken = getNextToken()
+                    if (currentToken?.first == "boundary") {
+                        currentToken = getNextToken()
+                        if (currentToken?.first == "colon") {
+                            currentToken = getNextToken()
+                            if (currentToken?.first == "lbrace") {
+                                currentToken = getNextToken()
+                                if (procedurePolygon()) {
+                                    if (currentToken?.first == "rbrace") {
+                                        currentToken = getNextToken()
+                                        if (procedureElementsOpt()) {
+                                            if (currentToken?.first == "rbrace") {
+                                                currentToken = getNextToken()
+                                                return true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                // Interpolirano drevo
-                currentToken()?.value == "drevo" -> {
-                    if (!DREVO_INTERPOLATED()) {
-                        pos = savedPos
-                        break
-                    }
-                }
-                else -> break
             }
+        }
+        return false
+    }
+
+
+    private fun procedureElementsOpt(): Boolean {
+        if (currentToken?.first == "rbrace") {
+            return true
+        }
+        return procedureElements()
+    }
+
+    private fun procedureElements(): Boolean {
+        if (procedureElement()) {
+            return procedureElements()
         }
         return true
     }
 
-    private fun DREVO_INTERPOLATED(): Boolean {
-        return match("drevo") &&
-                match("lcurly") &&
-                match("koordinata") && match("colon") && match("lcurly") &&
-                match("interpolate") &&
-                match("lparen") &&
-                match("start") && match("comma") &&
-                match("end") && match("comma") &&
-                match("variable") &&
-                match("divide") &&
-                match("count") &&
-                match("rparen") &&
-                match("rcurly") &&
-                match("rcurly")
+    private fun procedureElement(): Boolean {
+        return when (currentToken?.first) {
+            "drevo" -> procedureDrevo()
+            "klop" -> procedureKlop()
+            "kos" -> procedureKos()
+            "ellip" -> procedureSimpleLake()
+            "pot" -> procedurePot()
+            "var" -> procedureVariableDeclaration()
+            "if" -> procedureIfStavek()
+            else -> false
+        }
+    }
+
+    private fun  procedureVariableDeclaration(): Boolean {
+        if (currentToken?.first == "var") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "id") {
+                currentToken = getNextToken()
+                if (currentToken?.first == "assign") {
+                    currentToken = getNextToken()
+                    return procedureValue()
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureValue(): Boolean {
+        return procedureExprValue() || procedurePolygonValue()
+    }
+
+    private fun procedureExprValue(): Boolean {
+        return procedureExpr() || procedureKoordinata()
+    }
+
+    private fun procedurePolygonValue(): Boolean {
+        if (currentToken?.first == "polygon") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedurePolygon()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureDrevo(): Boolean {
+        if (currentToken?.first == "drevo") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureKlop(): Boolean {
+        if (currentToken?.first == "klop") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureKos(): Boolean {
+        if (currentToken?.first == "kos") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedurePot(): Boolean {
+        if (currentToken?.first == "pot") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedureTipPoti()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureTipPoti(): Boolean {
+        return procedureLine() || procedureBentLine()
+    }
+
+    private fun procedureLine(): Boolean {
+        if (currentToken?.first == "line") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lparen") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "comma") {
+                        currentToken = getNextToken()
+                        if (procedureKoordinata()) {
+                            if (currentToken?.first == "rparen") {
+                                currentToken = getNextToken()
+                                return true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureBentLine(): Boolean {
+        if (currentToken?.first == "bent_line") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lparen") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "comma") {
+                        currentToken = getNextToken()
+                        if (procedureKoordinata()) {
+                            if (currentToken?.first == "comma") {
+                                currentToken = getNextToken()
+                                if (procedureAngle()) {
+                                    if (currentToken?.first == "rparen") {
+                                        currentToken = getNextToken()
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedureSimpleLake(): Boolean {
+        if (currentToken?.first == "ellip") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lparen") {
+                currentToken = getNextToken()
+                if (procedureKoordinata()) {
+                    if (currentToken?.first == "comma") {
+                        currentToken = getNextToken()
+                        if (procedureAxis()) {
+                            if (currentToken?.first == "comma") {
+                                currentToken = getNextToken()
+                                if (procedureAxis()) {
+                                    if (currentToken?.first == "rparen") {
+                                        currentToken = getNextToken()
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun procedurePolygon(): Boolean {
+        if (procedureKoordinata()) {
+            if (procedureKoordinata()) {
+                if (procedureKoordinata()) {
+                    return procedureKoordinataOpt()
+                }
+            }
+        }
+        return false
+    }
+
+//    private fun procedurePolygon(): Boolean {
+//        if (!procedureKoordinata()) return false
+//        if (!procedureKoordinata()) return false
+//        if (!procedureKoordinata()) return false
+//        return procedureKoordinataOpt()
+//    }
+
+
+    private fun procedureKoordinataOpt(): Boolean {
+        if (procedureKoordinata()) {
+            return procedureKoordinataOpt()
+        }
+        return true
+    }
+
+//    private fun procedureKoordinataOpt(): Boolean {
+//        // Only try to parse another coordinate if one exists
+//        if (currentToken?.first == "lparen" || currentToken?.first == "id") {
+//            return procedureKoordinata() && procedureKoordinataOpt()
+//        }
+//        return true
+//    }
+
+
+    private fun procedureKoordinata(): Boolean {
+        if (currentToken?.first == "lparen") {
+            currentToken = getNextToken()
+            if (procedureExpr()) {
+                if (currentToken?.first == "comma") {
+                    currentToken = getNextToken()
+                    if (procedureExpr()) {
+                        if (currentToken?.first == "rparen") {
+                            currentToken = getNextToken()
+                            return true
+                        }
+                    }
+                }
+            }
+        } else if (currentToken?.first == "id") {
+            currentToken = getNextToken()
+            return true
+        }
+        return false
+    }
+
+    private fun procedureAngle(): Boolean {
+        return procedureExpr()
+    }
+
+    private fun procedureAxis(): Boolean {
+        return procedureExpr()
+    }
+
+    private fun procedureIfStavek(): Boolean {
+        if (currentToken?.first == "if") {
+            currentToken = getNextToken()
+            if (procedureCond()) {
+                if (currentToken?.first == "lbrace") {
+                    currentToken = getNextToken()
+                    if (procedureElementsOpt()) {
+                        if (currentToken?.first == "rbrace") {
+                            currentToken = getNextToken()
+                            return procedureElse() // else stavek je opcijski
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+
+    private fun procedureElse(): Boolean {
+        if (currentToken?.first == "else") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lbrace") {
+                currentToken = getNextToken()
+                if (procedureElementsOpt()) {
+                    if (currentToken?.first == "rbrace") {
+                        currentToken = getNextToken()
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        return true
+    }
+
+    private fun procedureCond(): Boolean {
+        println("test")
+        if (procedureExpr()) {
+            if (procedureComp()) {
+                return procedureExpr()
+            }
+        }
+        return false
+    }
+
+    private fun procedureComp(): Boolean {
+        return when (currentToken?.first) {
+            "gt" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "lt" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "ge" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "le" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "eq" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "ne" -> {
+                currentToken = getNextToken()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun procedureExpr(): Boolean {
+        return procedureAdditive()
+    }
+
+    private fun procedureAdditive(): Boolean {
+        return procedureMultiplicative() && procedureAdditive_()
+    }
+
+    private fun procedureAdditive_(): Boolean {
+        if (currentToken?.first == "plus" || currentToken?.first == "minus") {
+            currentToken = getNextToken()
+            return procedureMultiplicative() && procedureAdditive_()
+        }
+        return true
+    }
+
+    private fun procedureMultiplicative(): Boolean {
+        return procedureUnary() && procedureMultiplicative_()
+    }
+
+    private fun procedureMultiplicative_(): Boolean {
+        if (currentToken?.first == "times" || currentToken?.first == "divide") {
+            currentToken = getNextToken()
+            return procedureUnary() && procedureMultiplicative_()
+        }
+        return true
+    }
+
+    private fun procedureUnary(): Boolean {
+        if (currentToken?.first == "plus" || currentToken?.first == "minus") {
+            currentToken = getNextToken()
+        }
+        return procedurePrimary()
+    }
+
+    private fun procedurePrimary(): Boolean {
+        return when (currentToken?.first) {
+            "double" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "id" -> {
+                currentToken = getNextToken()
+                true
+            }
+            "lparen" -> {
+                currentToken = getNextToken()
+                if (procedureExpr()) {
+                    if (currentToken?.first == "rparen") {
+                        currentToken = getNextToken()
+                        true
+                    } else false
+                } else false
+            }
+            else -> false
+        }
     }
 }
+
