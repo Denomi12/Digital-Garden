@@ -1,4 +1,4 @@
-import { Tile, GardenElement } from "./elements";
+import { Tile, GardenElement, Crop } from "./Elements";
 
 export class Garden {
   width: number;
@@ -69,20 +69,57 @@ export class Garden {
     return this.grid?.[row]?.[col];
   }
 
-  setElement(row: number, col: number, element: GardenElement) {
+  setElement(
+    row: number,
+    col: number,
+    crop: Crop | null,
+    element: GardenElement
+  ) {
+    console.log(crop, element);
+
     const tile = this.getTile(row, col);
     if (!tile) return;
 
-    if (element == GardenElement.None) {
+    //TODO Upoštevaj, da ne povoziš datumov
+    //TODO Dodaj gumb za brisanje
+
+    // 1. Oboje prazno => pobriši vse
+    if (element == GardenElement.None && !crop) {
       tile.plantedDate = undefined;
+      tile.wateredDate = undefined
+      tile.crop = undefined;
       tile.type = GardenElement.None;
       tile.color = undefined;
       tile.imageSrc = undefined;
       return;
     }
 
-    tile.type = element;
-    tile.plantedDate = new Date();
+    // 2. Crop na obstoječo gredo => dodaj crop in planted date
+    else if (
+      crop &&
+      (tile.type == GardenElement.GardenBed ||
+        tile.type == GardenElement.RaisedBed)
+    ) {
+      tile.crop = crop;
+      tile.plantedDate = new Date();
+    }
+
+    //3. Crop in element => dodaj element in crop
+    else if (crop && (element == GardenElement.GardenBed ||
+        element == GardenElement.RaisedBed)) {
+      tile.type = element;
+      tile.crop = crop;
+      tile.plantedDate = new Date();
+    }
+
+    //4. Samo element
+    else if (!crop) {
+      tile.crop = undefined;
+      tile.plantedDate = undefined;
+      tile.wateredDate = undefined;
+      tile.type = element;
+      tile.color = undefined;
+    }
 
     switch (element) {
       case GardenElement.GardenBed:
@@ -96,7 +133,10 @@ export class Garden {
         tile.color = "#F5DEB3";
         break;
       default:
-        tile.color = undefined;
+        if (!crop) {
+          tile.color = undefined;
+          tile.imageSrc = undefined;
+        }
     }
   }
 

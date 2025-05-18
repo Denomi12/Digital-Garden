@@ -28,9 +28,6 @@ export const tileSchema = new Schema<Tile>(
     },
     wateredDate: {
       type: Date,
-      required: function (this: Tile) {
-        return this.crop != null;
-      },
     },
   },
   { id: false }

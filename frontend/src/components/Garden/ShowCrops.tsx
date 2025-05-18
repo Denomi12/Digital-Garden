@@ -1,10 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Crop } from "./Types/elements";
+import { Crop } from "./Types/Elements";
 
-function ShowCrops() {
+type ShowCropsProps = {
+  selectedCrop: Crop | null;
+  setSelectedCrop: (crop: Crop | null) => void;
+};
+
+function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
   const [crops, setCrops] = useState<Crop[] | null>(null);
-  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
 
   async function fetchCrops() {
     try {
@@ -27,7 +31,6 @@ function ShowCrops() {
   return (
     <div>
       <h2>Crops</h2>
-      {JSON.stringify(selectedCrop)}
       <ul>
         {crops.map((crop, index) => (
           <li key={index} style={{ marginBottom: "1rem" }}>
@@ -47,7 +50,7 @@ function ShowCrops() {
                 setSelectedCrop(selectedCrop != crop ? crop : null)
               }
             >
-              Select
+              {selectedCrop === crop ? "Deselect" : "Select"}
             </button>
           </li>
         ))}

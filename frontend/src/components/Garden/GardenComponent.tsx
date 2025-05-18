@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import GardenMenu from "./GardenMenu";
 import styles from "../../stylesheets/GardenComponent.module.css";
 import axios from "axios";
@@ -6,7 +6,8 @@ import { UserContext } from "../../UserContext";
 import ShowCrops from "./ShowCrops";
 import GardenGrid from "./GardenGrid";
 import { Garden } from "./Types/Garden";
-import { GardenElement } from "./Types/elements";
+import { Crop, GardenElement } from "./Types/Elements";
+import CursorFollower from "../CursorFollower";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -14,6 +15,24 @@ function GardenComponent() {
   const [selectedElement, setSelectedElement] = useState<GardenElement>(
     GardenElement.None
   );
+  const [elementImage, setElementImage] = useState<string | null>(null)
+  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null)
+
+    useEffect(() => {
+    switch (selectedElement) {
+      case GardenElement.GardenBed:
+        setElementImage(`/assets/Greda.png`);
+        break;
+      case GardenElement.RaisedBed:
+        setElementImage(`/assets/Greda.png`);
+        break;
+      case GardenElement.Path:
+        setElementImage(`/assets/Greda.png`);
+        break;
+      default:
+        setElementImage(null);
+    }
+  }, [selectedCrop, selectedElement]);
 
   const createGarden = () => {
     const widthInput = prompt("Enter the width of the garden:");
@@ -55,7 +74,7 @@ function GardenComponent() {
   const handleCellClick = (row: number, col: number) => {
     if (!garden) return;
 
-    garden.setElement(row, col, selectedElement);
+    garden.setElement(row, col, selectedCrop, selectedElement);
     setGarden(
       new Garden(
         garden.width,
@@ -141,8 +160,9 @@ function GardenComponent() {
         </button>
 
         <div className={styles.MainLayout}>
+          <CursorFollower cropImage={selectedCrop?.imageSrc} elementImage={elementImage}/>
           <div className={styles.SidePanel}>
-            <ShowCrops />
+            <ShowCrops selectedCrop={selectedCrop} setSelectedCrop={setSelectedCrop}/>
           </div>
 
           <div className={styles.GridContainer}>
@@ -172,65 +192,3 @@ function GardenComponent() {
 }
 
 export default GardenComponent;
-
-// <div>
-//   <button onClick={createGarden}>Create Garden</button>
-// </div>
-// {JSON.stringify(garden)}
-// <ShowCrops/>
-// <div className={styles.MainDisplay}>
-//   {garden && (
-//     <div className={styles.GardenWrapper}>
-//       <button
-//         className={`${styles.PlusButton} ${styles.PlusTop}`}
-//         onClick={() => handleTopClick()}
-//       >
-//         +
-//       </button>
-//       <button
-//         className={`${styles.PlusButton} ${styles.PlusBottom}`}
-//         onClick={() => handleBottomClick()}
-//       >
-//         +
-//       </button>
-//       <button
-//         className={`${styles.PlusButton} ${styles.PlusLeft}`}
-//         onClick={() => handleLeftClick()}
-//       >
-//         +
-//       </button>
-//       <button
-//         className={`${styles.PlusButton} ${styles.PlusRight}`}
-//         onClick={() => handleRightClick()}
-//       >
-//         +
-//       </button>
-
-//       <div className={styles.GardenColumn}>
-//         {garden.grid.map((row, rowIndex) => (
-//           <div key={rowIndex} className={styles.GardenRow}>
-//             {row.map((cell, colIndex) => (
-//               <div
-//                 key={`${rowIndex}-${colIndex}`}
-//                 className={styles.GardenCell}
-//                 style={{ backgroundColor: cell.color }}
-//                 onClick={() => handleCellClick(rowIndex, colIndex)}
-//               >
-//                 {`${cell.y}-${cell.x}`}
-//               </div>
-//             ))}
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   )}
-//   {garden && (
-//     <GardenMenu
-//       selectedElement={selectedElement}
-//       setSelectedElement={setSelectedElement}
-//       saveGarden={saveGarden}
-//     />
-//   )}
-//     <AddCrop/>
-
-//   <div className={styles.GardenActions}></div>

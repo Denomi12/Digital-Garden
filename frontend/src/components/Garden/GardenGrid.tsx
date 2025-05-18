@@ -55,7 +55,7 @@ export default function GardenGrid({
                     row={rowIndex}
                     col={colIndex}
                     cell={cell}
-                    handleCellClik={() => onCellClick(rowIndex, colIndex)}
+                    handleCellClick={() => onCellClick(rowIndex, colIndex)}
                   />
                 </span>
               ))}
