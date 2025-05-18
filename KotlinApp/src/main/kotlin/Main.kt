@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import ui.PeopleTab
 
 
 @Composable
@@ -83,10 +84,7 @@ fun MainSection(tab: String) {
             modifier = Modifier.padding(16.dp)
         )
     } else if (tab == "People") {
-        Text(
-            text = "People",
-            modifier = Modifier.padding(16.dp)
-        )
+        PeopleTab()
     } else if (tab == "Scraper") {
         Text(
             text = "Scraper",
