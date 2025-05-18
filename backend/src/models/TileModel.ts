@@ -7,6 +7,7 @@ export interface Tile extends Document {
   type: string;
   crop?: Crop;
   plantedDate?: Date;
+  wateredDate?: Date;
 }
 
 export const tileSchema = new Schema<Tile>(
@@ -19,10 +20,15 @@ export const tileSchema = new Schema<Tile>(
       ref: "Crop",
       required: false,
     },
-    plantedDate: { type: Date, required: function (this: Tile) {
+    plantedDate: {
+      type: Date,
+      required: function (this: Tile) {
         return this.crop != null;
-      }, },
+      },
+    },
+    wateredDate: {
+      type: Date,
+    },
   },
   { id: false }
 );
-

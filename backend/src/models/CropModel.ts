@@ -11,6 +11,7 @@ export interface Crop extends Document {
     frequency: string,
     amount: number
   }
+  imageSrc: string;
 }
 
 const cropSchema = new Schema<Crop>(
@@ -29,7 +30,9 @@ const cropSchema = new Schema<Crop>(
     watering: {
       frequency: {type: String, required: true},
       amount: {type: Number, required: true},
-    }
+    },
+    imageSrc: {type: String},
+
   },
   { timestamps: true }
 );
