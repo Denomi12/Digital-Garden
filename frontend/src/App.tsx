@@ -6,7 +6,7 @@ import Logout from "./components/Logout";
 import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import styles from "./App.module.css";
-import Forum from "./components/Forum";
+import Forum from "./components/Forum/Forum";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
@@ -40,7 +40,7 @@ function App() {
     verifyUser();
   }, []);
 
-   if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
 
   // v local storage shrani podatke o uporabniku
   const updateUserData = (userInfo: User | null) => {
