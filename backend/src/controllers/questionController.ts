@@ -28,7 +28,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     const owner = res.locals.user?.id;
 
     if (!owner) {
-      res.status(400).json({ message: "Invalid garden owner" });
+      res.status(400).json({ message: "Invalid question owner" });
       return;
     }
 
@@ -37,7 +37,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { title, questionMessage } = req.body;
+    const { title, questionMessage, summary } = req.body;
 
     if (!title) {
       res.status(400).json({ message: "Title is required" });
@@ -45,24 +45,29 @@ const create = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (!questionMessage) {
-      res.status(400).json({ message: "Question is required" });
+      res.status(400).json({ message: "Question body is required" });
+      return;
+    }
+
+    if (!summary) {
+      res.status(400).json({ message: "Summary is required" });
       return;
     }
 
     const question = new Question({
-      title,
+      title: title,
+      summary: summary,
       question: questionMessage,
       likes: 0,
       likedBy: [],
       dislikedBy: [],
-      owner,
+      owner: owner,
     });
 
     const savedQuestion = await question.save();
     res.status(201).json(savedQuestion);
   } catch (error) {
-    // console.error(error);
-    res.status(500).json({ message: "Error when creating crop", error });
+    res.status(500).json({ message: "Error when creating question", error });
   }
 };
 

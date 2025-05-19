@@ -7,6 +7,7 @@ import Map from "./components/Map";
 import Sidebar from "./components/Sidebar";
 import styles from "./App.module.css";
 import Forum from "./components/Forum/Forum";
+import AddQuestion from "./components/Forum/AddQuestion";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
@@ -65,6 +66,7 @@ function App() {
               <Route path="/garden" element={<GardenComponent />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/forum" element={<Forum />} />
+              <Route path="/addQuestion" element={<AddQuestion />} />
             </Routes>
           </div>
         </div>

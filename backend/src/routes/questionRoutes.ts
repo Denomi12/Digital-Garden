@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import questionController from "../controllers/questionController";
+import { requireAuth } from "../middleware/authMiddleware";
 
 /*
  * GET
@@ -15,6 +16,6 @@ router.get("/:id", questionController.show);
 /*
  * POST
  */
-router.post("/", questionController.create);
+router.post("/", requireAuth, questionController.create);
 
 export default router;
