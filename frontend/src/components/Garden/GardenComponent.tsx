@@ -68,7 +68,6 @@ function GardenComponent() {
       garden?.toJson(),
       { withCredentials: true }
     );
-    console.log(res);
   }
 
   const handleCellClick = (row: number, col: number) => {

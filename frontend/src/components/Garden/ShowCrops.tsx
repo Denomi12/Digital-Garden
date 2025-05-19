@@ -15,7 +15,6 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
       const res = await axios.get(
         `${import.meta.env.VITE_API_BACKEND_URL}/crop`
       );
-      console.log(res);
       setCrops(res.data);
     } catch (error) {
       console.error("Error fetching crops:", error);

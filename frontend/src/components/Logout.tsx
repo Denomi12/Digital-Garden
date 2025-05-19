@@ -23,7 +23,7 @@ const Logout = () => {
     };
 
     logout();
-  }, [userContext]);
+  }, []);
 
   return <Navigate replace to="/" />;;
 };

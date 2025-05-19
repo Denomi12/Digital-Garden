@@ -75,8 +75,6 @@ export class Garden {
     crop: Crop | null,
     element: GardenElement
   ) {
-    console.log(crop, element);
-
     const tile = this.getTile(row, col);
     if (!tile) return;
 

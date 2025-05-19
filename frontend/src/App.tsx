@@ -31,7 +31,6 @@ function App() {
           setUser(null);
         }
       } catch (error) {
-        console.error("User verification failed:", error);
         setUser(null);
       } finally {
         setLoading(false);
