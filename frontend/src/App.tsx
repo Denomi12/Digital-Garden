@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Header from "./components/Header";
@@ -11,20 +11,40 @@ import Forum from "./components/Forum";
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
 import GardenComponent from "./components/Garden/GardenComponent";
+import axios from "axios";
 
 function App() {
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function verifyUser() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BACKEND_URL}/user/verify`,
+          { withCredentials: true }
+        );
+
+        if (response.data && response.data.user) {
+          setUser(response.data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("User verification failed:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    verifyUser();
+  }, []);
+
+   if (loading) return <div>Loading...</div>;
 
   // v local storage shrani podatke o uporabniku
   const updateUserData = (userInfo: User | null) => {
-    if (userInfo) {
-      localStorage.setItem("user", JSON.stringify(userInfo));
-    } else {
-      localStorage.removeItem("user");
-    }
     setUser(userInfo);
   };
 
