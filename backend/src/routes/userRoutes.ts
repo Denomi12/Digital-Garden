@@ -8,6 +8,7 @@ import { requireAuth } from "../middleware/authMiddleware";
  */
 router.get("/", userController.list);
 router.get("/me", requireAuth, userController.me);
+router.get("/verify", requireAuth, userController.verify);
 
 /*
  * GET
