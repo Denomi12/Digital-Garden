@@ -4,15 +4,15 @@
 //
 //  ELEMENTS ::= ELEMENT ELEMENTS'
 //  ELEMENTS' ::= ELEMENT ELEMENTS' | ε
-//  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK
-//
+//  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK | VALIDATION
 //
 //  VARIABLE_DECLARATION ::= var ID = VALUE
 //  ID ::= [a-zA-Z_][a-zA-Z0-9_]*
 //
-//  VALUE ::= EXPR_VALUE | POLYGON_VALUE
+//  VALUE ::= EXPR_VALUE | POLYGON_VALUE | OBJECT_VALUE
 //  EXPR_VALUE ::= EXPR | KOORDINATA
 //  POLYGON_VALUE ::= polygon { POLYGON }
+//  OBJECT_VALUE ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE
 //
 //  DREVO ::= drevo { KOORDINATA }
 //  KLOP ::= klop { KOORDINATA }
@@ -41,6 +41,9 @@
 //  ELSE ::= else { ELEMENTS } | ε
 //  COND ::= EXPR COMP EXPR
 //  COMP ::= > | < | >= | <= | == | !=
+//
+//  VALIDATION ::= validate (ID in ID)                      // prvi ID je drevo, klop, kos; drugi ID je ellip
+//
 
 
 class Parser(
@@ -78,6 +81,11 @@ class Parser(
             }
             println("--------------------------------------")
         }
+        println("\n------ Spremenljivke v mapOfValues ------")
+        mapOfValues.forEach { (key, value) ->
+            println("$key: $value")
+        }
+        println("--------------------------------------")
 
     }
 
@@ -156,8 +164,11 @@ class Parser(
                 procedureVariableDeclaration()
                 Unit
             }
-
             "if" -> procedureIfStavek()
+            "validate" -> {
+                procedureValidation()
+                Unit
+            }
             else -> null
         }
     }
@@ -172,7 +183,25 @@ class Parser(
                 if (currentToken?.first == "assign") {
                     currentToken = getNextToken()
                     val value = procedureValue() ?: return false
+
                     mapOfValues[name] = value
+                    mapOfValues[name] = when (value) {
+                        is Double -> value
+                        is Koordinate -> value
+                        is List<*> -> value
+                        is Drevo -> value
+                        is Klop -> value
+                        is Kos -> value
+                        is Ellip -> value
+                        else -> error("Unsupported value type")
+                    }
+
+                    when (value) {
+                        is Drevo, is Klop, is Kos, is Ellip -> {
+                            val key = "var_$name"
+                            mapOfElements[key] = value
+                        }
+                    }
                     return true
                 }
             }
@@ -183,7 +212,11 @@ class Parser(
     private fun procedureValue(): Any? {
         if (currentToken?.first == "polygon") {
             return procedurePolygonValue()
-        } else {
+        }
+        else if (currentToken?.first in listOf("drevo", "klop", "kos", "ellip")) {
+            return procedureObjectValue()
+        }
+        else {
             return procedureExprValue()
         }
     }
@@ -193,6 +226,16 @@ class Parser(
             procedureExpr()
         } catch (e: Exception) {
             procedureKoordinata()
+        }
+    }
+
+    private fun procedureObjectValue(): Any? {
+        return when (currentToken?.first) {
+            "drevo" -> procedureDrevo()
+            "klop" -> procedureKlop()
+            "kos" -> procedureKos()
+            "ellip" -> procedureSimpleLake()
+            else -> null
         }
     }
 
@@ -561,6 +604,83 @@ class Parser(
 
             else -> false
         }
+    }
+
+    private fun procedureValidation(): Boolean {
+        if (currentToken?.first == "validate") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lparen") {
+                currentToken = getNextToken()
+                if (currentToken?.first == "id") {
+                    val elementName = currentToken!!.second
+                    println("\nValidating element: $elementName")
+                    currentToken = getNextToken()
+                    if (currentToken?.first == "in") {
+                        currentToken = getNextToken()
+                        if (currentToken?.first == "id") {
+                            val lakeName = currentToken!!.second
+                            currentToken = getNextToken()
+                            if (currentToken?.first == "rparen") {
+                                currentToken = getNextToken()
+
+                                // Semantic check
+                                val element = mapOfValues[elementName]
+                                val lake = mapOfValues[lakeName]
+
+                                if (element == null) {
+                                    val errorMsg = "ERROR: Element $elementName not found"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+                                if (lake == null) {
+                                    val errorMsg = "ERROR: Lake $lakeName not found"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+                                if (lake !is Ellip) {
+                                    val errorMsg = "ERROR: $lakeName is not a lake (ellip)"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+
+                                // Check if element is inside lake
+                                val isInside = when (element) {
+                                    is Drevo -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    is Klop -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    is Kos -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    else -> {
+                                        val errorMsg = "ERROR: $elementName is not a valid element (must be drevo, klop, or kos)"
+                                        println(errorMsg)
+                                        error(errorMsg)
+                                    }
+                                }
+
+                                if (isInside) {
+                                    println("$elementName is inside $lakeName\n")
+                                } else {
+                                    println("$elementName is not inside $lakeName\n")
+                                }
+
+                                return isInside
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun isPointInsideEllipse(x: Double, y: Double, center: Koordinate, a: Double, b: Double): Boolean {
+        val normalizedX = x - center.x
+        val normalizedY = y - center.y
+        return (normalizedX * normalizedX) / (a * a) + (normalizedY * normalizedY) / (b * b) <= 1.0
     }
 
     private fun procedureExpr(): Double {

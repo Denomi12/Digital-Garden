@@ -9,11 +9,19 @@ park moj_park {
     if x > 20 {
         kos { (30.0, x) }
         if x > 10 {
-            kos { (30.0, x) }
+            kos { (30.0, x + 3) }
         } else {
             var y := 2 + 4
         }
     } else {
         ellip((15.0, 15.0), x, x)
     }
+    ellip((15.0, 15.0), x, x)
+
+    var x := x + 4
+
+    var kos1 := kos { (50.0, 5.0) }
+    var mali_ribnik := ellip((0.0, 0.0), 10.0, 10.0)
+    validate(kos1 in mali_ribnik)
 }
+

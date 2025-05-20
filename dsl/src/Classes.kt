@@ -10,7 +10,6 @@ data class Koordinate(val x: Double, val y: Double)
 
 data class Polygon(val points: List<Koordinate>)
 
-
 sealed class Pot
 
 data class PotLine(val line: Line) : Pot()
