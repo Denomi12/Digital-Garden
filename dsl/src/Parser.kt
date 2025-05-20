@@ -63,15 +63,21 @@ class Parser(
 
     fun parse() {
         currentToken = getNextToken()
-        if (procedureProgram() && currentToken == null) {
-            println("ACCEPT")
-        } else {
-            println("REJECT")
-        }
-//        val result = procedureProgram()
-//        if(currentToken != null){
-//            println("Napaka!")
+//        if (procedureProgram() && currentToken == null) {
+//            println("ACCEPT")
+//        } else {
+//            println("REJECT")
 //        }
+        val result = procedureProgram()
+        if(currentToken != null){
+            println("Napaka!")
+        }else {
+            println("------ Elementi v mapOfElements ------")
+            for ((key, value) in mapOfElements) {
+                println("$key: $value")
+            }
+            println("--------------------------------------")
+        }
 
     }
 
@@ -105,13 +111,6 @@ class Parser(
                                     currentToken = getNextToken()
                                     if (procedureElements()) {
                                         if (currentToken?.first == "rbrace") {
-
-                                            println("------ Elementi v mapOfElements ------")
-                                            for ((key, value) in mapOfElements) {
-                                                println("$key: $value")
-                                            }
-                                            println("--------------------------------------")
-
                                             currentToken = getNextToken()
                                             return true
                                         }
@@ -134,9 +133,10 @@ class Parser(
     private fun procedureElements_(): Boolean {
         val element = procedureElement() ?: return true
 
-        if (element == Unit) {
-
-        } else {
+        if(currentToken == null){
+            error("napaka")
+        }
+        if (!(element == Unit || element == true)) {
             val key = "element_${mapOfElements.size}"
             mapOfElements[key] = element
         }
