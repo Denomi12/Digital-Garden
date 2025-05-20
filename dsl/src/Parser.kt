@@ -2,8 +2,8 @@
 //  QUERY ::= PARK
 //  PARK ::= park ime { boundary: { POLYGON } ELEMENTS_OPT }
 //
-//  ELEMENTS_OPT ::= ELEMENTS | ε
-//  ELEMENTS ::= ELEMENT ELEMENTS_OPT
+//  ELEMENTS ::= ELEMENT ELEMENTS'
+//  ELEMENTS' ::= ELEMENT ELEMENTS' | ε
 //  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK
 //
 //
@@ -37,8 +37,8 @@
 //  UNARY ::= plus PRIMARY | minus PRIMARY | PRIMARY
 //  PRIMARY ::= double | ID | lparen EXPR rparen
 //
-//  IF_STAVEK ::= if COND { ELEMENTS_OPT } ELSE
-//  ELSE ::= else { ELEMENTS_OPT } | ε
+//  IF_STAVEK ::= if COND { ELEMENTS } ELSE
+//  ELSE ::= else { ELEMENTS } | ε
 //  COND ::= EXPR COMP EXPR
 //  COMP ::= > | < | >= | <= | == | !=
 
@@ -90,7 +90,7 @@ class Parser(
                                 if (procedurePolygon()) {
                                     if (currentToken?.first == "rbrace") {
                                         currentToken = getNextToken()
-                                        if (procedureElementsOpt()) {
+                                        if (procedureElements()) {
                                             if (currentToken?.first == "rbrace") {
                                                 currentToken = getNextToken()
                                                 return true
@@ -108,16 +108,14 @@ class Parser(
     }
 
 
-    private fun procedureElementsOpt(): Boolean {
-        if (currentToken?.first == "rbrace") {
-            return true
-        }
-        return procedureElements()
+    private fun procedureElements(): Boolean {
+        if (!procedureElement()) return false
+        return procedureElements_()
     }
 
-    private fun procedureElements(): Boolean {
+    private fun procedureElements_(): Boolean {
         if (procedureElement()) {
-            return procedureElements()
+            return procedureElements_()
         }
         return true
     }
@@ -325,13 +323,6 @@ class Parser(
         return false
     }
 
-//    private fun procedurePolygon(): Boolean {
-//        if (!procedureKoordinata()) return false
-//        if (!procedureKoordinata()) return false
-//        if (!procedureKoordinata()) return false
-//        return procedureKoordinataOpt()
-//    }
-
 
     private fun procedureKoordinataOpt(): Boolean {
         if (procedureKoordinata()) {
@@ -347,7 +338,6 @@ class Parser(
 //        }
 //        return true
 //    }
-
 
     private fun procedureKoordinata(): Boolean {
         if (currentToken?.first == "lparen") {
@@ -384,7 +374,7 @@ class Parser(
             if (procedureCond()) {
                 if (currentToken?.first == "lbrace") {
                     currentToken = getNextToken()
-                    if (procedureElementsOpt()) {
+                    if (procedureElements()) {
                         if (currentToken?.first == "rbrace") {
                             currentToken = getNextToken()
                             return procedureElse() // else stavek je opcijski
@@ -402,7 +392,7 @@ class Parser(
             currentToken = getNextToken()
             if (currentToken?.first == "lbrace") {
                 currentToken = getNextToken()
-                if (procedureElementsOpt()) {
+                if (procedureElements()) {
                     if (currentToken?.first == "rbrace") {
                         currentToken = getNextToken()
                         return true
