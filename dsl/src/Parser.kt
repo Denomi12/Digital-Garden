@@ -4,15 +4,15 @@
 //
 //  ELEMENTS ::= ELEMENT ELEMENTS'
 //  ELEMENTS' ::= ELEMENT ELEMENTS' | ε
-//  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK
-//
+//  ELEMENT ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE | POT | VARIABLE_DECLARATION | IF_STAVEK | VALIDATION
 //
 //  VARIABLE_DECLARATION ::= var ID = VALUE
 //  ID ::= [a-zA-Z_][a-zA-Z0-9_]*
 //
-//  VALUE ::= EXPR_VALUE | POLYGON_VALUE
+//  VALUE ::= EXPR_VALUE | POLYGON_VALUE | OBJECT_VALUE
 //  EXPR_VALUE ::= EXPR | KOORDINATA
 //  POLYGON_VALUE ::= polygon { POLYGON }
+//  OBJECT_VALUE ::= DREVO | KLOP | KOŠ | SIMPLE_LAKE
 //
 //  DREVO ::= drevo { KOORDINATA }
 //  KLOP ::= klop { KOORDINATA }
@@ -41,6 +41,9 @@
 //  ELSE ::= else { ELEMENTS } | ε
 //  COND ::= EXPR COMP EXPR
 //  COMP ::= > | < | >= | <= | == | !=
+//
+//  VALIDATION ::= validate (ID in ID)                      // prvi ID je drevo, klop, kos; drugi ID je ellip
+//
 
 
 class Parser(
@@ -48,6 +51,10 @@ class Parser(
 ) {
     private var tokenCounter = 0
     private var currentToken: Pair<String, String>? = null
+    private val mapOfValues = mutableMapOf<String, Any>()
+    private var parkBoundary: List<Koordinate>? = null
+    private val mapOfElements = mutableMapOf<String, Any>()
+
 
     private fun getNextToken(): Pair<String, String>? {
         return if (tokenCounter < tokens.size) {
@@ -59,11 +66,27 @@ class Parser(
 
     fun parse() {
         currentToken = getNextToken()
-        if (procedureProgram() && currentToken == null) {
-            println("ACCEPT")
-        } else {
-            println("REJECT")
+//        if (procedureProgram() && currentToken == null) {
+//            println("ACCEPT")
+//        } else {
+//            println("REJECT")
+//        }
+        val result = procedureProgram()
+        if(currentToken != null){
+            println("Napaka!")
+        }else {
+            println("------ Elementi v mapOfElements ------")
+            for ((key, value) in mapOfElements) {
+                println("$key: $value")
+            }
+            println("--------------------------------------")
         }
+        println("\n------ Spremenljivke v mapOfValues ------")
+        mapOfValues.forEach { (key, value) ->
+            println("$key: $value")
+        }
+        println("--------------------------------------")
+
     }
 
     private fun procedureProgram(): Boolean {
@@ -87,14 +110,17 @@ class Parser(
                             currentToken = getNextToken()
                             if (currentToken?.first == "lbrace") {
                                 currentToken = getNextToken()
-                                if (procedurePolygon()) {
-                                    if (currentToken?.first == "rbrace") {
-                                        currentToken = getNextToken()
-                                        if (procedureElements()) {
-                                            if (currentToken?.first == "rbrace") {
-                                                currentToken = getNextToken()
-                                                return true
-                                            }
+
+                                val polygonCoords = procedurePolygon()
+
+                                parkBoundary = polygonCoords
+
+                                if (currentToken?.first == "rbrace") {
+                                    currentToken = getNextToken()
+                                    if (procedureElements()) {
+                                        if (currentToken?.first == "rbrace") {
+                                            currentToken = getNextToken()
+                                            return true
                                         }
                                     }
                                 }
@@ -109,227 +135,320 @@ class Parser(
 
 
     private fun procedureElements(): Boolean {
-        if (!procedureElement()) return false
         return procedureElements_()
     }
 
     private fun procedureElements_(): Boolean {
-        if (procedureElement()) {
-            return procedureElements_()
+        val element = procedureElement() ?: return true
+
+        if(currentToken == null){
+            error("napaka")
         }
-        return true
+        if (!(element == Unit || element == true)) {
+            val key = "element_${mapOfElements.size}"
+            mapOfElements[key] = element
+        }
+
+        return procedureElements_()
     }
 
-    private fun procedureElement(): Boolean {
+
+    private fun procedureElement(): Any? {
         return when (currentToken?.first) {
             "drevo" -> procedureDrevo()
             "klop" -> procedureKlop()
             "kos" -> procedureKos()
             "ellip" -> procedureSimpleLake()
             "pot" -> procedurePot()
-            "var" -> procedureVariableDeclaration()
+            "var" -> {
+                procedureVariableDeclaration()
+                Unit
+            }
             "if" -> procedureIfStavek()
-            else -> false
+            "validate" -> {
+                procedureValidation()
+                Unit
+            }
+            else -> null
         }
     }
 
-    private fun  procedureVariableDeclaration(): Boolean {
+
+    private fun procedureVariableDeclaration(): Any? {
         if (currentToken?.first == "var") {
             currentToken = getNextToken()
             if (currentToken?.first == "id") {
+                var name = currentToken!!.second
                 currentToken = getNextToken()
                 if (currentToken?.first == "assign") {
                     currentToken = getNextToken()
-                    return procedureValue()
+                    val value = procedureValue() ?: return false
+
+                    mapOfValues[name] = value
+                    mapOfValues[name] = when (value) {
+                        is Double -> value
+                        is Koordinate -> value
+                        is List<*> -> value
+                        is Drevo -> value
+                        is Klop -> value
+                        is Kos -> value
+                        is Ellip -> value
+                        else -> error("Unsupported value type")
+                    }
+
+                    when (value) {
+                        is Drevo, is Klop, is Kos, is Ellip -> {
+                            val key = "var_$name"
+                            mapOfElements[key] = value
+                        }
+                    }
+                    return true
                 }
             }
         }
         return false
     }
 
-    private fun procedureValue(): Boolean {
-        return procedureExprValue() || procedurePolygonValue()
+    private fun procedureValue(): Any? {
+        if (currentToken?.first == "polygon") {
+            return procedurePolygonValue()
+        }
+        else if (currentToken?.first in listOf("drevo", "klop", "kos", "ellip")) {
+            return procedureObjectValue()
+        }
+        else {
+            return procedureExprValue()
+        }
     }
 
-    private fun procedureExprValue(): Boolean {
-        return procedureExpr() || procedureKoordinata()
+    private fun procedureExprValue(): Any {
+        return try {
+            procedureExpr()
+        } catch (e: Exception) {
+            procedureKoordinata()
+        }
     }
 
-    private fun procedurePolygonValue(): Boolean {
+    private fun procedureObjectValue(): Any? {
+        return when (currentToken?.first) {
+            "drevo" -> procedureDrevo()
+            "klop" -> procedureKlop()
+            "kos" -> procedureKos()
+            "ellip" -> procedureSimpleLake()
+            else -> null
+        }
+    }
+
+
+    private fun procedurePolygonValue(): List<Koordinate>? {
         if (currentToken?.first == "polygon") {
             currentToken = getNextToken()
             if (currentToken?.first == "lbrace") {
                 currentToken = getNextToken()
-                if (procedurePolygon()) {
-                    if (currentToken?.first == "rbrace") {
-                        currentToken = getNextToken()
-                        return true
-                    }
+
+                val koordinate = procedurePolygon()
+
+                if (currentToken?.first == "rbrace") {
+                    currentToken = getNextToken()
+
+                    return koordinate
+
                 }
             }
         }
-        return false
+        return null
     }
 
-    private fun procedureDrevo(): Boolean {
+    private fun procedureDrevo(): Drevo {
         if (currentToken?.first == "drevo") {
             currentToken = getNextToken()
             if (currentToken?.first == "lbrace") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
-                    if (currentToken?.first == "rbrace") {
-                        currentToken = getNextToken()
-                        return true
-                    }
+                val drevoKoordinate = procedureKoordinata()
+                val drevo = Drevo(drevoKoordinate.x, drevoKoordinate.y)
+                if (currentToken?.first == "rbrace") {
+                    currentToken = getNextToken()
+                    return drevo
                 }
             }
         }
-        return false
+        error("Expected 'drevo { (x, y) }'")
     }
 
-    private fun procedureKlop(): Boolean {
+    private fun procedureKlop(): Klop {
         if (currentToken?.first == "klop") {
             currentToken = getNextToken()
             if (currentToken?.first == "lbrace") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
-                    if (currentToken?.first == "rbrace") {
-                        currentToken = getNextToken()
-                        return true
-                    }
+                val klopKoordinate = procedureKoordinata()
+                val klop = Klop(klopKoordinate.x, klopKoordinate.y)
+                if (currentToken?.first == "rbrace") {
+                    currentToken = getNextToken()
+                    return klop
                 }
             }
         }
-        return false
+        error("Expected 'klop { (x, y) }'")
     }
 
-    private fun procedureKos(): Boolean {
+    private fun procedureKos(): Kos {
         if (currentToken?.first == "kos") {
             currentToken = getNextToken()
             if (currentToken?.first == "lbrace") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
-                    if (currentToken?.first == "rbrace") {
-                        currentToken = getNextToken()
-                        return true
-                    }
+                val kosKoordinate = procedureKoordinata()
+                val kos = Kos(kosKoordinate.x, kosKoordinate.y)
+                if (currentToken?.first == "rbrace") {
+                    currentToken = getNextToken()
+                    return kos
                 }
+
             }
         }
-        return false
+        error("Expected 'kos { (x, y) }'")
     }
 
-    private fun procedurePot(): Boolean {
-        if (currentToken?.first == "pot") {
-            currentToken = getNextToken()
-            if (currentToken?.first == "lbrace") {
-                currentToken = getNextToken()
-                if (procedureTipPoti()) {
-                    if (currentToken?.first == "rbrace") {
-                        currentToken = getNextToken()
-                        return true
-                    }
-                }
+
+    private fun procedurePot(): List<Pot> {
+        val poti = mutableListOf<Pot>()
+
+        if (currentToken?.first != "pot") error("Expected keyword 'pot'")
+        currentToken = getNextToken()
+
+        if (currentToken?.first != "lbrace") error("Expected '{' after keyword 'pot'")
+        currentToken = getNextToken()
+
+        while (true) {
+            val potElement = procedureTipPoti()
+            if (potElement != null) {
+                poti.add(potElement)
+            } else {
+                break
             }
         }
-        return false
+
+        if (currentToken?.first != "rbrace") error("Missing closing brace '}' in 'pot' block")
+        currentToken = getNextToken()
+
+        return poti
     }
 
-    private fun procedureTipPoti(): Boolean {
-        return procedureLine() || procedureBentLine()
+    private fun procedureTipPoti(): Pot? {
+        return when (currentToken?.first) {
+            "line" -> procedureLine()
+            "bent_line" -> procedureBentLine()
+            else -> null
+        }
     }
 
-    private fun procedureLine(): Boolean {
+
+    private fun procedureLine(): PotLine {
         if (currentToken?.first == "line") {
             currentToken = getNextToken()
             if (currentToken?.first == "lparen") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
-                    if (currentToken?.first == "comma") {
+
+                val firstCoordinate = procedureKoordinata()
+
+
+                if (currentToken?.first == "comma") {
+                    currentToken = getNextToken()
+
+                    val secondCoordinate = procedureKoordinata()
+
+                    if (currentToken?.first == "rparen") {
                         currentToken = getNextToken()
-                        if (procedureKoordinata()) {
-                            if (currentToken?.first == "rparen") {
-                                currentToken = getNextToken()
-                                return true
-                            }
-                        }
+                        return PotLine(Line(firstCoordinate, secondCoordinate))
                     }
                 }
             }
         }
-        return false
+        error("Expected 'line(start, end)' structure")
     }
 
-    private fun procedureBentLine(): Boolean {
+    private fun procedureBentLine(): PotBentLine {
         if (currentToken?.first == "bent_line") {
             currentToken = getNextToken()
             if (currentToken?.first == "lparen") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
+
+                val firstCoordinate = procedureKoordinata()
+
+                if (currentToken?.first == "comma") {
+                    currentToken = getNextToken()
+
+                    val secondCoordinate = procedureKoordinata()
+
                     if (currentToken?.first == "comma") {
                         currentToken = getNextToken()
-                        if (procedureKoordinata()) {
-                            if (currentToken?.first == "comma") {
-                                currentToken = getNextToken()
-                                if (procedureAngle()) {
-                                    if (currentToken?.first == "rparen") {
-                                        currentToken = getNextToken()
-                                        return true
-                                    }
-                                }
-                            }
+
+                        val angle = procedureAngle()
+
+                        if (currentToken?.first == "rparen") {
+                            currentToken = getNextToken()
+                            return PotBentLine(BentLine(firstCoordinate, secondCoordinate, angle))
                         }
+
                     }
+
                 }
             }
         }
-        return false
+        error("Expected 'bent_line(start, end, angle)' structure")
     }
 
-    private fun procedureSimpleLake(): Boolean {
+    private fun procedureSimpleLake(): Ellip {
         if (currentToken?.first == "ellip") {
             currentToken = getNextToken()
             if (currentToken?.first == "lparen") {
                 currentToken = getNextToken()
-                if (procedureKoordinata()) {
+
+                val simpleLakeCoordinates = procedureKoordinata()
+
+                if (currentToken?.first == "comma") {
+                    currentToken = getNextToken()
+
+                    val firstAxis = procedureAxis()
+
                     if (currentToken?.first == "comma") {
                         currentToken = getNextToken()
-                        if (procedureAxis()) {
-                            if (currentToken?.first == "comma") {
-                                currentToken = getNextToken()
-                                if (procedureAxis()) {
-                                    if (currentToken?.first == "rparen") {
-                                        currentToken = getNextToken()
-                                        return true
-                                    }
-                                }
-                            }
+
+                        val secondAxis = procedureAxis()
+
+                        if (currentToken?.first == "rparen") {
+                            currentToken = getNextToken()
+                            return Ellip(simpleLakeCoordinates, firstAxis, secondAxis)
                         }
                     }
                 }
             }
         }
-        return false
+        error("Expected 'ellip { ((x, y), a, b )}'")
     }
 
-    private fun procedurePolygon(): Boolean {
-        if (procedureKoordinata()) {
-            if (procedureKoordinata()) {
-                if (procedureKoordinata()) {
-                    return procedureKoordinataOpt()
-                }
-            }
+    private fun procedurePolygon(): List<Koordinate>? {
+        return try {
+            val first = procedureKoordinata()
+            val second = procedureKoordinata()
+            val third = procedureKoordinata()
+            val others = procedureKoordinataOpt()
+            listOf(first, second, third) + others
+        } catch (e: Exception) {
+            error("Polygon must have three or more coordinates")
         }
-        return false
     }
 
 
-    private fun procedureKoordinataOpt(): Boolean {
-        if (procedureKoordinata()) {
-            return procedureKoordinataOpt()
+    private fun procedureKoordinataOpt(): List<Koordinate> {
+        val koordinate = mutableListOf<Koordinate>()
+
+        while (currentToken?.first == "lparen" || currentToken?.first == "id") {
+            koordinate.add(procedureKoordinata())
         }
-        return true
+
+        return koordinate
     }
+
 
 //    private fun procedureKoordinataOpt(): Boolean {
 //        // Only try to parse another coordinate if one exists
@@ -339,52 +458,93 @@ class Parser(
 //        return true
 //    }
 
-    private fun procedureKoordinata(): Boolean {
+    private fun procedureKoordinata(): Koordinate {
         if (currentToken?.first == "lparen") {
             currentToken = getNextToken()
-            if (procedureExpr()) {
-                if (currentToken?.first == "comma") {
+            val firstCoordinate = procedureExpr()
+            if (currentToken?.first == "comma") {
+                currentToken = getNextToken()
+                val secondCoordinate = procedureExpr()
+                if (currentToken?.first == "rparen") {
                     currentToken = getNextToken()
-                    if (procedureExpr()) {
-                        if (currentToken?.first == "rparen") {
-                            currentToken = getNextToken()
-                            return true
-                        }
-                    }
+                    return Koordinate(firstCoordinate, secondCoordinate)
                 }
             }
         } else if (currentToken?.first == "id") {
+            val variable = currentToken?.second ?: error("Missing variable name")
             currentToken = getNextToken()
-            return true
+
+            val value = mapOfValues[variable] ?: error("Variable $variable not found")
+
+            if (value is Koordinate) {
+                return value
+            } else {
+                error("Variable $variable is not of type Koordinate")
+            }
         }
-        return false
+
+        error("Koordinate is not the right structure")
     }
 
-    private fun procedureAngle(): Boolean {
+    private fun procedureAngle(): Double {
         return procedureExpr()
     }
 
-    private fun procedureAxis(): Boolean {
+    private fun procedureAxis(): Double {
         return procedureExpr()
     }
 
     private fun procedureIfStavek(): Boolean {
         if (currentToken?.first == "if") {
             currentToken = getNextToken()
-            if (procedureCond()) {
-                if (currentToken?.first == "lbrace") {
-                    currentToken = getNextToken()
+
+            val ifCheck = procedureCond()
+
+                if (!ifCheck) { //else block
+                    skipBlock()
+                    return procedureElse()
+                } else {
+                    if (currentToken?.first == "lbrace") {
+                        currentToken = getNextToken()
                     if (procedureElements()) {
                         if (currentToken?.first == "rbrace") {
+
                             currentToken = getNextToken()
-                            return procedureElse() // else stavek je opcijski
+                            while(currentToken?.first == "else"){
+                                currentToken = getNextToken()
+                                skipBlock()
+                            }
+                            return true
+
                         }
                     }
                 }
+
             }
+
         }
         return false
     }
+
+    private fun skipBlock() {
+        var braceCount = 0
+
+        if (currentToken?.first == "lbrace") {
+            braceCount++
+            currentToken = getNextToken()
+        }
+
+        while (currentToken != null && braceCount > 0) {
+            if (currentToken?.first == "lbrace") {
+                braceCount++
+            } else if (currentToken?.first == "rbrace") {
+                braceCount--
+            }
+
+            currentToken = getNextToken()
+        }
+    }
+
 
 
     private fun procedureElse(): Boolean {
@@ -405,101 +565,208 @@ class Parser(
     }
 
     private fun procedureCond(): Boolean {
-        println("test")
-        if (procedureExpr()) {
-            if (procedureComp()) {
-                return procedureExpr()
+        val vhod = procedureExpr()
+        return procedureComp(vhod)
+    }
+
+    private fun procedureComp(vhod: Double): Boolean {
+//        currentToken = getNextToken()
+        return when (currentToken?.first) {
+            "gt" -> {
+                currentToken = getNextToken()
+                return vhod > procedureExpr()
+            }
+
+            "lt" -> {
+                currentToken = getNextToken()
+                return vhod < procedureExpr()
+            }
+
+            "ge" -> {
+                currentToken = getNextToken()
+                return vhod >= procedureExpr()
+            }
+
+            "le" -> {
+                currentToken = getNextToken()
+                return vhod <= procedureExpr()
+            }
+
+            "eq" -> {
+                currentToken = getNextToken()
+                return vhod == procedureExpr()
+            }
+
+            "ne" -> {
+                currentToken = getNextToken()
+                return vhod != procedureExpr()
+            }
+
+            else -> false
+        }
+    }
+
+    private fun procedureValidation(): Boolean {
+        if (currentToken?.first == "validate") {
+            currentToken = getNextToken()
+            if (currentToken?.first == "lparen") {
+                currentToken = getNextToken()
+                if (currentToken?.first == "id") {
+                    val elementName = currentToken!!.second
+                    println("\nValidating element: $elementName")
+                    currentToken = getNextToken()
+                    if (currentToken?.first == "in") {
+                        currentToken = getNextToken()
+                        if (currentToken?.first == "id") {
+                            val lakeName = currentToken!!.second
+                            currentToken = getNextToken()
+                            if (currentToken?.first == "rparen") {
+                                currentToken = getNextToken()
+
+                                // Semantic check
+                                val element = mapOfValues[elementName]
+                                val lake = mapOfValues[lakeName]
+
+                                if (element == null) {
+                                    val errorMsg = "ERROR: Element $elementName not found"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+                                if (lake == null) {
+                                    val errorMsg = "ERROR: Lake $lakeName not found"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+                                if (lake !is Ellip) {
+                                    val errorMsg = "ERROR: $lakeName is not a lake (ellip)"
+                                    println(errorMsg)
+                                    error(errorMsg)
+                                }
+
+                                // Check if element is inside lake
+                                val isInside = when (element) {
+                                    is Drevo -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    is Klop -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    is Kos -> {
+                                        isPointInsideEllipse(element.x, element.y, lake.center, lake.a, lake.b)
+                                    }
+                                    else -> {
+                                        val errorMsg = "ERROR: $elementName is not a valid element (must be drevo, klop, or kos)"
+                                        println(errorMsg)
+                                        error(errorMsg)
+                                    }
+                                }
+
+                                if (isInside) {
+                                    println("$elementName is inside $lakeName\n")
+                                } else {
+                                    println("$elementName is not inside $lakeName\n")
+                                }
+
+                                return isInside
+                            }
+                        }
+                    }
+                }
             }
         }
         return false
     }
 
-    private fun procedureComp(): Boolean {
-        return when (currentToken?.first) {
-            "gt" -> {
-                currentToken = getNextToken()
-                true
-            }
-            "lt" -> {
-                currentToken = getNextToken()
-                true
-            }
-            "ge" -> {
-                currentToken = getNextToken()
-                true
-            }
-            "le" -> {
-                currentToken = getNextToken()
-                true
-            }
-            "eq" -> {
-                currentToken = getNextToken()
-                true
-            }
-            "ne" -> {
-                currentToken = getNextToken()
-                true
-            }
-            else -> false
-        }
+    private fun isPointInsideEllipse(x: Double, y: Double, center: Koordinate, a: Double, b: Double): Boolean {
+        val normalizedX = x - center.x
+        val normalizedY = y - center.y
+        return (normalizedX * normalizedX) / (a * a) + (normalizedY * normalizedY) / (b * b) <= 1.0
     }
 
-    private fun procedureExpr(): Boolean {
+    private fun procedureExpr(): Double {
         return procedureAdditive()
     }
 
-    private fun procedureAdditive(): Boolean {
-        return procedureMultiplicative() && procedureAdditive_()
+    private fun procedureAdditive(): Double {
+        val vhodna = procedureMultiplicative()
+        return procedureAdditive_(vhodna)
     }
 
-    private fun procedureAdditive_(): Boolean {
-        if (currentToken?.first == "plus" || currentToken?.first == "minus") {
+    private fun procedureAdditive_(vhodna: Double): Double {
+        var temp = vhodna
+        if (currentToken?.first == "plus") {
             currentToken = getNextToken()
-            return procedureMultiplicative() && procedureAdditive_()
+            temp = vhodna + procedureMultiplicative()
+            return procedureAdditive_(temp)
+        } else if (currentToken?.first == "minus") {
+            currentToken = getNextToken()
+            temp = vhodna - procedureMultiplicative()
+            return procedureAdditive_(temp)
         }
-        return true
+        return temp //epsilon
     }
 
-    private fun procedureMultiplicative(): Boolean {
-        return procedureUnary() && procedureMultiplicative_()
+    private fun procedureMultiplicative(): Double {
+        val vhodna = procedureUnary()
+        return procedureMultiplicative_(vhodna)
     }
 
-    private fun procedureMultiplicative_(): Boolean {
-        if (currentToken?.first == "times" || currentToken?.first == "divide") {
+    private fun procedureMultiplicative_(vhodna: Double): Double {
+        var temp = vhodna
+        if (currentToken?.first == "times") {
             currentToken = getNextToken()
-            return procedureUnary() && procedureMultiplicative_()
+            temp = vhodna * procedureUnary()
+            return procedureMultiplicative_(temp)
+        } else if (currentToken?.first == "divide") {
+            currentToken = getNextToken()
+            temp = vhodna / procedureUnary()
+            return procedureMultiplicative_(temp)
         }
-        return true
+        return temp //epsilon
     }
 
-    private fun procedureUnary(): Boolean {
-        if (currentToken?.first == "plus" || currentToken?.first == "minus") {
+    private fun procedureUnary(): Double {
+        if (currentToken?.first == "minus") {
             currentToken = getNextToken()
+            return -procedurePrimary()
         }
         return procedurePrimary()
     }
 
-    private fun procedurePrimary(): Boolean {
+    private fun procedurePrimary(): Double {
         return when (currentToken?.first) {
             "double" -> {
+                val value = currentToken?.second?.toDoubleOrNull() ?: error("Invalid double value")
                 currentToken = getNextToken()
-                true
+                value
             }
+
             "id" -> {
+                val variable = currentToken?.second ?: error("Variable name missing")
                 currentToken = getNextToken()
-                true
+                val value = mapOfValues[variable] ?: error("Variable $variable not found")
+
+                if (value is Double) {
+                    value
+                } else {
+                    error("Variable $variable is not a numeric value")
+                }
             }
+
             "lparen" -> {
                 currentToken = getNextToken()
-                if (procedureExpr()) {
-                    if (currentToken?.first == "rparen") {
-                        currentToken = getNextToken()
-                        true
-                    } else false
-                } else false
+                val value = procedureExpr()
+                if (currentToken?.first == "rparen") {
+                    currentToken = getNextToken()
+                    value
+                } else {
+                    error("Missing rparen")
+                }
             }
-            else -> false
+
+            else -> error("Unknown token")
         }
     }
+
 }
 
