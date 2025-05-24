@@ -55,13 +55,45 @@ class Parser(
     private var parkBoundary: List<Koordinate>? = null
     private val mapOfElements = mutableMapOf<String, Any>()
 
-
     private fun getNextToken(): Pair<String, String>? {
         return if (tokenCounter < tokens.size) {
             tokens[tokenCounter++]
         } else {
             null
         }
+    }
+
+    fun toGeoJson(): String {
+
+        var stringifiedElements: MutableList<String> = mutableListOf()
+
+        val parkBoundary = Park(boundary = parkBoundary!!).toGeoJson()
+        stringifiedElements.add(parkBoundary)
+        mapOfElements.forEach { (key, value) ->
+            if (value is ToGeoJson) {
+                stringifiedElements.add(value.toGeoJson())
+            }
+            else if (value is List<*>) {
+               for (element in value){
+                   if(element is ToGeoJson){
+                       stringifiedElements.add(element.toGeoJson())
+                   }
+               }
+            }
+            else {
+                println(value)
+            }
+        }
+
+        val features = stringifiedElements.joinToString(",\n") { it.trimIndent() }
+
+        return """
+{
+  "type": "FeatureCollection",
+  "features": [${features}]
+}
+"""
+
     }
 
     fun parse() {
