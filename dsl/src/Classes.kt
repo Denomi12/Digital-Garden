@@ -19,7 +19,13 @@ data class Park(val boundary: List<Koordinate>): ToGeoJson {
 {
     "type": "Feature",
     "properties": {
-        "ime":"Park"
+        "ime":"Park",
+        "stroke": "#056d03",
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "fill": "#34fe0b",
+        "fill-opacity": 0.2
+
     },
     "geometry": {
         "type": "Polygon",
@@ -41,7 +47,10 @@ data class Kos(val x: Double, val y: Double): ToGeoJson {
     {
         "type": "Feature",
         "properties": {
-            "ime": "Kos"
+            "ime": "Koš",
+            "marker-color": "#454545",
+            "marker-size": "medium",
+            "marker-symbol": "circle-stroked"
         },
         "geometry": {
             "coordinates": [
@@ -62,7 +71,10 @@ data class Drevo(val x: Double, val y: Double): ToGeoJson {
     {
         "type": "Feature",
         "properties": {
-            "ime": "Drevo"
+            "ime": "Drevo",
+            "marker-color": "#047116",
+            "marker-size": "medium",
+            "marker-symbol": "circle"
         },
         "geometry": {
             "coordinates": [
@@ -83,7 +95,10 @@ data class Klop(val x: Double, val y: Double): ToGeoJson {
     {
         "type": "Feature",
         "properties": {
-            "ime": "Klop"
+            "ime": "Klop",
+            "marker-color": "#cc9705",
+            "marker-size": "medium",
+            "marker-symbol": "circle"
         },
         "geometry": {
             "coordinates": [
@@ -114,7 +129,12 @@ data class Ellip(val center: Koordinate, val a: Double, val b: Double) : ToGeoJs
 {
     "type": "Feature",
     "properties": {
-        "ime":"Lake"
+        "ime":"Ribnik",
+        "stroke": "#555555",
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "fill": "#24b3c6",
+        "fill-opacity": 0.5
     },
     "geometry": {
         "type": "Polygon",
@@ -146,7 +166,10 @@ data class PotLine(val line: Line) : Pot() {
     {
         "type": "Feature",
         "properties": {
-            "ime": "Pot"
+            "ime": "Pot",
+            "stroke": "#000000",
+            "stroke-width": 4,
+            "stroke-opacity": 1
         },
         "geometry": {
             "coordinates": [${line.toGeoJson()}

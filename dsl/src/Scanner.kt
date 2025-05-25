@@ -46,6 +46,7 @@ class Scanner (
     private val tNe = 33
     private val tWhiteSpace = 34
     private val tComment = 35
+    private val tNil = 36
 
     init {
 
@@ -212,6 +213,10 @@ class Scanner (
             }
         }
 
+        automata[0]['n'.code] = 87
+        automata[87]['i'.code] = 88
+        automata[88]['l'.code] = 89
+
         //ID-JI
         for (i in 'a'.code..'z'.code) {
             automata[0][i] = 4
@@ -226,7 +231,6 @@ class Scanner (
         for (i in '0'.code..'9'.code) {
             automata[4][i] = 4
         }
-
         finalStates[0] = tError
         finalStates[1] = tDouble
         finalStates[3] = tDouble
@@ -265,6 +269,8 @@ class Scanner (
         finalStates[84] = tNe
         finalStates[85] = tWhiteSpace
         finalStates[86] = tComment
+        finalStates[89] = tNil
+
     }
 
     private fun  identifyLexemType(lexem: String): String {
@@ -301,6 +307,7 @@ class Scanner (
             "<=" -> "le"
             "==" -> "eq"
             "!=" -> "ne"
+            "nil" -> "nil"
             else -> {
                 when {
                     lexem.matches(Regex("[0-9]+(\\.[0-9]+)?")) -> "double"
