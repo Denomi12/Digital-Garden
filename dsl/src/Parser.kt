@@ -1,3 +1,5 @@
+import java.io.File
+
 //  PROGRAM ::= QUERY
 //  QUERY ::= PARK
 //  PARK ::= park ime { boundary: { POLYGON } ELEMENTS_OPT }
@@ -54,6 +56,7 @@ class Parser(
     private val mapOfValues = mutableMapOf<String, Any>()
     private var parkBoundary: List<Koordinate>? = null
     private val mapOfElements = mutableMapOf<String, Any>()
+    private var parkName: String = "Park"
 
     private fun getNextToken(): Pair<String, String>? {
         return if (tokenCounter < tokens.size) {
@@ -67,7 +70,7 @@ class Parser(
 
         var stringifiedElements: MutableList<String> = mutableListOf()
 
-        val parkBoundary = Park(boundary = parkBoundary!!).toGeoJson()
+        val parkBoundary = Park(boundary = parkBoundary!!, parkName).toGeoJson()
         stringifiedElements.add(parkBoundary)
         mapOfElements.forEach { (key, value) ->
             if (value is ToGeoJson) {
@@ -86,13 +89,15 @@ class Parser(
         }
 
         val features = stringifiedElements.joinToString(",\n") { it.trimIndent() }
-
-        return """
+        val geojson = """
 {
   "type": "FeatureCollection",
   "features": [${features}]
 }
 """
+        File("geojsonOutput.txt").writeText(geojson)
+
+        return geojson
 
     }
 
@@ -133,6 +138,7 @@ class Parser(
         if (currentToken?.first == "park") {
             currentToken = getNextToken()
             if (currentToken?.first == "id") {
+                parkName = currentToken!!.second
                 currentToken = getNextToken()
                 if (currentToken?.first == "lbrace") {
                     currentToken = getNextToken()

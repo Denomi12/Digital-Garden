@@ -10,7 +10,7 @@ interface ToGeoJson {
     fun toGeoJson(): String
 }
 
-data class Park(val boundary: List<Koordinate>): ToGeoJson {
+data class Park(val boundary: List<Koordinate>, val parkName: String = "Park"): ToGeoJson {
     override fun toGeoJson(): String {
         val coordinates = (boundary + boundary.first()).joinToString(",\n") {
             koord -> String.format(Locale.US, "\t\t\t\t[%.6f, %.6f]", koord.y, koord.x)
@@ -19,7 +19,7 @@ data class Park(val boundary: List<Koordinate>): ToGeoJson {
 {
     "type": "Feature",
     "properties": {
-        "ime":"Park",
+        "ime":"$parkName",
         "stroke": "#056d03",
         "stroke-width": 2,
         "stroke-opacity": 1,
@@ -130,7 +130,7 @@ data class Ellip(val center: Koordinate, val a: Double, val b: Double) : ToGeoJs
     "type": "Feature",
     "properties": {
         "ime":"Ribnik",
-        "stroke": "#555555",
+        "stroke": "#021783",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "fill": "#24b3c6",
@@ -208,7 +208,10 @@ data class BentLine(val start: Koordinate, val end: Koordinate, val angle: Doubl
 {
     "type": "Feature",
     "properties": {
-        "ime": "BentLine",
+        "ime": "Kriva pot",
+        "stroke": "#000000",
+        "stroke-width": 4,
+        "stroke-opacity": 1,
         "kot": $angle
     },
     "geometry": {
