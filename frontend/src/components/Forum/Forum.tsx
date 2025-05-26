@@ -5,16 +5,19 @@ import { useNavigate } from "react-router-dom";
 
 type UserSummary = {
   _id: string;
+  username: string;
 };
 
-type QuestionType = {
+export type QuestionType = {
   _id: string;
   title: string;
   question: string;
+  summary: string;
   likes: number;
   owner: UserSummary;
   likedBy: UserSummary[];
   dislikedBy: UserSummary[];
+  createdAt: Date;
 };
 
 function Forum() {
@@ -36,15 +39,13 @@ function Forum() {
 
   return (
     <>
-      <button onClick={addQuestion}>Add Question</button>
-      <div className={styles.container}>
-        <div className={styles.questionGrid}>
-          {questions.map((question) => (
-            <div key={question._id} className={styles.questionItem}>
-              <Question />
-            </div>
-          ))}
-        </div>
+      <button className={styles.addQuestionBtn} onClick={addQuestion}>
+        Ask Question
+      </button>
+      <div className={styles.forumWrapper}>
+        {questions.map((question) => (
+          <Question key={question._id} question={question} />
+        ))}
       </div>
     </>
   );

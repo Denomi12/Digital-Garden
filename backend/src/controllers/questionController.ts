@@ -3,7 +3,7 @@ import Question from "../models/QuestionModel";
 
 const list = async (req: Request, res: Response): Promise<void> => {
   try {
-    const questions = await Question.find();
+    const questions = await Question.find().populate("owner", "username");
     res.json(questions);
   } catch (error) {
     res.status(500).json({ message: "Error when getting questions", error });
@@ -12,7 +12,10 @@ const list = async (req: Request, res: Response): Promise<void> => {
 
 const show = async (req: Request, res: Response): Promise<void> => {
   try {
-    const question = await Question.findById(req.params.id).populate("owner");
+    const question = await Question.findById(req.params.id).populate(
+      "owner",
+      "username"
+    );
     if (!question) {
       res.status(404).json({ message: "No such question" });
       return;
@@ -62,6 +65,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       likedBy: [],
       dislikedBy: [],
       owner: owner,
+      createdAt: new Date(),
     });
 
     const savedQuestion = await question.save();

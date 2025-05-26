@@ -10,7 +10,7 @@ export interface QuestionInstance extends Document {
   likedBy: UserInstance[];
   dislikedBy: UserInstance[];
   owner: UserInstance;
-  //posted date?
+  createdAt: Date;
 }
 
 var questionSchema = new Schema<QuestionInstance>(
