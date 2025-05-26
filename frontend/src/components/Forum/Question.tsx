@@ -1,5 +1,6 @@
 import { QuestionType } from "./Forum";
 import styles from "../../stylesheets/Question.module.css";
+import { NavLink } from "react-router-dom";
 
 type QuestionProps = {
   question: QuestionType;
@@ -7,7 +8,7 @@ type QuestionProps = {
 
 function Question({ question }: QuestionProps) {
   return (
-    <div className={styles.container}>
+    <NavLink to={`/showQuestion/${question._id}`} className={styles.container}>
       <h3 className={styles.title}>{question.title}</h3>
       <p className={styles.summary}>{question.summary}</p>
       <div className={styles.footer}>
@@ -17,7 +18,7 @@ function Question({ question }: QuestionProps) {
           {new Date(question.createdAt).toLocaleDateString("sl-SI")}
         </div>
       </div>
-    </div>
+    </NavLink>
   );
 }
 

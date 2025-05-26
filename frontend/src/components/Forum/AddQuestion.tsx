@@ -21,18 +21,21 @@ function AddQuestion() {
       return;
     }
 
-    const res = await fetch("http://localhost:3001/question", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        questionMessage,
-        summary,
-      }),
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_BACKEND_URL}/question`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          questionMessage,
+          summary,
+        }),
+      }
+    );
 
     const data = await res.json();
     console.log(data);
@@ -40,45 +43,41 @@ function AddQuestion() {
   }
 
   return (
-    <form className={styles.formGroup} onSubmit={onSubmit}>
-      {uploaded ? <Navigate replace to="/forum" /> : ""}
-      <input
-        type="text"
-        className={styles.formControl}
-        name="title"
-        placeholder="Question Title"
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-        }}
-      />
-      <input
-        type="text"
-        className={styles.formControl}
-        name="summary"
-        placeholder="Question Summary"
-        value={summary}
-        onChange={(e) => {
-          setSummary(e.target.value);
-        }}
-      />
-      <input
-        type="text"
-        className={styles.formControl}
-        name="question"
-        placeholder="Your Question"
-        value={questionMessage}
-        onChange={(e) => {
-          setQuestionMessage(e.target.value);
-        }}
-      />
-      <input
-        className={styles.submitButton}
-        type="submit"
-        name="submit"
-        value="Submit"
-      />
-    </form>
+    <div className={styles.pageWrapper}>
+      {uploaded && <Navigate replace to="/forum" />}
+      <div className={styles.formHeader}>Add new questions</div>
+      <form className={styles.formGroup} onSubmit={onSubmit}>
+        <input
+          type="text"
+          className={styles.formControl}
+          name="title"
+          placeholder="Question Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          className={styles.formControl}
+          name="summary"
+          placeholder="Summary"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+        />
+        <textarea
+          className={styles.formControl}
+          name="question"
+          placeholder="Your Question"
+          rows={6}
+          value={questionMessage}
+          onChange={(e) => setQuestionMessage(e.target.value)}
+        />
+        <input
+          className={styles.submitButton}
+          type="submit"
+          value="Add Question"
+        />
+      </form>
+    </div>
   );
 }
 

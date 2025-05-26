@@ -8,6 +8,7 @@ import Sidebar from "./components/Sidebar";
 import styles from "./App.module.css";
 import Forum from "./components/Forum/Forum";
 import AddQuestion from "./components/Forum/AddQuestion";
+import ShowQuestion from "./components/Forum/ShowQuestion";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
@@ -67,6 +68,7 @@ function App() {
               <Route path="/logout" element={<Logout />} />
               <Route path="/forum" element={<Forum />} />
               <Route path="/addQuestion" element={<AddQuestion />} />
+              <Route path="/showQuestion/:id" element={<ShowQuestion />} />
             </Routes>
           </div>
         </div>

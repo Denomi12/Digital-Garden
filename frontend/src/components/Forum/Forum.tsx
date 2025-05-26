@@ -26,7 +26,9 @@ function Forum() {
 
   useEffect(function () {
     const getPhotos = async function () {
-      const res = await fetch("http://localhost:3001/question");
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BACKEND_URL}/question`
+      );
       const data = await res.json();
       setQuestions(data);
     };
