@@ -26,14 +26,12 @@ dependencies {
     implementation(compose.material)
 
 
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("io.ktor:ktor-client-core:2.3.1")
-    implementation("io.ktor:ktor-client-cio:2.3.1")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") // za http zahtevke
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // za parsanje
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0") // za asinhronost
     implementation("ch.qos.logback:logback-classic:1.4.14") // logger knjižnica
+    implementation("it.skrape:skrapeit:1.2.2") // Skrape knjižnica za scraping
+
 }
 
 compose.desktop {

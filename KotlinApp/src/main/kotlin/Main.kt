@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import ui.PeopleTab
+import ui.ScraperTab
 
 
 @Composable
@@ -86,10 +87,7 @@ fun MainSection(tab: String) {
     } else if (tab == "People") {
         PeopleTab()
     } else if (tab == "Scraper") {
-        Text(
-            text = "Scraper",
-            modifier = Modifier.padding(16.dp)
-        )
+        ScraperTab()
     } else if (tab == "Generator") {
         Text(
             text = "Generator",
