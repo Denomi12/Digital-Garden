@@ -1,0 +1,67 @@
+.pageWrapper {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #f8faf8;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.formHeader {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2e7d32; /* temno zelena */
+  margin-bottom: 25px;
+  text-align: center;
+  user-select: none;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formControl {
+  padding: 14px 18px;
+  font-size: 17px;
+  border: 2px solid #a5d6a7;
+  border-radius: 10px;
+  outline-color: #2e7d32;
+  transition: border-color 0.3s ease;
+  background-color: white;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.formControl::placeholder {
+  color: #81c784;
+  font-weight: 400;
+}
+
+.formControl:focus {
+  border-color: #388e3c;
+  box-shadow: 0 0 6px #388e3c99;
+}
+
+textarea.formControl {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.submitButton {
+  background-color: #4caf50;
+  color: white;
+  font-size: 18px;
+  padding: 14px 0;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #388e3c;
+}
