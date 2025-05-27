@@ -10,6 +10,26 @@ const list = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const listByOwner = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const ownerId = req.params.ownerId;
+
+    if (!ownerId) {
+      res.status(400).json({ message: "Missing owner ID" });
+      return;
+    }
+
+    const gardens = await Garden.find({ owner: ownerId })
+      .populate("owner")
+      .populate({
+        path: "elements.crop",
+      });
+    res.json(gardens);
+  } catch (error) {
+    res.status(500).json({ message: "Error when getting gardens", error });
+  }
+};
+
 const show = async (req: Request, res: Response): Promise<void> => {
   try {
     const garden = await Garden.findById(req.params.id).populate(
@@ -39,7 +59,8 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { name, latitude, longitude, elements } = req.body;
+    const { name, width, height, location, latitude, longitude, elements } =
+      req.body;
 
     if (!name) {
       res.status(400).json({ message: "Name is required" });
@@ -52,7 +73,16 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const garden = new Garden({ name, owner, latitude, longitude, elements });
+    const garden = new Garden({
+      name,
+      owner,
+      width,
+      height,
+      location,
+      latitude,
+      longitude,
+      elements,
+    });
     const savedGarden = await garden.save();
 
     res.status(201).json(savedGarden);
@@ -66,4 +96,5 @@ export default {
   list,
   show,
   create,
+  listByOwner,
 };

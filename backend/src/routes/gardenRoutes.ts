@@ -7,6 +7,7 @@ import { requireAuth } from "../middleware/authMiddleware";
  * GET
  */
 router.get("/", gardenController.list);
+router.get("/ownedBy/:ownerId", gardenController.listByOwner);
 
 /*
  * GET

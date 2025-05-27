@@ -8,6 +8,7 @@ import GardenGrid from "./GardenGrid";
 import { Garden } from "./Types/Garden";
 import { Crop, GardenElement } from "./Types/Elements";
 import CursorFollower from "../CursorFollower";
+import GardenList from "./GardenList";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -15,10 +16,11 @@ function GardenComponent() {
   const [selectedElement, setSelectedElement] = useState<GardenElement>(
     GardenElement.None
   );
-  const [elementImage, setElementImage] = useState<string | null>(null)
-  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null)
+  const [elementImage, setElementImage] = useState<string | null>(null);
+  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+  const [displayGardens, setDisplayGardens] = useState<Boolean>(true);
 
-    useEffect(() => {
+  useEffect(() => {
     switch (selectedElement) {
       case GardenElement.GardenBed:
         setElementImage(`/assets/Greda.png`);
@@ -33,6 +35,10 @@ function GardenComponent() {
         setElementImage(null);
     }
   }, [selectedCrop, selectedElement]);
+
+  useEffect(() => {
+    setDisplayGardens(garden == null);
+  }, [garden]);
 
   const createGarden = () => {
     const widthInput = prompt("Enter the width of the garden:");
@@ -51,7 +57,8 @@ function GardenComponent() {
           null,
           undefined,
           undefined,
-          user?.id
+          undefined,
+          user ? user : undefined
         );
         setGarden(newGarden);
       } else {
@@ -68,6 +75,7 @@ function GardenComponent() {
       garden?.toJson(),
       { withCredentials: true }
     );
+    console.log("Saved garden: ", res);
   }
 
   const handleCellClick = (row: number, col: number) => {
@@ -79,10 +87,11 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
+        garden.elements,
+        garden.location,
         garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner
       )
     );
   };
@@ -95,10 +104,11 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner
       )
     );
   };
@@ -111,10 +121,11 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner
       )
     );
   };
@@ -127,10 +138,11 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner
       )
     );
   };
@@ -143,10 +155,11 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner
       )
     );
   };
@@ -156,12 +169,22 @@ function GardenComponent() {
       <div className={styles.Container}>
         <button onClick={createGarden} className={styles.CreateButton}>
           Create Garden
+          {JSON.stringify(garden)}
         </button>
 
+        {garden ? "jey" : "mey"}
+        <GardenList setGarden={setGarden} />
+
         <div className={styles.MainLayout}>
-          <CursorFollower cropImage={selectedCrop?.imageSrc} elementImage={elementImage}/>
+          <CursorFollower
+            cropImage={selectedCrop?.imageSrc}
+            elementImage={elementImage}
+          />
           <div className={styles.SidePanel}>
-            <ShowCrops selectedCrop={selectedCrop} setSelectedCrop={setSelectedCrop}/>
+            <ShowCrops
+              selectedCrop={selectedCrop}
+              setSelectedCrop={setSelectedCrop}
+            />
           </div>
 
           <div className={styles.GridContainer}>
@@ -177,13 +200,15 @@ function GardenComponent() {
             )}
           </div>
 
-          <div className={styles.SidePanel}>
-            <GardenMenu
-              selectedElement={selectedElement}
-              setSelectedElement={setSelectedElement}
-              saveGarden={saveGarden}
-            />
-          </div>
+          {garden && (
+            <div className={styles.SidePanel}>
+              <GardenMenu
+                selectedElement={selectedElement}
+                setSelectedElement={setSelectedElement}
+                saveGarden={saveGarden}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
