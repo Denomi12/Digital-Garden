@@ -25,25 +25,27 @@ class Scanner (
     private val tLine = 12
     private val tBent_line = 13
     private val tBoundary = 14
-    private val tLbrace = 15
-    private val tRbrace = 16
-    private val tLparen = 17
-    private val tRparen = 18
-    private val tComma = 19
-    private val tColon = 20
-    private val tAssign = 21
-    private val tPlus = 22
-    private val tMinus = 23
-    private val tTimes = 24
-    private val tDivide = 25
-    private val tGt = 26
-    private val tLt = 27
-    private val tGe = 28
-    private val tLe = 29
-    private val tEq = 30
-    private val tNe = 31
-    private val tWhiteSpace = 32
-    private val tComment = 33
+    private val tValidate = 15
+    private val tIn = 16
+    private val tLbrace = 17
+    private val tRbrace = 18
+    private val tLparen = 19
+    private val tRparen = 20
+    private val tComma = 21
+    private val tColon = 22
+    private val tAssign = 23
+    private val tPlus = 24
+    private val tMinus = 25
+    private val tTimes = 26
+    private val tDivide = 27
+    private val tGt = 28
+    private val tLt = 29
+    private val tGe = 30
+    private val tLe = 31
+    private val tEq = 32
+    private val tNe = 33
+    private val tWhiteSpace = 34
+    private val tComment = 35
 
     init {
 
@@ -133,6 +135,7 @@ class Scanner (
         automata[49]['n'.code] = 50
         automata[50]['e'.code] = 51
 
+
         // BOUNDARY
         automata[43]['o'.code] = 52
         automata[52]['u'.code] = 53
@@ -142,60 +145,70 @@ class Scanner (
         automata[56]['r'.code] = 57
         automata[57]['y'.code] = 58
 
+        // VALIDATE
+        automata[10]['l'.code] = 59
+        automata[59]['i'.code] = 60
+        automata[60]['d'.code] = 61
+        automata[61]['a'.code] = 62
+        automata[62]['t'.code] = 63
+        automata[63]['e'.code] = 64
+
+        // IN
+        automata[12]['n'.code] = 65
 
         // SIMBOLI
         // {
-        automata[0]['{'.code] = 59
+        automata[0]['{'.code] = 66
         // }
-        automata[0]['}'.code] = 60
+        automata[0]['}'.code] = 67
         // (
-        automata[0]['('.code] = 61
+        automata[0]['('.code] = 68
         // )
-        automata[0][')'.code] = 62
+        automata[0][')'.code] = 69
         // ,
-        automata[0][','.code] = 63
+        automata[0][','.code] = 70
         // :
-        automata[0][':'.code] = 64
+        automata[0][':'.code] = 71
         // :=
-        automata[64]['='.code] = 65
+        automata[71]['='.code] = 72
         // +
-        automata[0]['+'.code] = 66
+        automata[0]['+'.code] = 73
         // -
-        automata[0]['-'.code] = 67
+        automata[0]['-'.code] = 74
         // *
-        automata[0]['*'.code] = 68
+        automata[0]['*'.code] = 75
         // /
-        automata[0]['/'.code] = 69
+        automata[0]['/'.code] = 76
         // >
-        automata[0]['>'.code] = 70
+        automata[0]['>'.code] = 77
         // >=
-        automata[70]['='.code] = 71
+        automata[77]['='.code] = 78
         // <
-        automata[0]['<'.code] = 72
+        automata[0]['<'.code] = 79
         // <=
-        automata[72]['='.code] = 73
+        automata[79]['='.code] = 80
         // ==
-        automata[0]['='.code] = 74
-        automata[74]['='.code] = 75
+        automata[0]['='.code] = 81
+        automata[81]['='.code] = 82
         // !=
-        automata[0]['!'.code] = 76
-        automata[76]['='.code] = 77
+        automata[0]['!'.code] = 83
+        automata[83]['='.code] = 84
 
         // WHITESPACES
-        automata[0][' '.code] = 78
-        automata[0]['\t'.code] = 78
-        automata[0]['\n'.code] = 78
-        automata[0]['\r'.code] = 78
-        automata[78][' '.code] = 78
-        automata[78]['\t'.code] = 78
-        automata[78]['\n'.code] = 78
-        automata[78]['\r'.code] = 78
+        automata[0][' '.code] = 85
+        automata[0]['\t'.code] = 85
+        automata[0]['\n'.code] = 85
+        automata[0]['\r'.code] = 85
+        automata[85][' '.code] = 85
+        automata[85]['\t'.code] = 85
+        automata[85]['\n'.code] = 85
+        automata[85]['\r'.code] = 85
 
         // KOMENTAR
-        automata[69]['/'.code] = 79
+        automata[76]['/'.code] = 86
         for (i in 0..255) {
             if (i != '\n'.code) {
-                automata[79][i] = 79
+                automata[86][i] = 86
             }
         }
 
@@ -231,25 +244,27 @@ class Scanner (
         finalStates[42] = tLine
         finalStates[51] = tBent_line
         finalStates[58] = tBoundary
-        finalStates[59] = tLbrace
-        finalStates[60] = tRbrace
-        finalStates[61] = tLparen
-        finalStates[62] = tRparen
-        finalStates[63] = tComma
-        finalStates[64] = tColon
-        finalStates[65] = tAssign
-        finalStates[66] = tPlus
-        finalStates[67] = tMinus
-        finalStates[68] = tTimes
-        finalStates[69] = tDivide
-        finalStates[70] = tGt
-        finalStates[71] = tGe
-        finalStates[72] = tLt
-        finalStates[73] = tLe
-        finalStates[75] = tEq
-        finalStates[77] = tNe
-        finalStates[78] = tWhiteSpace
-        finalStates[79] = tComment
+        finalStates[64] = tValidate
+        finalStates[65] = tIn
+        finalStates[66] = tLbrace
+        finalStates[67] = tRbrace
+        finalStates[68] = tLparen
+        finalStates[69] = tRparen
+        finalStates[70] = tComma
+        finalStates[71] = tColon
+        finalStates[72] = tAssign
+        finalStates[73] = tPlus
+        finalStates[74] = tMinus
+        finalStates[75] = tTimes
+        finalStates[76] = tDivide
+        finalStates[77] = tGt
+        finalStates[78] = tGe
+        finalStates[79] = tLt
+        finalStates[80] = tLe
+        finalStates[82] = tEq
+        finalStates[84] = tNe
+        finalStates[85] = tWhiteSpace
+        finalStates[86] = tComment
     }
 
     private fun  identifyLexemType(lexem: String): String {
@@ -267,6 +282,8 @@ class Scanner (
             "line" -> "line"
             "bent_line" -> "bent_line"
             "boundary" -> "boundary"
+            "validate" -> "validate"
+            "in" -> "in"
             "{" -> "lbrace"
             "}" -> "rbrace"
             "(" -> "lparen"
