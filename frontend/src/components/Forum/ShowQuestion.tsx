@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 // import LikeDislikeButton from "./LikeButton.js";
 // import Comments from "./Comments.js";
-import styles from "../../stylesheets/Forum.module.css";
+import styles from "../../stylesheets/ShowQuestion.module.css";
 
 type UserSummary = {
   _id: string;
@@ -38,7 +38,6 @@ function ShowQuestion() {
   }, []);
 
   return (
-    // <div>{id}</div>
     <div className={styles.photoContainer}>
       {question && (
         <div className={styles.photoContent}>

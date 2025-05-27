@@ -5,10 +5,8 @@ import styles from "../../stylesheets/AddQuestion.module.css";
 function AddQuestion() {
   const [title, setTitle] = useState("");
   const [questionMessage, setQuestionMessage] = useState("");
-  const [summary, setSummary] = useState("");
   const [uploaded, setUploaded] = useState(false);
 
-  //
   async function onSubmit(e: any) {
     e.preventDefault();
     if (!title) {
@@ -32,7 +30,6 @@ function AddQuestion() {
         body: JSON.stringify({
           title,
           questionMessage,
-          summary,
         }),
       }
     );
@@ -54,14 +51,6 @@ function AddQuestion() {
           placeholder="Question Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          className={styles.formControl}
-          name="summary"
-          placeholder="Summary"
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
         />
         <textarea
           className={styles.formControl}

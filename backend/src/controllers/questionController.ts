@@ -40,7 +40,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { title, questionMessage, summary } = req.body;
+    const { title, questionMessage } = req.body;
 
     if (!title) {
       res.status(400).json({ message: "Title is required" });
@@ -52,14 +52,8 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (!summary) {
-      res.status(400).json({ message: "Summary is required" });
-      return;
-    }
-
     const question = new Question({
       title: title,
-      summary: summary,
       question: questionMessage,
       likes: 0,
       likedBy: [],
@@ -75,8 +69,14 @@ const create = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const handleLike = async (req: Request, res: Response): Promise<void> => {};
+
+const handleDislike = async (req: Request, res: Response): Promise<void> => {};
+
 export default {
   list,
   create,
   show,
+  handleLike,
+  handleDislike,
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "../../stylesheets/Forum.module.css";
 import Question from "./Question";
 import { useNavigate } from "react-router-dom";
+import Chat from "../Chat/Chat.tsx";
 
 type UserSummary = {
   _id: string;
@@ -40,16 +41,21 @@ function Forum() {
   }
 
   return (
-    <>
-      <button className={styles.addQuestionBtn} onClick={addQuestion}>
-        Ask Question
-      </button>
-      <div className={styles.forumWrapper}>
-        {questions.map((question) => (
-          <Question key={question._id} question={question} />
-        ))}
+    <div className={styles.forum}>
+      <div className={styles.leftSide}>
+        <div className={styles.forumWrapper}>
+          {questions.map((question) => (
+            <Question key={question._id} question={question} />
+          ))}
+        </div>
       </div>
-    </>
+      <div className={styles.rightSide}>
+        <button className={styles.addQuestionBtn} onClick={addQuestion}>
+          + Ask Question
+        </button>
+        <Chat />
+      </div>
+    </div>
   );
 }
 

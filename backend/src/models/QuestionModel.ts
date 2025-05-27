@@ -5,7 +5,6 @@ import { Tile, tileSchema } from "./TileModel";
 export interface QuestionInstance extends Document {
   title: string;
   question: string;
-  summary: string;
   likes: number;
   likedBy: UserInstance[];
   dislikedBy: UserInstance[];
@@ -17,7 +16,6 @@ var questionSchema = new Schema<QuestionInstance>(
   {
     title: { type: String },
     question: { type: String },
-    summary: { type: String },
     likes: { type: Number },
     likedBy: [
       {

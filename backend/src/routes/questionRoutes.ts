@@ -17,5 +17,7 @@ router.get("/:id", questionController.show);
  * POST
  */
 router.post("/", requireAuth, questionController.create);
+router.post("/like/:id", requireAuth, questionController.handleLike);
+router.post("/dislike/:id", requireAuth, questionController.handleDislike);
 
 export default router;

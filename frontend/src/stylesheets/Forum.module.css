@@ -1,39 +1,46 @@
-:root {
-  --primary-green: #4caf50;
-  --hover-green: #388e3c;
-  --text-green: #1a7f3e;
-  --shadow-color: rgba(0, 0, 0, 0.12);
+.forum {
+  display: flex;
+  justify-content: center;
 }
 
-.forumContainer {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+.leftSide {
+  width: 70%;
+  padding-right: 30px;
+}
+
+.rightSide {
+  padding-top: 20px;
+  justify-content: center;
+  width: 20%;
+  position: sticky;
+  top: 0;
+  height: fit-content;
 }
 
 .forumWrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background-color: #f8faf8;
   padding: 20px;
 }
 
 .addQuestionBtn {
+  width: 100%;
   display: block;
+  justify-content: center;
   padding: 10px 15px;
   margin-bottom: 20px;
-  background: var(--primary-green);
+  background: #4caf50;
   color: white;
   font-size: 1.2rem;
   font-weight: 700;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .addQuestionBtn:hover {
-  background-color: var(--hover-green);
+  background-color: #388e3c;
   transform: translateY(-2px);
 }
 

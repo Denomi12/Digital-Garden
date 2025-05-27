@@ -1,24 +1,51 @@
 import { QuestionType } from "./Forum";
 import styles from "../../stylesheets/Question.module.css";
-import { NavLink } from "react-router-dom";
+import LikeDislike from "./LikeDislike";
+// import { NavLink } from "react-router-dom";
 
 type QuestionProps = {
   question: QuestionType;
 };
 
+function timeAgo(date: Date | string): string {
+  const now = new Date();
+  const posted = new Date(date);
+  const diffMs = now.getTime() - posted.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays >= 1) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  if (diffHours >= 1) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffMins >= 1) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+  return "Just now";
+}
+
 function Question({ question }: QuestionProps) {
   return (
-    <NavLink to={`/showQuestion/${question._id}`} className={styles.container}>
-      <h3 className={styles.title}>{question.title}</h3>
-      <p className={styles.summary}>{question.summary}</p>
-      <div className={styles.footer}>
-        <div className={styles.likes}>{question.likes} likes</div>
-        <div className={styles.owner}>
-          Posted By <strong>{question.owner.username}</strong>,{" "}
-          {new Date(question.createdAt).toLocaleDateString("sl-SI")}
+    <div className={styles.container}>
+      <div className={styles.leftSide}>
+        <LikeDislike id={question._id} />
+      </div>
+      <div className={styles.rightSide}>
+        <div className={styles.title}>{question.title}</div>
+        <div className={styles.summary}>{question.question}</div>
+        <hr className={styles.line}></hr>
+        <div className={styles.footer}>
+          <div className={styles.footerLeft}>
+            <div>img</div>
+            <div className={styles.owner}>
+              Posted By <strong>{question.owner.username}</strong>
+            </div>
+            <div>{timeAgo(question.createdAt)}</div>
+          </div>
+          <div className={styles.comments}>
+            <div>LOGO</div>
+            <div>50+</div>
+          </div>
         </div>
       </div>
-    </NavLink>
+    </div>
   );
 }
 
