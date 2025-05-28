@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import ui.AddPersonTab
 import ui.PeopleTab
 import ui.ScraperTab
 
@@ -80,10 +81,7 @@ fun MainSection(tab: String) {
             modifier = Modifier.padding(16.dp)
         )
     } else if (tab == "Add person") {
-        Text(
-            text = "Add person",
-            modifier = Modifier.padding(16.dp)
-        )
+        AddPersonTab()
     } else if (tab == "People") {
         PeopleTab()
     } else if (tab == "Scraper") {

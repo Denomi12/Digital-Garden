@@ -43,4 +43,17 @@ object UserApi {
             response.isSuccessful
         }
     }
+
+    suspend fun createUser(user: User): Boolean = withContext(Dispatchers.IO) {
+        val requestBody = json.encodeToString(user).toRequestBody(JSON_MEDIA_TYPE)
+
+        val request = Request.Builder()
+            .url("http://localhost:3001/user")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            response.isSuccessful
+        }
+    }
 }
