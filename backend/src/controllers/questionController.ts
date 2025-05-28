@@ -5,6 +5,7 @@ const list = async (req: Request, res: Response): Promise<void> => {
   try {
     const questions = await Question.find()
       .populate("owner", "username")
+      .populate("comments")
       .sort({ createdAt: -1 });
     res.json(questions);
   } catch (error) {

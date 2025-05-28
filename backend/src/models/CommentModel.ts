@@ -1,23 +1,19 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import { UserInstance } from "./UserModel";
-import { CommentInstance } from "./CommentModel";
 import { Tile, tileSchema } from "./TileModel";
 
-export interface QuestionInstance extends Document {
-  title: string;
-  question: string;
+export interface CommentInstance extends Document {
+  body: string;
   likes: number;
   likedBy: UserInstance[];
   dislikedBy: UserInstance[];
-  owner: UserInstance;
+  owner: Types.ObjectId | UserInstance;
   createdAt: Date;
-  comments: Types.ObjectId[];
 }
 
-var questionSchema = new Schema<QuestionInstance>(
+var commentSchema = new Schema<CommentInstance>(
   {
-    title: { type: String },
-    question: { type: String },
+    body: { type: String },
     likes: { type: Number },
     likedBy: [
       {
@@ -36,16 +32,10 @@ var questionSchema = new Schema<QuestionInstance>(
       ref: "User",
       required: true,
     },
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "comment",
-      },
-    ],
   },
   { timestamps: true }
 );
 
-const Question = mongoose.model<QuestionInstance>("question", questionSchema);
+const Comment = mongoose.model<CommentInstance>("comment", commentSchema);
 
-export default Question;
+export default Comment;
