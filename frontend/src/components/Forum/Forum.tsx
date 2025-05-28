@@ -4,6 +4,16 @@ import Question from "./Question";
 import { useNavigate } from "react-router-dom";
 import Chat from "../Chat/Chat.tsx";
 
+type CommentType = {
+  _id: string;
+  body: string;
+  owner: {
+    _id: string;
+    username: string;
+  };
+  createdAt: Date;
+};
+
 type UserSummary = {
   _id: string;
   username: string;
@@ -19,6 +29,7 @@ export type QuestionType = {
   likedBy: UserSummary[];
   dislikedBy: UserSummary[];
   createdAt: Date;
+  comments: CommentType[];
 };
 
 function Forum() {
@@ -31,6 +42,7 @@ function Forum() {
         `${import.meta.env.VITE_API_BACKEND_URL}/question`
       );
       const data = await res.json();
+      console.log(data);
       setQuestions(data);
     };
     getPhotos();

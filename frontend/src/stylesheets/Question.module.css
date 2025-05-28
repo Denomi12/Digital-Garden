@@ -2,8 +2,8 @@
   background-color: white;
   border-radius: 16px;
   padding-right: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   border: 1px solid #e8f0e8;
@@ -37,6 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 5px;
 }
 
 .rightSide {
@@ -83,4 +84,20 @@
   align-items: center;
   gap: 6px;
   font-weight: 600;
+}
+
+.commentsSection {
+  margin-top: 20px;
+  padding-top: 12px;
+}
+
+.comment {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.expandedTitle {
+  display: flex;
+  justify-content: space-between;
 }
