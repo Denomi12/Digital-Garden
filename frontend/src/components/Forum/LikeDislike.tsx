@@ -8,18 +8,33 @@ type LikeDislikeProps = {
 
 function LikeDislike({ id }: LikeDislikeProps) {
   const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
+  const [userId, setUserId] = useState("");
 
-  useEffect(function () {
-    const getLikes = async function () {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BACKEND_URL}/question/${id}`
-      );
-      const data = await res.json();
-      console.log(data);
-      setLikes(data.likes);
+  useEffect(() => {
+    const fetchData = async () => {
+      const [questionRes, meRes] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/question/${id}`),
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/user/me`, {
+          credentials: "include",
+        }),
+      ]);
+
+      const questionData = await questionRes.json();
+      const meData = await meRes.json();
+
+      setLikes(questionData.likes);
+      setUserId(meData.user?.id || "");
+
+      if (meData.user) {
+        const uid = meData.user.id;
+        setLiked(questionData.likedBy.includes(uid));
+        setDisliked(questionData.dislikedBy.includes(uid));
+      }
     };
 
-    getLikes();
+    fetchData();
   }, []);
 
   async function handleLike() {
@@ -31,6 +46,8 @@ function LikeDislike({ id }: LikeDislikeProps) {
     if (res.ok) {
       const data = await res.json();
       setLikes(data.likes);
+      setLiked(data.likedBy.includes(userId));
+      setDisliked(data.dislikedBy.includes(userId));
     }
   }
 
@@ -43,16 +60,26 @@ function LikeDislike({ id }: LikeDislikeProps) {
     if (res.ok) {
       const data = await res.json();
       setLikes(data.likes);
+      setLiked(data.likedBy.includes(userId));
+      setDisliked(data.dislikedBy.includes(userId));
     }
   }
 
   return (
     <div className={styles.voteBox}>
-      <button onClick={handleLike} className={styles.arrowButton}>
+      <button
+        onClick={handleLike}
+        className={`${styles.arrowButton} ${liked ? styles.active : ""}`}
+      >
         <FaArrowUp />
       </button>
+
       <div className={styles.likeCount}>{likes}</div>
-      <button onClick={handleDislike} className={styles.arrowButton}>
+
+      <button
+        onClick={handleDislike}
+        className={`${styles.arrowButton} ${disliked ? styles.active : ""}`}
+      >
         <FaArrowDown />
       </button>
     </div>

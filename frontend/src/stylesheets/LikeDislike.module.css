@@ -22,6 +22,10 @@
   color: #1a7f3e;
 }
 
+.arrowButton.active svg:last-child {
+  color: #4caf50;
+}
+
 .likeCount {
   font-weight: bold;
   color: #4caf50;

@@ -29,7 +29,6 @@ var questionSchema = new Schema<QuestionInstance>(
         ref: "User",
       },
     ],
-
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
