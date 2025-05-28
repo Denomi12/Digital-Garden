@@ -168,7 +168,7 @@ data class PotLine(val line: Line) : Pot() {
         "properties": {
             "ime": "Pot",
             "stroke": "#000000",
-            "stroke-width": 4,
+            "stroke-width": 1,
             "stroke-opacity": 1
         },
         "geometry": {
@@ -210,7 +210,7 @@ data class BentLine(val start: Koordinate, val end: Koordinate, val angle: Doubl
     "properties": {
         "ime": "Kriva pot",
         "stroke": "#000000",
-        "stroke-width": 4,
+        "stroke-width": 1,
         "stroke-opacity": 1,
         "kot": $angle
     },
