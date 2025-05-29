@@ -3,6 +3,8 @@ const router = express.Router();
 import commentController from "../controllers/commentController";
 import { requireAuth } from "../middleware/authMiddleware";
 
+router.get("/:id", commentController.show);
+
 /*
  * POST
  */

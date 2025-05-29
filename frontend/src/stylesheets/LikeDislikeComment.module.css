@@ -1,0 +1,33 @@
+.voteBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: #555;
+  user-select: none;
+}
+
+.arrowButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.arrowButton:hover {
+  color: #1a7f3e;
+}
+
+.arrowButton.active svg:last-child {
+  color: #4caf50;
+}
+
+.likeCount {
+  font-weight: bold;
+  color: #4caf50;
+  font-size: 0.9rem;
+}

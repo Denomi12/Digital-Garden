@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import styles from "../../stylesheets/LikeDislike.module.css";
+import styles from "../../stylesheets/LikeDislikeComment.module.css";
 
-type LikeDislikeProps = {
+type LikeDislikeCommentProps = {
   id: string;
+  // likedBy: string[];
+  // dislikedBy: string[];
+  // likes: number;
+  // userId: string;
 };
 
-function LikeDislike({ id }: LikeDislikeProps) {
+function LikeDislikeComment({ id }: LikeDislikeCommentProps) {
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -14,23 +18,23 @@ function LikeDislike({ id }: LikeDislikeProps) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [questionRes, meRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/question/${id}`),
+      const [commentRes, meRes] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/comment/${id}`),
         fetch(`${import.meta.env.VITE_API_BACKEND_URL}/user/me`, {
           credentials: "include",
         }),
       ]);
 
-      const questionData = await questionRes.json();
+      const commentData = await commentRes.json();
       const meData = await meRes.json();
 
-      setLikes(questionData.likes);
+      setLikes(commentData.likes);
       setUserId(meData.user?.id || "");
 
       if (meData.user) {
         const uid = meData.user.id;
-        setLiked(questionData.likedBy.includes(uid));
-        setDisliked(questionData.dislikedBy.includes(uid));
+        setLiked(commentData.likedBy.includes(uid));
+        setDisliked(commentData.dislikedBy.includes(uid));
       }
     };
 
@@ -39,7 +43,7 @@ function LikeDislike({ id }: LikeDislikeProps) {
 
   async function handleLike() {
     const res = await fetch(
-      `${import.meta.env.VITE_API_BACKEND_URL}/question/like/${id}`,
+      `${import.meta.env.VITE_API_BACKEND_URL}/comment/like/${id}`,
       {
         method: "POST",
         credentials: "include",
@@ -56,7 +60,7 @@ function LikeDislike({ id }: LikeDislikeProps) {
 
   async function handleDislike() {
     const res = await fetch(
-      `${import.meta.env.VITE_API_BACKEND_URL}/question/dislike/${id}`,
+      `${import.meta.env.VITE_API_BACKEND_URL}/comment/dislike/${id}`,
       {
         method: "POST",
         credentials: "include",
@@ -92,4 +96,4 @@ function LikeDislike({ id }: LikeDislikeProps) {
   );
 }
 
-export default LikeDislike;
+export default LikeDislikeComment;
