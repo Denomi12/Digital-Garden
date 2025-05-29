@@ -19,7 +19,7 @@ import androidx.compose.ui.window.application
 import ui.AddPersonTab
 import ui.PeopleTab
 import ui.ScraperTab
-
+import ui.CropsTab
 
 @Composable
 fun MenuRow(label: String, icon: ImageVector, onClick: () -> Unit) {
@@ -50,13 +50,22 @@ fun SideBar(setTab: (String) -> Unit) {
             MenuRow("People", Icons.Rounded.List) { setTab("People") }
         }
 
-
         Divider(
             color = Color.Gray,
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth()
         )
 
+        Column {
+            MenuRow("Add crop", Icons.Rounded.Add) { setTab("Add crop") }
+            MenuRow("Crops", Icons.Rounded.List) { setTab("Crops") }
+        }
+
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Column {
             MenuRow("Scraper", Icons.Rounded.Share) { setTab("Scraper") }
@@ -84,6 +93,8 @@ fun MainSection(tab: String) {
         AddPersonTab()
     } else if (tab == "People") {
         PeopleTab()
+    } else if (tab == "Crops") {
+        CropsTab()
     } else if (tab == "Scraper") {
         ScraperTab()
     } else if (tab == "Generator") {
