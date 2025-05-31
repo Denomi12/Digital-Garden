@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "../../stylesheets/GardenGrid.module.css";
 import { Tile } from "./Types/Elements";
 
@@ -16,7 +15,11 @@ export default function GardenCell({
   handleCellClick,
 }: GardenCellProps) {
   return (
-    <div className={styles.GardenCell} onClick={() => handleCellClick(y, x)}>
+    <div
+      className={styles.GardenCell}
+      onClick={() => handleCellClick(y, x)}
+      style={{ backgroundColor: cell.color || "transparent" }}
+    >
       {/* Background Image (e.g., garden element) */}
       {cell.imageSrc && (
         <img src={cell.imageSrc} alt={cell.type} className={styles.CellImage} />
