@@ -1,6 +1,7 @@
+import { useContext } from "react";
 import styles from "../../stylesheets/GardenMenu.module.css";
 import { GardenElement } from "./Types/Elements";
-
+import { UserContext } from "../../UserContext";
 
 // Določimo tip za setSelectedTool kot funkcijo, ki sprejme string
 type GardenMenuProps = {
@@ -19,6 +20,7 @@ const GardenMenu = ({
     GardenElement.Path,
     GardenElement.RaisedBed,
   ];
+  const { user } = useContext(UserContext);
 
   return (
     <div className={styles.GardenMenu}>
@@ -37,9 +39,13 @@ const GardenMenu = ({
           {element}
         </button>
       ))}
-      <button className={styles.MenuButton} onClick={saveGarden}>
-        Save garden
-      </button>
+      {user ? (
+        <button className={styles.MenuButton} onClick={saveGarden}>
+          Save garden
+        </button>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

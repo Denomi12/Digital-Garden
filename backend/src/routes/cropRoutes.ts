@@ -13,4 +13,6 @@ router.get("/", cropController.list);
  */
 router.post("/", cropController.create);
 
+router.put("/:id", cropController.update);
+
 export default router;
