@@ -48,4 +48,22 @@ object CropApi {
         }
     }
 
+    suspend fun createCrop(crop: Crop): Boolean = withContext(Dispatchers.IO) {
+        val requestBody = json.encodeToString(crop).toRequestBody(JSON_MEDIA_TYPE)
+
+        val request = Request.Builder()
+            .url("http://localhost:3001/crop")
+            .post(requestBody)
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                val errorBody = response.body?.string() ?: "No error body"
+                throw Exception("Failed to create crop: ${response.code} - $errorBody")
+            }
+            true
+        }
+    }
+
 }

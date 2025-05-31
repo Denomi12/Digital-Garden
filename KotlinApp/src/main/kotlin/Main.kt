@@ -16,10 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import ui.AddPersonTab
-import ui.PeopleTab
-import ui.ScraperTab
-import ui.CropsTab
+import api.CropApi
+import kotlinx.coroutines.launch
+import models.Crop
+import ui.*
 
 @Composable
 fun MenuRow(label: String, icon: ImageVector, onClick: () -> Unit) {
@@ -83,7 +83,7 @@ fun SideBar(setTab: (String) -> Unit) {
 
 @Composable
 @Preview
-fun MainSection(tab: String) {
+fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
     if (tab == "Home") {
         Text(
             text = "Home",
@@ -93,6 +93,8 @@ fun MainSection(tab: String) {
         AddPersonTab()
     } else if (tab == "People") {
         PeopleTab()
+    } else if (tab == "Add crop" ) {
+        AddCropTab(allCrops = allCrops, onCropAdded = onCropsUpdated)
     } else if (tab == "Crops") {
         CropsTab()
     } else if (tab == "Scraper") {
@@ -114,6 +116,23 @@ fun MainSection(tab: String) {
 @Preview
 fun App() {
     var tab by remember { mutableStateOf("Home") }
+    var allCrops by remember { mutableStateOf<List<Crop>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    fun loadAllCrops() {
+        coroutineScope.launch {
+            try {
+                allCrops = CropApi.getCrops()
+                println("Crops loaded in App: ${allCrops.size} items")
+            } catch (e: Exception) {
+                println("Error loading all crops in App: ${e.message}")
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        loadAllCrops()
+    }
 
     Row(
         modifier = Modifier
@@ -138,7 +157,7 @@ fun App() {
                 .padding(start = 8.dp),
             shape = RoundedCornerShape(4.dp),
         ) {
-            MainSection(tab = tab)
+            MainSection(tab = tab, allCrops = allCrops, onCropsUpdated = { loadAllCrops() })
         }
     }
 }

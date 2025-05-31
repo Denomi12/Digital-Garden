@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import api.CropApi
 import kotlinx.coroutines.launch
+import models.CompanionCrop
 import models.Crop
 
 @Composable
@@ -25,7 +28,7 @@ fun CropsTab() {
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var expandedCropId by remember { mutableStateOf<String?>(null) }
-    var showSuccess by remember { mutableStateOf(false) }  // Dodajmo success sporočilo
+    var showSuccess by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     fun loadCrops() {
@@ -77,6 +80,8 @@ fun CropsTab() {
                 items(crops) { crop ->
                     CropCardExpandable(
                         crop = crop,
+                        // posredujem seznam vseh rastlin, da jih lahko izberem kot sosede
+                        allCrops = crops,
                         isExpanded = expandedCropId == crop._id,
                         onClick = {
                             expandedCropId = if (expandedCropId == crop._id) null else crop._id
@@ -89,7 +94,7 @@ fun CropsTab() {
                                 try {
                                     if (CropApi.updateCrop(updatedCrop)) {
                                         showSuccess = true
-                                        loadCrops()  // Ponovno naložimo podatke iz baze
+                                        loadCrops()
                                     }
                                 } catch (e: Exception) {
                                     error = "Error saving crop: ${e.message}"
@@ -105,9 +110,11 @@ fun CropsTab() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CropCardExpandable(
     crop: Crop,
+    allCrops: List<Crop>,
     isExpanded: Boolean,
     onClick: () -> Unit,
     onSave: (Crop) -> Unit
@@ -117,6 +124,23 @@ fun CropCardExpandable(
     var plantingMonth by remember { mutableStateOf(crop.plantingMonth) }
     var wateringFrequency by remember { mutableStateOf(crop.watering.frequency) }
     var wateringAmount by remember { mutableStateOf(crop.watering.amount.toString()) }
+
+    var goodCompanionsState by remember { mutableStateOf(crop.goodCompanions.toMutableList()) }
+    var badCompanionsState by remember { mutableStateOf(crop.badCompanions.toMutableList()) }
+
+    val plantingMonths = listOf(
+        "Januar", "Februar", "Marec", "April", "Maj", "Junij",
+        "Julij", "Avgust", "September", "Oktober", "November", "December"
+    )
+    var plantingMonthExpanded by remember { mutableStateOf(false) }
+
+    val wateringFrequencies = listOf(
+        "Vsak dan", "1-krat na teden", "2-krat na teden", "redko"
+    )
+    var wateringFrequencyExpanded by remember { mutableStateOf(false) }
+
+    var showGoodCompanionPicker by remember { mutableStateOf(false) }
+    var showBadCompanionPicker by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -149,49 +173,212 @@ fun CropCardExpandable(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = plantingMonth,
-                    onValueChange = { plantingMonth = it },
-                    label = { Text("Planting Month") },
+
+                ExposedDropdownMenuBox(
+                    expanded = plantingMonthExpanded,
+                    onExpandedChange = { plantingMonthExpanded = !plantingMonthExpanded },
                     modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row {
+                ) {
                     OutlinedTextField(
-                        value = wateringFrequency,
-                        onValueChange = { wateringFrequency = it },
-                        label = { Text("Watering Frequency") },
-                        modifier = Modifier.weight(1f)
+                        value = plantingMonth,
+                        onValueChange = { },
+                        readOnly = true,
+                        label = { Text("Planting Month") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = plantingMonthExpanded)
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    ExposedDropdownMenu(
+                        expanded = plantingMonthExpanded,
+                        onDismissRequest = { plantingMonthExpanded = false }
+                    ) {
+                        plantingMonths.forEach { month ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    plantingMonth = month
+                                    plantingMonthExpanded = false
+                                }
+                            ) {
+                                Text(month)
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row {
+                    ExposedDropdownMenuBox(
+                        expanded = wateringFrequencyExpanded,
+                        onExpandedChange = { wateringFrequencyExpanded = !wateringFrequencyExpanded },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        OutlinedTextField(
+                            value = wateringFrequency,
+                            onValueChange = { },
+                            readOnly = true,
+                            label = { Text("Watering Frequency") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = wateringFrequencyExpanded)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = wateringFrequencyExpanded,
+                            onDismissRequest = { wateringFrequencyExpanded = false }
+                        ) {
+                            wateringFrequencies.forEach { frequency ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        wateringFrequency = frequency
+                                        wateringFrequencyExpanded = false
+                                    }
+                                ) {
+                                    Text(frequency)
+                                }
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
                         value = wateringAmount,
-                        onValueChange = { wateringAmount = it },
+                        onValueChange = { newValue ->
+                            if (newValue.all { it.isDigit() || it == '.' }) {
+                                wateringAmount = newValue
+                            }
+                        },
                         label = { Text("Watering Amount") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f)
                     )
                 }
 
-                // Display companions if they exist
-                if (crop.goodCompanions.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Good Companions:", style = MaterialTheme.typography.subtitle2)
-                    Column {
-                        crop.goodCompanions.forEach { companion ->
+                Spacer(modifier = Modifier.height(16.dp))
+                // Urejanje dobrih sosedov
+                Text("Good Companions:", style = MaterialTheme.typography.subtitle2)
+                Column {
+                    goodCompanionsState.forEach { companion ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("- ${companion.name} (${companion.latinName})")
+                            IconButton(
+                                onClick = {
+                                    goodCompanionsState = goodCompanionsState.toMutableList().apply { remove(companion) }
+                                }
+                            ) {
+                                Icon(Icons.Default.Delete, contentDescription = "Remove good companion")
+                            }
                         }
+                    }
+                    Button(
+                        onClick = { showGoodCompanionPicker = true },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add good companion")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Add Good Companion")
                     }
                 }
 
-                if (crop.badCompanions.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Bad Companions:", style = MaterialTheme.typography.subtitle2)
-                    Column {
-                        crop.badCompanions.forEach { companion ->
+                if (showGoodCompanionPicker) {
+                    AlertDialog(
+                        onDismissRequest = { showGoodCompanionPicker = false },
+                        title = { Text("Select Good Companion") },
+                        text = {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(1),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                items(allCrops.filter {
+                                    it._id != crop._id && // Ne more biti sam sebi sosed
+                                            !goodCompanionsState.any { gc -> gc._id == it._id } && // Še ni dober sosed
+                                            !badCompanionsState.any { bc -> bc._id == it._id } // Ni slab sosed
+                                }) { availableCrop ->
+                                    Text(
+                                        "${availableCrop.name} (${availableCrop.latinName})",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                goodCompanionsState = goodCompanionsState.toMutableList().apply {
+                                                    add(CompanionCrop(_id = availableCrop._id, name = availableCrop.name, latinName = availableCrop.latinName))
+                                                }
+                                                showGoodCompanionPicker = false
+                                            }
+                                            .padding(8.dp)
+                                    )
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = { showGoodCompanionPicker = false }) {
+                                Text("Close")
+                            }
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                // Urejanje slabih sosedov
+                Text("Bad Companions:", style = MaterialTheme.typography.subtitle2)
+                Column {
+                    badCompanionsState.forEach { companion ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("- ${companion.name} (${companion.latinName})")
+                            IconButton(
+                                onClick = {
+                                    badCompanionsState = badCompanionsState.toMutableList().apply { remove(companion) }
+                                }
+                            ) {
+                                Icon(Icons.Default.Delete, contentDescription = "Remove bad companion")
+                            }
                         }
                     }
+                    Button(
+                        onClick = { showBadCompanionPicker = true },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add bad companion")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Add Bad Companion")
+                    }
+                }
+
+                if (showBadCompanionPicker) {
+                    AlertDialog(
+                        onDismissRequest = { showBadCompanionPicker = false },
+                        title = { Text("Select Bad Companion") },
+                        text = {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(1),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                items(allCrops.filter {
+                                    it._id != crop._id &&
+                                            !badCompanionsState.any { bc -> bc._id == it._id } &&
+                                            !goodCompanionsState.any { gc -> gc._id == it._id }
+                                }) { availableCrop ->
+                                    Text(
+                                        "${availableCrop.name} (${availableCrop.latinName})",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                badCompanionsState = badCompanionsState.toMutableList().apply {
+                                                    add(CompanionCrop(_id = availableCrop._id, name = availableCrop.name, latinName = availableCrop.latinName))
+                                                }
+                                                showBadCompanionPicker = false
+                                            }
+                                            .padding(8.dp)
+                                    )
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = { showBadCompanionPicker = false }) {
+                                Text("Close")
+                            }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -209,7 +396,9 @@ fun CropCardExpandable(
                             watering = crop.watering.copy(
                                 frequency = wateringFrequency,
                                 amount = amount
-                            )
+                            ),
+                            goodCompanions = goodCompanionsState,
+                            badCompanions = badCompanionsState
                         ))
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
