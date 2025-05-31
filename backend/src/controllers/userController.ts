@@ -111,6 +111,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
         httpOnly: true,
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
+        path: "/",
       })
       .json({ user: userWithoutPassword });
   } catch (error) {
@@ -124,10 +125,7 @@ const logout = async (req: Request, res: Response): Promise<void> => {
     .clearCookie("token", {
       httpOnly: true,
       sameSite: "strict",
-    })
-    .clearCookie("refreshToken", {
-      httpOnly: true,
-      sameSite: "strict",
+      path: "/",
     })
     .status(200)
     .json({ message: "Logged out successfully" });
