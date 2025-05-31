@@ -20,32 +20,31 @@ export default function GardenGrid({
 }: GardenGridProps) {
   return (
     <div className={styles.GardenWrapper}>
+      <button
+        className={`${styles.PlusButton} ${styles.PlusTop}`}
+        onClick={onTopClick}
+      >
+        +
+      </button>
+      <button
+        className={`${styles.PlusButton} ${styles.PlusBottom}`}
+        onClick={onBottomClick}
+      >
+        +
+      </button>
+      <button
+        className={`${styles.PlusButton} ${styles.PlusLeft}`}
+        onClick={onLeftClick}
+      >
+        +
+      </button>
+      <button
+        className={`${styles.PlusButton} ${styles.PlusRight}`}
+        onClick={onRightClick}
+      >
+        +
+      </button>
       <div className={styles.GardenGrid}>
-        <button
-          className={`${styles.PlusButton} ${styles.PlusTop}`}
-          onClick={onTopClick}
-        >
-          +
-        </button>
-        <button
-          className={`${styles.PlusButton} ${styles.PlusBottom}`}
-          onClick={onBottomClick}
-        >
-          +
-        </button>
-        <button
-          className={`${styles.PlusButton} ${styles.PlusLeft}`}
-          onClick={onLeftClick}
-        >
-          +
-        </button>
-        <button
-          className={`${styles.PlusButton} ${styles.PlusRight}`}
-          onClick={onRightClick}
-        >
-          +
-        </button>
-
         <div className={styles.ElementsGrid}>
           {garden.elements.map((row, rowIndex) => (
             <div key={rowIndex} className={styles.GridRow}>

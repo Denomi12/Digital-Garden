@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Crop } from "./Types/Elements";
+import styles from "../../stylesheets/ShowCrops.module.css"
 
 type ShowCropsProps = {
   selectedCrop: Crop | null;
@@ -28,7 +29,7 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
   if (!crops) return <div>Loading crops...</div>;
 
   return (
-    <div>
+    <div className={styles.CropsPannel}>
       <h2>Crops</h2>
       <ul>
         {crops.map((crop, index) => (
