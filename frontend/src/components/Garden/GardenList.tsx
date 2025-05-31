@@ -38,7 +38,8 @@ function GardenList({ setGarden }: GardenListProps) {
       selectedGarden.location,
       selectedGarden.latitude,
       selectedGarden.longitude,
-      selectedGarden.owner
+      selectedGarden.owner,
+      selectedGarden.id
     );
 
     console.log("Before: ", newGarden);

@@ -10,6 +10,7 @@ export class Garden {
   latitude?: number;
   longitude?: number;
   owner?: User;
+  id?: string;
 
   private createTile(x: number, y: number): Tile {
     return { x, y, type: GardenElement.None, color: undefined };
@@ -24,7 +25,8 @@ export class Garden {
     latitude?: number,
     longitude?: number,
 
-    owner?: User
+    owner?: User,
+    id?: string,
   ) {
     this.width = width;
     this.height = height;
@@ -33,7 +35,7 @@ export class Garden {
     this.latitude = latitude;
     this.longitude = longitude;
     this.owner = owner;
-
+    this.id = id;
     if (elements) {
       this.elements = elements.map((row) =>
         row.map((cell) => ({
@@ -50,6 +52,7 @@ export class Garden {
 
   toJson() {
     return {
+      id: this.id,
       name: this.name,
       owner: this.owner,
       width: this.width,

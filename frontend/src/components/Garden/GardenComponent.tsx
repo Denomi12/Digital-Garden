@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import GardenMenu from "./GardenMenu";
 import styles from "../../stylesheets/GardenComponent.module.css";
-import axios from "axios";
+import axios, { getAdapter } from "axios";
 import { UserContext } from "../../UserContext";
 import ShowCrops from "./ShowCrops";
 import GardenGrid from "./GardenGrid";
@@ -18,7 +18,6 @@ function GardenComponent() {
   );
   const [elementImage, setElementImage] = useState<string | null>(null);
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
-  const [displayGardens, setDisplayGardens] = useState<Boolean>(true);
 
   useEffect(() => {
     switch (selectedElement) {
@@ -35,10 +34,6 @@ function GardenComponent() {
         setElementImage(null);
     }
   }, [selectedCrop, selectedElement]);
-
-  useEffect(() => {
-    setDisplayGardens(garden == null);
-  }, [garden]);
 
   const createGarden = () => {
     const widthInput = prompt("Enter the width of the garden:");
@@ -91,7 +86,8 @@ function GardenComponent() {
         garden.location,
         garden.latitude,
         garden.longitude,
-        garden.owner
+        garden.owner,
+        garden.id
       )
     );
   };
@@ -108,7 +104,8 @@ function GardenComponent() {
         garden.location,
         garden.latitude,
         garden.longitude,
-        garden.owner
+        garden.owner,
+        garden.id
       )
     );
   };
@@ -125,7 +122,8 @@ function GardenComponent() {
         garden.location,
         garden.latitude,
         garden.longitude,
-        garden.owner
+        garden.owner,
+        garden.id
       )
     );
   };
@@ -142,7 +140,8 @@ function GardenComponent() {
         garden.location,
         garden.latitude,
         garden.longitude,
-        garden.owner
+        garden.owner,
+        garden.id
       )
     );
   };
@@ -159,7 +158,8 @@ function GardenComponent() {
         garden.location,
         garden.latitude,
         garden.longitude,
-        garden.owner
+        garden.owner,
+        garden.id
       )
     );
   };
