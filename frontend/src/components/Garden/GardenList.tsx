@@ -39,7 +39,7 @@ function GardenList({ setGarden }: GardenListProps) {
       selectedGarden.latitude,
       selectedGarden.longitude,
       selectedGarden.owner,
-      selectedGarden.id
+      selectedGarden._id
     );
 
     console.log("Before: ", newGarden);
@@ -73,7 +73,7 @@ function GardenList({ setGarden }: GardenListProps) {
   if (!gardens) return <div>Loading gardens...</div>;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.listContainer}>
       <h2 className={styles.title}>My Gardens</h2>
       <div className={styles.gardensContainer}>
         {gardens.map((garden, index) => (
