@@ -47,7 +47,7 @@ export default function GardenGrid({
         </button>
 
         <div className={styles.ElementsGrid}>
-          {garden.grid.map((row, rowIndex) => (
+          {garden.elements.map((row, rowIndex) => (
             <div key={rowIndex} className={styles.GridRow}>
               {row.map((cell, colIndex) => (
                 <span key={`${rowIndex}-${colIndex}`}>

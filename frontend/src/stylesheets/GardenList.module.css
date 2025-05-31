@@ -1,0 +1,44 @@
+.container {
+  position: relative;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gardensContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+}
+
+.gardenCard {
+  background: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 10rem;
+}
+
+.gardenName {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.gardenOwner {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.gardenLocation {
+  color: #444;
+  font-size: 0.95rem;
+}
