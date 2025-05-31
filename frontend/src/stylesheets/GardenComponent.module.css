@@ -50,7 +50,7 @@
 .SidePanel {
   flex: 0 0 auto;
   max-height: 80vh;
-  max-width: 400px;
+  max-width: 20%;
   overflow-y: auto;
   background-color: #f3f3f3;
   border-radius: 8px;

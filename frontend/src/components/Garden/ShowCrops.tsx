@@ -34,7 +34,7 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
       <ul className={styles.CropsList}>
         {crops.map((crop, index) => (
           <li key={index} className={styles.CropItem}>
-            <img src={crop.imageSrc} alt={crop.name} />
+            {crop.imageSrc && <img src={crop.imageSrc} alt={crop.name} />}
             <strong>{crop.name}</strong> (<em>{crop.latinName}</em>)<br />
             <strong>Planting Month:</strong> {crop.plantingMonth}
             <br />
