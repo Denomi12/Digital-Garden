@@ -65,14 +65,32 @@ function GardenComponent() {
   };
 
   async function saveGarden() {
-    console.log("Trying to save: ", garden?.toJson());
+    const data = garden?.toJson();
 
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_BACKEND_URL}/garden`,
-      garden?.toJson(),
-      { withCredentials: true }
-    );
-    console.log("Saved garden: ", res);
+    if (!data) {
+      console.error("No garden data to save.");
+      return;
+    }
+
+    console.log("Trying to save: ", data);
+
+    const url = data._id
+      ? `${import.meta.env.VITE_API_BACKEND_URL}/garden/${data._id}`
+      : `${import.meta.env.VITE_API_BACKEND_URL}/garden`;
+
+    const method = data._id ? "put" : "post";
+
+    try {
+      const res = await axios({
+        method,
+        url,
+        data,
+        withCredentials: true,
+      });
+      console.log("Saved garden: ", res.data);
+    } catch (error) {
+      console.error("Error saving garden:", error);
+    }
   }
 
   const handleCellClick = (row: number, col: number) => {

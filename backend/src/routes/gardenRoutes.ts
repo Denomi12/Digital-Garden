@@ -19,4 +19,10 @@ router.get("/:id", gardenController.show);
  */
 router.post("/", requireAuth, gardenController.create);
 
+/*
+ * PUT
+ */
+router.put("/:id", requireAuth, gardenController.update);
+
+
 export default router;

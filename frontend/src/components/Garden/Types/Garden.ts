@@ -1,4 +1,5 @@
 import { User } from "../../../types/User";
+import { isValidDate } from "../../../utils/helpers";
 import { Tile, GardenElement, Crop } from "./Elements";
 
 export class Garden {
@@ -68,9 +69,12 @@ export class Garden {
           y: tile.y,
           type: tile.type,
           crop: tile.crop,
-          plantedDate: tile.plantedDate?.toISOString(),
-          wateredDate: tile.wateredDate?.toISOString(),
-
+          plantedDate: isValidDate(tile.plantedDate)
+          ? new Date(tile.plantedDate).toISOString()
+          : tile.plantedDate ?? null,
+        wateredDate: isValidDate(tile.wateredDate)
+          ? new Date(tile.wateredDate).toISOString()
+          : tile.wateredDate ?? null,
         })),
     };
   }
