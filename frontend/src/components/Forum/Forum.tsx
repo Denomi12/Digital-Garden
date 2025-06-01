@@ -4,13 +4,10 @@ import Question from "./Question";
 import { useNavigate } from "react-router-dom";
 import Chat from "../Chat/Chat.tsx";
 
-type CommentType = {
+export type CommentType = {
   _id: string;
   body: string;
-  owner: {
-    _id: string;
-    username: string;
-  };
+  owner: UserSummary;
   createdAt: Date;
 };
 

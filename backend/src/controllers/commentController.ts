@@ -3,6 +3,22 @@ import { Types } from "mongoose";
 import Comment, { CommentInstance } from "../models/CommentModel";
 import Question from "../models/QuestionModel";
 
+const show = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const comment = await Comment.findById(req.params.id).populate(
+      "owner",
+      "username"
+    );
+    if (!comment) {
+      res.status(404).json({ message: "No such comment99" });
+      return;
+    }
+    res.json(comment);
+  } catch (error) {
+    res.status(500).json({ message: "Error when getting comment", error });
+  }
+};
+
 const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const owner = res.locals.user?.id;
@@ -47,6 +63,8 @@ const create = async (req: Request, res: Response): Promise<void> => {
     question.comments.push(savedComment._id);
 
     await question.save();
+
+    // await comment.populate("owner", "username");
 
     res.status(201).json(savedComment);
   } catch (error: any) {
@@ -150,6 +168,7 @@ const handleDislike = async (req: Request, res: Response): Promise<void> => {
 };
 
 export default {
+  show,
   create,
   handleLike,
   handleDislike,

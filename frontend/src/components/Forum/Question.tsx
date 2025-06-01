@@ -2,7 +2,7 @@ import { QuestionType } from "./Forum";
 import { useState } from "react";
 import styles from "../../stylesheets/Question.module.css";
 import LikeDislike from "./LikeDislike";
-// import { NavLink } from "react-router-dom";
+import Comment from "./Comment";
 
 type QuestionProps = {
   question: QuestionType;
@@ -24,25 +24,71 @@ function timeAgo(date: Date | string): string {
 
 function Question({ question }: QuestionProps) {
   const [expanded, setExpanded] = useState(false);
+  const [newComment, setNewComment] = useState<string>("");
+  const [comments, setComments] = useState(question.comments);
+  const [error, setError] = useState<string | null>(null);
+
+  async function addComment() {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BACKEND_URL}/comment/${question._id}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            body: newComment,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      console.log(data.owner.username);
+
+      if (data._id) {
+        setComments((prev) => [...prev, data]);
+        setNewComment("");
+        setError(null);
+      } else {
+        setError("Adding a comment failed.");
+      }
+    } catch (err) {
+      setError("Server error: Could not add comment.");
+    }
+  }
 
   return (
     <div className={styles.container}>
       <div className={styles.leftSide}>
         <LikeDislike id={question._id} />
       </div>
-      <div
-        className={styles.rightSide}
-        onClick={() => setExpanded(!expanded)}
-        style={{ cursor: "pointer" }}
-      >
+      <div className={styles.rightSide}>
         {expanded && (
-          <div className={styles.expandedTitle}>
+          <div
+            className={styles.expandedTitle}
+            onClick={() => setExpanded(!expanded)}
+            style={{ cursor: "pointer" }}
+          >
             <div className={styles.title}>{question.title}</div>
             <div>img</div>
           </div>
         )}
-        {!expanded && <div className={styles.title}>{question.title}</div>}
-        <div className={styles.summary}>{question.question}</div>
+        {!expanded && (
+          <div
+            className={styles.title}
+            onClick={() => setExpanded(!expanded)}
+            style={{ cursor: "pointer" }}
+          >
+            {question.title}
+          </div>
+        )}
+        <div
+          className={styles.summary}
+          onClick={() => setExpanded(!expanded)}
+          style={{ cursor: "pointer" }}
+        >
+          {question.question}
+        </div>
 
         <hr className={styles.line}></hr>
         {!expanded && (
@@ -63,15 +109,36 @@ function Question({ question }: QuestionProps) {
         )}
 
         {expanded && (
-          <div className={styles.commentsSection}>
-            {question.comments.length === 0 && <div>No comments yet.</div>}
-            {question.comments.map((comment) => (
-              <div key={comment._id} className={styles.comment}>
-                <p>{comment.body}</p>
-                <small>By {comment.owner.username}</small>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className={styles.commentsSection}>
+              {comments.length === 0 && <div>No comments yet.</div>}
+              {comments.map((comment, index) => (
+                <Comment key={comment._id || index} commentId={comment._id} />
+              ))}
+            </div>
+
+            <form
+              className={styles.commentForm}
+              onSubmit={(e) => {
+                e.preventDefault();
+                addComment();
+              }}
+            >
+              <input
+                type="text"
+                className={styles.commentInput}
+                placeholder="Add a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                required
+              />
+              <button type="submit" className={styles.commentButton}>
+                Add Comment
+              </button>
+            </form>
+
+            {error && <div className={styles.error}>{error}</div>}
+          </>
         )}
       </div>
     </div>
