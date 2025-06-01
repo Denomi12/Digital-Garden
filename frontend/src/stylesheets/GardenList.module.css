@@ -1,46 +1,44 @@
 .listContainer {
-  position: relative;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 5rem 0;
+  padding: 2rem;
+  background-color: #f9f9f9; /* Light background restored */
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  max-width: 90%;
 }
 
 .gardensContainer {
   display: flex;
-  justify-content: space-around;
   flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start; /* aligns to the left like a row */
 }
 
-.title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #2e7d32;
-}
-
+/* Optional: constrain card widths and allow responsive wrapping */
 .gardenCard {
-  background: white;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  flex: 1 1 250px; /* grow, shrink, basis */
+  max-width: 300px;
+  min-width: 220px;
+  background: #ffffff;
+  padding: 1.25rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  width: 10rem;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
-.gardenName {
+.gardenCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.CreateButton {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
   font-weight: bold;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.gardenOwner {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.gardenLocation {
-  color: #444;
-  font-size: 0.95rem;
+  margin: 2rem 0 0 0;
+  cursor: pointer;
 }

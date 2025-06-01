@@ -1,32 +1,16 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../UserContext";
 import { Garden } from "./Types/Garden";
 import styles from "../../stylesheets/GardenList.module.css";
 import { GardenElement } from "./Types/Elements";
+import { useContext } from "react";
+import { UserContext } from "../../UserContext";
 
 type GardenListProps = {
   setGarden: (garden: Garden | null) => void;
+  gardens: Garden[];
 };
 
-function GardenList({ setGarden }: GardenListProps) {
-  const [gardens, setGardens] = useState<Garden[]>([]);
+function GardenList({ setGarden, gardens }: GardenListProps) {
   const { user } = useContext(UserContext);
-
-  async function fetchUserGardens() {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`
-      );
-      setGardens(res.data);
-    } catch (error) {
-      console.error("Error fetching crops:", error);
-    }
-  }
-
-  useEffect(() => {
-    if (user?.id) fetchUserGardens();
-  }, []);
 
   function setSelectedGarden(selectedGarden: Garden) {
     console.log(selectedGarden);
@@ -70,6 +54,35 @@ function GardenList({ setGarden }: GardenListProps) {
     setGarden(newGarden);
   }
 
+  const createGarden = () => {
+      const widthInput = prompt("Enter the width of the garden:");
+      const heightInput = prompt("Enter the height of the garden:");
+      const nameInput = prompt("Enter garden name:");
+
+      if (widthInput && heightInput) {
+        const w = parseInt(widthInput, 10);
+        const h = parseInt(heightInput, 10);
+
+        if (!isNaN(w) && !isNaN(h) && nameInput) {
+          const newGarden = new Garden(
+            w,
+            h,
+            nameInput,
+            null,
+            undefined,
+            undefined,
+            undefined,
+            user ? user : undefined
+          );
+          setGarden(newGarden);
+        } else {
+          alert("Please enter valid numbers for both width and height.");
+        }
+      } else {
+        alert("Please enter both width and height.");
+      }
+    };
+
   if (!gardens) return <div>Loading gardens...</div>;
 
   return (
@@ -92,6 +105,9 @@ function GardenList({ setGarden }: GardenListProps) {
           </div>
         ))}
       </div>
+      <button onClick={createGarden} className={styles.CreateButton}>
+        Create Garden
+      </button>
     </div>
   );
 }
