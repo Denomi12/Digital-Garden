@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import GardenMenu from "./GardenMenu";
 import styles from "../../stylesheets/GardenComponent.module.css";
 import axios from "axios";
@@ -13,11 +13,36 @@ import GardenList from "./GardenList";
 function GardenComponent() {
   const { user } = useContext(UserContext);
   const [garden, setGarden] = useState<Garden | null>(null);
+  const [gardens, setGardens] = useState<Garden[]>([]);
   const [selectedElement, setSelectedElement] = useState<GardenElement>(
     GardenElement.None
   );
   const [elementImage, setElementImage] = useState<string | null>(null);
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+  const gardenGridRef = useRef<HTMLDivElement>(null);
+
+  const scrollToGrid = () => {
+    gardenGridRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  async function fetchUserGardens() {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`
+      );
+      setGardens(res.data);
+    } catch (error) {
+      console.error("Error fetching crops:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) fetchUserGardens();
+  }, [user]);
+
+  useEffect(() => {
+    if (garden) scrollToGrid();
+  }, [garden]);
 
   useEffect(() => {
     switch (selectedElement) {
@@ -34,35 +59,6 @@ function GardenComponent() {
         setElementImage(null);
     }
   }, [selectedCrop, selectedElement]);
-
-  const createGarden = () => {
-    const widthInput = prompt("Enter the width of the garden:");
-    const heightInput = prompt("Enter the height of the garden:");
-    const nameInput = prompt("Enter garden name:");
-
-    if (widthInput && heightInput) {
-      const w = parseInt(widthInput, 10);
-      const h = parseInt(heightInput, 10);
-
-      if (!isNaN(w) && !isNaN(h) && nameInput) {
-        const newGarden = new Garden(
-          w,
-          h,
-          nameInput,
-          null,
-          undefined,
-          undefined,
-          undefined,
-          user ? user : undefined
-        );
-        setGarden(newGarden);
-      } else {
-        alert("Please enter valid numbers for both width and height.");
-      }
-    } else {
-      alert("Please enter both width and height.");
-    }
-  };
 
   async function saveGarden() {
     const data = garden?.toJson();
@@ -90,6 +86,8 @@ function GardenComponent() {
       console.log("Saved garden: ", res.data);
     } catch (error) {
       console.error("Error saving garden:", error);
+    } finally {
+      fetchUserGardens();
     }
   }
 
@@ -187,11 +185,7 @@ function GardenComponent() {
   return (
     <>
       <div className={styles.GardenComponentContainer}>
-        <button onClick={createGarden} className={styles.CreateButton}>
-          Create Garden
-        </button>
-
-        <GardenList setGarden={setGarden} />
+        {user && <GardenList setGarden={setGarden} gardens={gardens} />}
 
         {garden && (
           <div className={styles.SelectedGarden}>
@@ -213,26 +207,22 @@ function GardenComponent() {
                 </div>
               </div>
 
-              <div className={styles.GridContainer}>
-                {garden && (
-                  <GardenGrid
-                    garden={garden}
-                    onCellClick={handleCellClick}
-                    onTopClick={handleTopClick}
-                    onBottomClick={handleBottomClick}
-                    onLeftClick={handleLeftClick}
-                    onRightClick={handleRightClick}
-                  />
-                )}
-              </div>
-              <div className={styles.Menu}>
-                {garden && (
+              <div className={styles.GridContainer} ref={gardenGridRef}>
+                <GardenGrid
+                  garden={garden}
+                  onCellClick={handleCellClick}
+                  onTopClick={handleTopClick}
+                  onBottomClick={handleBottomClick}
+                  onLeftClick={handleLeftClick}
+                  onRightClick={handleRightClick}
+                />
+                <div className={styles.Menu}>
                   <GardenMenu
                     selectedElement={selectedElement}
                     setSelectedElement={setSelectedElement}
                     saveGarden={saveGarden}
                   />
-                )}
+                </div>
               </div>
             </div>
           </div>
