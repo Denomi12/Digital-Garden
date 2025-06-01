@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Crop } from "./Types/Elements";
+import styles from "../../stylesheets/ShowCrops.module.css";
 
 type ShowCropsProps = {
   selectedCrop: Crop | null;
@@ -15,7 +16,6 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
       const res = await axios.get(
         `${import.meta.env.VITE_API_BACKEND_URL}/crop`
       );
-      console.log(res);
       setCrops(res.data);
     } catch (error) {
       console.error("Error fetching crops:", error);
@@ -29,12 +29,12 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
   if (!crops) return <div>Loading crops...</div>;
 
   return (
-    <div>
+    <div className={styles.CropsPannel}>
       <h2>Crops</h2>
-      <ul>
+      <ul className={styles.CropsList}>
         {crops.map((crop, index) => (
-          <li key={index} style={{ marginBottom: "1rem" }}>
-            <img src={crop.imageSrc}></img>
+          <li key={index} className={styles.CropItem}>
+            {crop.imageSrc && <img src={crop.imageSrc} alt={crop.name} />}
             <strong>{crop.name}</strong> (<em>{crop.latinName}</em>)<br />
             <strong>Planting Month:</strong> {crop.plantingMonth}
             <br />
@@ -45,9 +45,11 @@ function ShowCrops({ selectedCrop, setSelectedCrop }: ShowCropsProps) {
             <br />
             <strong>Bad Companions:</strong>{" "}
             {crop.badCompanions.map((c) => c.name).join(", ") || "None"}
+            <br />
             <button
+              className={styles.SelectButton}
               onClick={() =>
-                setSelectedCrop(selectedCrop != crop ? crop : null)
+                setSelectedCrop(selectedCrop !== crop ? crop : null)
               }
             >
               {selectedCrop === crop ? "Deselect" : "Select"}

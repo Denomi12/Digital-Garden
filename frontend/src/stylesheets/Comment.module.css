@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.leftSide {
+  margin-right: 1rem;
+}
+
+.rightSide {
+  padding-top: 20px;
+  flex: 1;
+}
+
+.body {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.line {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 0.5rem 0;
+}
+
+.owner {
+  margin-left: 0.5rem;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

@@ -44,6 +44,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     const token = generateToken({
       id: savedUser.id,
       username: savedUser.username,
+      email: savedUser.email,
     });
     const { password: _password, ...userWithoutPassword } =
       savedUser.toObject();
@@ -103,13 +104,14 @@ const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateToken({ id: user.id, username: user.username });
+    const token = generateToken({ id: user.id, username: user.username, email: user.email });
     const { password: _password, ...userWithoutPassword } = user.toObject();
     res
       .cookie("token", token, {
         httpOnly: true,
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
+        path: "/",
       })
       .json({ user: userWithoutPassword });
   } catch (error) {
@@ -123,6 +125,7 @@ const logout = async (req: Request, res: Response): Promise<void> => {
     .clearCookie("token", {
       httpOnly: true,
       sameSite: "strict",
+      path: "/",
     })
     .status(200)
     .json({ message: "Logged out successfully" });
@@ -130,7 +133,12 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 
 const me = async (req: Request, res: Response): Promise<void> => {
   // vrne dekodirane podatke iz JWT žetona
-  res.status(200).json({ message: "You exist!", user: res.locals.user});
+  res.status(200).json({ message: "You exist!", user: res.locals.user });
+};
+
+const verify = async (req: Request, res: Response): Promise<void> => {
+  const user = res.locals.user;
+  res.status(200).json({ message: "User verified", user: user });
 };
 
 export default {
@@ -142,4 +150,5 @@ export default {
   login,
   logout,
   me,
+  verify,
 };

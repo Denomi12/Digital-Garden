@@ -1,13 +1,17 @@
+import { User } from "../../../types/User";
+import { isValidDate } from "../../../utils/helpers";
 import { Tile, GardenElement, Crop } from "./Elements";
 
 export class Garden {
   width: number;
   height: number;
   name: string;
-  grid: Tile[][];
+  elements: Tile[][];
+  location?: string;
   latitude?: number;
   longitude?: number;
-  user?: string;
+  owner?: User;
+  _id?: string;
 
   private createTile(x: number, y: number): Tile {
     return { x, y, type: GardenElement.None, color: undefined };
@@ -17,21 +21,24 @@ export class Garden {
     width: number,
     height: number,
     name: string,
-    grid: Tile[][] | null = null,
+    elements: Tile[][] | null = null,
+    location?: string,
     latitude?: number,
     longitude?: number,
 
-    user?: string
+    owner?: User,
+    _id?: string,
   ) {
     this.width = width;
     this.height = height;
     this.name = name;
+    this.location = location;
     this.latitude = latitude;
     this.longitude = longitude;
-    this.user = user;
-
-    if (grid) {
-      this.grid = grid.map((row) =>
+    this.owner = owner;
+    this._id = _id;
+    if (elements) {
+      this.elements = elements.map((row) =>
         row.map((cell) => ({
           ...cell,
         }))
@@ -39,20 +46,22 @@ export class Garden {
       return;
     }
 
-    this.grid = Array.from({ length: height }, (_, y) =>
+    this.elements = Array.from({ length: height }, (_, y) =>
       Array.from({ length: width }, (_, x) => this.createTile(x, y))
     );
   }
 
   toJson() {
     return {
+      _id: this._id,
       name: this.name,
-      owner: this.user,
+      owner: this.owner,
       width: this.width,
       height: this.height,
+      location: this.location,
       latitude: this.latitude,
       longitude: this.longitude,
-      elements: this.grid
+      elements: this.elements
         .flat()
         .filter((tile) => tile.type != GardenElement.None)
         .map((tile) => ({
@@ -60,13 +69,18 @@ export class Garden {
           y: tile.y,
           type: tile.type,
           crop: tile.crop,
-          plantedDate: tile.plantedDate?.toISOString(),
+          plantedDate: isValidDate(tile.plantedDate)
+          ? new Date(tile.plantedDate).toISOString()
+          : tile.plantedDate ?? null,
+        wateredDate: isValidDate(tile.wateredDate)
+          ? new Date(tile.wateredDate).toISOString()
+          : tile.wateredDate ?? null,
         })),
     };
   }
 
   getTile(row: number, col: number): Tile | undefined {
-    return this.grid?.[row]?.[col];
+    return this.elements?.[row]?.[col];
   }
 
   setElement(
@@ -75,8 +89,6 @@ export class Garden {
     crop: Crop | null,
     element: GardenElement
   ) {
-    console.log(crop, element);
-
     const tile = this.getTile(row, col);
     if (!tile) return;
 
@@ -86,7 +98,7 @@ export class Garden {
     // 1. Oboje prazno => pobriši vse
     if (element == GardenElement.None && !crop) {
       tile.plantedDate = undefined;
-      tile.wateredDate = undefined
+      tile.wateredDate = undefined;
       tile.crop = undefined;
       tile.type = GardenElement.None;
       tile.color = undefined;
@@ -105,8 +117,10 @@ export class Garden {
     }
 
     //3. Crop in element => dodaj element in crop
-    else if (crop && (element == GardenElement.GardenBed ||
-        element == GardenElement.RaisedBed)) {
+    else if (
+      crop &&
+      (element == GardenElement.GardenBed || element == GardenElement.RaisedBed)
+    ) {
       tile.type = element;
       tile.crop = crop;
       tile.plantedDate = new Date();
@@ -145,16 +159,16 @@ export class Garden {
       this.createTile(x, 0)
     );
 
-    this.grid.unshift(newRow);
+    this.elements.unshift(newRow);
 
     // poveča row index vsem celicam za eno
-    for (let rowIndex = 1; rowIndex < this.grid.length; rowIndex++) {
+    for (let rowIndex = 1; rowIndex < this.elements.length; rowIndex++) {
       for (
         let colIndex = 0;
-        colIndex < this.grid[rowIndex].length;
+        colIndex < this.elements[rowIndex].length;
         colIndex++
       ) {
-        this.grid[rowIndex][colIndex].y = rowIndex;
+        this.elements[rowIndex][colIndex].y = rowIndex;
       }
     }
 
@@ -166,7 +180,7 @@ export class Garden {
       this.createTile(x, this.height)
     );
 
-    this.grid.push(newRow);
+    this.elements.push(newRow);
 
     this.height += 1;
   }
@@ -174,12 +188,12 @@ export class Garden {
   addColumnLeft() {
     for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
       for (let colIndex = this.width - 1; colIndex >= 0; colIndex--) {
-        this.grid[rowIndex][colIndex].x += 1;
+        this.elements[rowIndex][colIndex].x += 1;
       }
 
       const newCell = this.createTile(0, rowIndex);
 
-      this.grid[rowIndex].unshift(newCell);
+      this.elements[rowIndex].unshift(newCell);
     }
 
     this.width += 1;
@@ -189,7 +203,7 @@ export class Garden {
     for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
       const newCell = this.createTile(this.width, rowIndex);
 
-      this.grid[rowIndex].push(newCell);
+      this.elements[rowIndex].push(newCell);
     }
 
     this.width += 1;

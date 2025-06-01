@@ -10,6 +10,26 @@ const list = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const listByOwner = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const ownerId = req.params.ownerId;
+
+    if (!ownerId) {
+      res.status(400).json({ message: "Missing owner ID" });
+      return;
+    }
+
+    const gardens = await Garden.find({ owner: ownerId })
+      .populate("owner")
+      .populate({
+        path: "elements.crop",
+      });
+    res.json(gardens);
+  } catch (error) {
+    res.status(500).json({ message: "Error when getting gardens", error });
+  }
+};
+
 const show = async (req: Request, res: Response): Promise<void> => {
   try {
     const garden = await Garden.findById(req.params.id).populate(
@@ -26,6 +46,7 @@ const show = async (req: Request, res: Response): Promise<void> => {
 };
 
 const create = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body);
   try {
     const owner = res.locals.user?.id;
 
@@ -39,10 +60,21 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { name, latitude, longitude, elements } = req.body;
+    const { name, width, height, location, latitude, longitude, elements } =
+      req.body;
 
     if (!name) {
       res.status(400).json({ message: "Name is required" });
+      return;
+    }
+
+    if (!width) {
+      res.status(400).json({ message: "Width is required" });
+      return;
+    }
+
+    if (!height) {
+      res.status(400).json({ message: "Height is required" });
       return;
     }
 
@@ -52,7 +84,16 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const garden = new Garden({ name, owner, latitude, longitude, elements });
+    const garden = new Garden({
+      name,
+      owner,
+      width,
+      height,
+      location,
+      latitude,
+      longitude,
+      elements,
+    });
     const savedGarden = await garden.save();
 
     res.status(201).json(savedGarden);
@@ -62,8 +103,50 @@ const create = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const update = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const gardenId = req.params.id;
+    const owner = res.locals.user?.id;
+
+    if (!gardenId) {
+      res.status(400).json({ message: "Missing garden ID" });
+      return;
+    }
+
+    const garden = await Garden.findById(gardenId);
+    if (!garden) {
+      res.status(404).json({ message: "Garden not found" });
+      return;
+    }
+
+    // Optional: Ensure only the owner can update their own garden
+    if (String(garden.owner) !== String(owner)) {
+      res.status(403).json({ message: "Not authorized to update this garden" });
+      return;
+    }
+
+    const { name, width, height, location, latitude, longitude, elements } =
+      req.body;
+
+    if (name !== undefined) garden.name = name;
+    if (width !== undefined) garden.width = width;
+    if (height !== undefined) garden.height = height;
+    if (location !== undefined) garden.location = location;
+    if (latitude !== undefined) garden.latitude = latitude;
+    if (longitude !== undefined) garden.longitude = longitude;
+    if (elements !== undefined) garden.elements = elements;
+
+    const updatedGarden = await garden.save();
+    res.json({updatedGarden, message: "Garden successfully updated"});
+  } catch (error) {
+    res.status(500).json({ message: "Error when updating garden", error });
+  }
+};
+
 export default {
   list,
   show,
   create,
+  listByOwner,
+  update,
 };

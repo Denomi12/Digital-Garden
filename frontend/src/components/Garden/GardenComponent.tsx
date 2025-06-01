@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import GardenMenu from "./GardenMenu";
 import styles from "../../stylesheets/GardenComponent.module.css";
 import axios from "axios";
@@ -8,17 +8,43 @@ import GardenGrid from "./GardenGrid";
 import { Garden } from "./Types/Garden";
 import { Crop, GardenElement } from "./Types/Elements";
 import CursorFollower from "../CursorFollower";
+import GardenList from "./GardenList";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
   const [garden, setGarden] = useState<Garden | null>(null);
+  const [gardens, setGardens] = useState<Garden[]>([]);
   const [selectedElement, setSelectedElement] = useState<GardenElement>(
     GardenElement.None
   );
-  const [elementImage, setElementImage] = useState<string | null>(null)
-  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null)
+  const [elementImage, setElementImage] = useState<string | null>(null);
+  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+  const gardenGridRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+  const scrollToGrid = () => {
+    gardenGridRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  async function fetchUserGardens() {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`
+      );
+      setGardens(res.data);
+    } catch (error) {
+      console.error("Error fetching crops:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) fetchUserGardens();
+  }, [user]);
+
+  useEffect(() => {
+    if (garden) scrollToGrid();
+  }, [garden]);
+
+  useEffect(() => {
     switch (selectedElement) {
       case GardenElement.GardenBed:
         setElementImage(`/assets/Greda.png`);
@@ -34,41 +60,35 @@ function GardenComponent() {
     }
   }, [selectedCrop, selectedElement]);
 
-  const createGarden = () => {
-    const widthInput = prompt("Enter the width of the garden:");
-    const heightInput = prompt("Enter the height of the garden:");
-    const nameInput = prompt("Enter garden name:");
-
-    if (widthInput && heightInput) {
-      const w = parseInt(widthInput, 10);
-      const h = parseInt(heightInput, 10);
-
-      if (!isNaN(w) && !isNaN(h) && nameInput) {
-        const newGarden = new Garden(
-          w,
-          h,
-          nameInput,
-          null,
-          undefined,
-          undefined,
-          user?.id
-        );
-        setGarden(newGarden);
-      } else {
-        alert("Please enter valid numbers for both width and height.");
-      }
-    } else {
-      alert("Please enter both width and height.");
-    }
-  };
-
   async function saveGarden() {
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_BACKEND_URL}/garden`,
-      garden?.toJson(),
-      { withCredentials: true }
-    );
-    console.log(res);
+    const data = garden?.toJson();
+
+    if (!data) {
+      console.error("No garden data to save.");
+      return;
+    }
+
+    console.log("Trying to save: ", data);
+
+    const url = data._id
+      ? `${import.meta.env.VITE_API_BACKEND_URL}/garden/${data._id}`
+      : `${import.meta.env.VITE_API_BACKEND_URL}/garden`;
+
+    const method = data._id ? "put" : "post";
+
+    try {
+      const res = await axios({
+        method,
+        url,
+        data,
+        withCredentials: true,
+      });
+      console.log("Saved garden: ", res.data);
+    } catch (error) {
+      console.error("Error saving garden:", error);
+    } finally {
+      fetchUserGardens();
+    }
   }
 
   const handleCellClick = (row: number, col: number) => {
@@ -80,10 +100,12 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
+        garden.elements,
+        garden.location,
         garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner,
+        garden._id
       )
     );
   };
@@ -96,10 +118,12 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner,
+        garden._id
       )
     );
   };
@@ -112,10 +136,12 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner,
+        garden._id
       )
     );
   };
@@ -128,10 +154,12 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner,
+        garden._id
       )
     );
   };
@@ -144,48 +172,61 @@ function GardenComponent() {
         garden.width,
         garden.height,
         garden.name,
-        garden.grid,
-         garden.latitude,
+        garden.elements,
+        garden.location,
+        garden.latitude,
         garden.longitude,
-        garden.user
+        garden.owner,
+        garden._id
       )
     );
   };
 
   return (
     <>
-      <div className={styles.Container}>
-        <button onClick={createGarden} className={styles.CreateButton}>
-          Create Garden
-        </button>
+      <div className={styles.GardenComponentContainer}>
+        {user && <GardenList setGarden={setGarden} gardens={gardens} />}
 
-        <div className={styles.MainLayout}>
-          <CursorFollower cropImage={selectedCrop?.imageSrc} elementImage={elementImage}/>
-          <div className={styles.SidePanel}>
-            <ShowCrops selectedCrop={selectedCrop} setSelectedCrop={setSelectedCrop}/>
-          </div>
+        {garden && (
+          <div className={styles.SelectedGarden}>
+            <div className={styles.GardenInfo}>
+              <span className={styles.NameInfo}>{garden?.name}</span>
+            </div>
 
-          <div className={styles.GridContainer}>
-            {garden && (
-              <GardenGrid
-                garden={garden}
-                onCellClick={handleCellClick}
-                onTopClick={handleTopClick}
-                onBottomClick={handleBottomClick}
-                onLeftClick={handleLeftClick}
-                onRightClick={handleRightClick}
+            <div className={styles.MainLayout}>
+              <CursorFollower
+                cropImage={selectedCrop?.imageSrc}
+                elementImage={elementImage}
               />
-            )}
-          </div>
+              <div className={styles.SidePanel}>
+                <div className={styles.ScrollablePanel}>
+                  <ShowCrops
+                    selectedCrop={selectedCrop}
+                    setSelectedCrop={setSelectedCrop}
+                  />
+                </div>
+              </div>
 
-          <div className={styles.SidePanel}>
-            <GardenMenu
-              selectedElement={selectedElement}
-              setSelectedElement={setSelectedElement}
-              saveGarden={saveGarden}
-            />
+              <div className={styles.GridContainer} ref={gardenGridRef}>
+                <GardenGrid
+                  garden={garden}
+                  onCellClick={handleCellClick}
+                  onTopClick={handleTopClick}
+                  onBottomClick={handleBottomClick}
+                  onLeftClick={handleLeftClick}
+                  onRightClick={handleRightClick}
+                />
+                <div className={styles.Menu}>
+                  <GardenMenu
+                    selectedElement={selectedElement}
+                    setSelectedElement={setSelectedElement}
+                    saveGarden={saveGarden}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

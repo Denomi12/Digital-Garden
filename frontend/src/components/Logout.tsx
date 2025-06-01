@@ -11,9 +11,8 @@ const Logout = () => {
       try {
         await axios.post(
           `${import.meta.env.VITE_API_BACKEND_URL}/user/logout`,
-          {
-            withCredentials: true,
-          }
+          {},
+          {withCredentials: true,}
         );
       } catch (error) {
         console.error("Logout error:", error);
@@ -23,7 +22,7 @@ const Logout = () => {
     };
 
     logout();
-  }, [userContext]);
+  }, []);
 
   return <Navigate replace to="/" />;;
 };

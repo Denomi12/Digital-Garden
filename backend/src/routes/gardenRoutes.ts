@@ -7,6 +7,7 @@ import { requireAuth } from "../middleware/authMiddleware";
  * GET
  */
 router.get("/", gardenController.list);
+router.get("/ownedBy/:ownerId", gardenController.listByOwner);
 
 /*
  * GET
@@ -17,5 +18,11 @@ router.get("/:id", gardenController.show);
  * POST
  */
 router.post("/", requireAuth, gardenController.create);
+
+/*
+ * PUT
+ */
+router.put("/:id", requireAuth, gardenController.update);
+
 
 export default router;

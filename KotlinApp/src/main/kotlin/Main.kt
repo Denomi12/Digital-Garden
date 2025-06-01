@@ -16,7 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-
+import api.CropApi
+import kotlinx.coroutines.launch
+import models.Crop
+import ui.*
 
 @Composable
 fun MenuRow(label: String, icon: ImageVector, onClick: () -> Unit) {
@@ -47,13 +50,22 @@ fun SideBar(setTab: (String) -> Unit) {
             MenuRow("People", Icons.Rounded.List) { setTab("People") }
         }
 
-
         Divider(
             color = Color.Gray,
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth()
         )
 
+        Column {
+            MenuRow("Add crop", Icons.Rounded.Add) { setTab("Add crop") }
+            MenuRow("Crops", Icons.Rounded.List) { setTab("Crops") }
+        }
+
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Column {
             MenuRow("Scraper", Icons.Rounded.Share) { setTab("Scraper") }
@@ -71,27 +83,22 @@ fun SideBar(setTab: (String) -> Unit) {
 
 @Composable
 @Preview
-fun MainSection(tab: String) {
+fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
     if (tab == "Home") {
         Text(
             text = "Home",
             modifier = Modifier.padding(16.dp)
         )
     } else if (tab == "Add person") {
-        Text(
-            text = "Add person",
-            modifier = Modifier.padding(16.dp)
-        )
+        AddPersonTab()
     } else if (tab == "People") {
-        Text(
-            text = "People",
-            modifier = Modifier.padding(16.dp)
-        )
+        PeopleTab()
+    } else if (tab == "Add crop" ) {
+        AddCropTab(allCrops = allCrops, onCropAdded = onCropsUpdated)
+    } else if (tab == "Crops") {
+        CropsTab()
     } else if (tab == "Scraper") {
-        Text(
-            text = "Scraper",
-            modifier = Modifier.padding(16.dp)
-        )
+        ScraperTab()
     } else if (tab == "Generator") {
         Text(
             text = "Generator",
@@ -109,6 +116,23 @@ fun MainSection(tab: String) {
 @Preview
 fun App() {
     var tab by remember { mutableStateOf("Home") }
+    var allCrops by remember { mutableStateOf<List<Crop>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    fun loadAllCrops() {
+        coroutineScope.launch {
+            try {
+                allCrops = CropApi.getCrops()
+                println("Crops loaded in App: ${allCrops.size} items")
+            } catch (e: Exception) {
+                println("Error loading all crops in App: ${e.message}")
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        loadAllCrops()
+    }
 
     Row(
         modifier = Modifier
@@ -133,7 +157,7 @@ fun App() {
                 .padding(start = 8.dp),
             shape = RoundedCornerShape(4.dp),
         ) {
-            MainSection(tab = tab)
+            MainSection(tab = tab, allCrops = allCrops, onCropsUpdated = { loadAllCrops() })
         }
     }
 }

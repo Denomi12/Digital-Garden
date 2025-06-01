@@ -2,26 +2,30 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-left: 30px;
-  background-color: beige;
-  padding: 10px;
+  padding: 16px;
+  border-radius: 10px;
+  width: 15rem;
 }
 
 .MenuButton {
-  padding: 10px 20px;
+  padding: 12px 20px;
   background-color: #6ab04c;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .MenuButton:hover {
   background-color: #4caf50;
+  transform: translateY(-2px);
 }
 
 .SelectedButton {
-  border: 1px solid black;
+  border: 2px solid #333;
+  background-color: #aed581; /* Light green to indicate selection */
+  color: #1b5e20;
 }
