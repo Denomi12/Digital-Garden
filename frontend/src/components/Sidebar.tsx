@@ -1,11 +1,15 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { UserContext } from "../UserContext";
 import styles from "../stylesheets/Sidebar.module.css";
 import { NavLink } from "react-router-dom";
 
-function Sidebar() {
+interface SidebarProps {
+  expanded: boolean;
+  setExpanded: (val: boolean) => void;
+};
+
+function Sidebar({expanded, setExpanded}: SidebarProps) {
   const { user } = useContext(UserContext);
-  const [expanded, setExpanded] = useState(true);
   const [rotated, setRotated] = useState(false);
 
   const toggleSidebar = () => {

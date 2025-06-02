@@ -18,6 +18,7 @@ import axios from "axios";
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     async function verifyUser() {
@@ -58,8 +59,9 @@ function App() {
         }}
       >
         <div className={styles.fullScreen}>
-          <Sidebar />
-          <div className={styles.mainContent}>
+          <Sidebar expanded={expanded} setExpanded={setExpanded}/>
+          
+          <div className={`${styles.mainContent} ${expanded ? styles.mainContentExpanded : ""}`}>
             <Header title="Garden" />
             <Routes>
               <Route path="/" element={<HomePage />} />
