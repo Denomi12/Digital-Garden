@@ -6,6 +6,12 @@
 
 .mainContent {
   /* padding: 16px; */
-  margin: 0%;
   width: 100%;
+  transition: padding-left 0.3s ease;
+  padding-left: 100px;
+}
+
+
+.mainContentExpanded {
+  padding-left: 200px;
 }

@@ -6,7 +6,10 @@
   align-items: center;
   width: 100px;
   transition: width 0.3s ease;
-  position: relative;
+  position: fixed; /* <--- Add this */
+  left: 0;
+  top: 0;
+  z-index: 1000; /* Optional: to ensure it stays above other elements */
 }
 
 .sidebar.expanded {
