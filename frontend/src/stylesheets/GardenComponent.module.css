@@ -14,20 +14,70 @@
 
 .GardenInfo {
   margin-bottom: 1rem;
-  text-align: center;
+  width: 25rem;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
 }
 
+
 .NameInfo {
-  display: inline-block;
+  text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
   color: #2e7d32;
   background-color: #e8f5e9;
-  padding: 0.5rem 5rem;
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  min-width: 5rem;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+
 }
+
+.LocationInfo{
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+
+}
+.InputWrapper {
+  position: relative;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.InputIcon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  pointer-events: none;
+  color: #555;
+}
+
+.InfoText {
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.2rem; /* extra left padding for icon */
+  border: 1px solid #ccc;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.InfoText:focus {
+  border-color: #2e7d32;
+  background-color: #fff;
+}
+
+
+
 
 .MainLayout {
   display: flex;

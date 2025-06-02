@@ -42,7 +42,7 @@ function GardenComponent() {
 
   useEffect(() => {
     if (garden) scrollToGrid();
-  }, [garden]);
+  }, [garden?._id]);
 
   useEffect(() => {
     switch (selectedElement) {
@@ -182,6 +182,27 @@ function GardenComponent() {
     );
   };
 
+  function updateGardenField(
+    field: "location" | "latitude" | "longitude",
+    value: string
+  ) {
+    if (!garden) return;
+
+    const updatedGarden = new Garden(
+      garden.width,
+      garden.height,
+      garden.name,
+      garden.elements,
+      field === "location" ? value : garden.location,
+      field === "latitude" ? parseFloat(value) || 0 : garden.latitude,
+      field === "longitude" ? parseFloat(value) || 0 : garden.longitude,
+      garden.owner,
+      garden._id
+    );
+
+    setGarden(updatedGarden);
+  }
+
   return (
     <>
       <div className={styles.GardenComponentContainer}>
@@ -190,7 +211,45 @@ function GardenComponent() {
         {garden && (
           <div className={styles.SelectedGarden}>
             <div className={styles.GardenInfo}>
-              <span className={styles.NameInfo}>{garden?.name}</span>
+              <div className={styles.NameInfo}>{garden?.name}</div>
+
+              <div className={styles.LocationInfo}>
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>📍</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.location || ""}
+                    onChange={(e) =>
+                      updateGardenField("location", e.target.value)
+                    }
+                    placeholder="Location"
+                  />
+                </div>
+
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>🌐</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.latitude?.toString() || ""}
+                    onChange={(e) =>
+                      updateGardenField("latitude", e.target.value)
+                    }
+                    placeholder="Latitude"
+                  />
+                </div>
+
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>🌐</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.longitude?.toString() || ""}
+                    onChange={(e) =>
+                      updateGardenField("longitude", e.target.value)
+                    }
+                    placeholder="Longitude"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className={styles.MainLayout}>
