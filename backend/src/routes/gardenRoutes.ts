@@ -12,7 +12,7 @@ router.get("/ownedBy/:ownerId", gardenController.listByOwner);
 /*
  * GET
  */
-router.get("/:id", gardenController.show);
+router.get("/:id", requireAuth, gardenController.show);
 
 /*
  * POST
@@ -23,6 +23,5 @@ router.post("/", requireAuth, gardenController.create);
  * PUT
  */
 router.put("/:id", requireAuth, gardenController.update);
-
 
 export default router;

@@ -43,7 +43,6 @@ function Question({ question }: QuestionProps) {
       );
 
       const data = await res.json();
-      console.log(data.owner.username);
 
       if (data._id) {
         setComments((prev) => [...prev, data]);
