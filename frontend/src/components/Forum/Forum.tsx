@@ -39,7 +39,6 @@ function Forum() {
         `${import.meta.env.VITE_API_BACKEND_URL}/question`
       );
       const data = await res.json();
-      console.log(data);
       setQuestions(data);
     };
     getPhotos();

@@ -7,6 +7,7 @@ import gardenRoutes from "./routes/gardenRoutes";
 import cropRoutes from "./routes/cropRoutes";
 import questionRoutes from "./routes/questionRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import storeRoutes from "./routes/storeRoutes";
 
 // import { env } from "process";
 // import dotenv from "dotenv";
@@ -31,6 +32,7 @@ app.use("/garden", gardenRoutes);
 app.use("/crop", cropRoutes);
 app.use("/question", questionRoutes);
 app.use("/comment", commentRoutes);
+app.use("/store", storeRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API is running" });

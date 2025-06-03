@@ -35,7 +35,6 @@ function AddQuestion() {
     );
 
     const data = await res.json();
-    console.log(data);
     setUploaded(true);
   }
 

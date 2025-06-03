@@ -9,6 +9,7 @@ import { Garden } from "./Types/Garden";
 import { Crop, GardenElement } from "./Types/Elements";
 import CursorFollower from "../CursorFollower";
 import GardenList from "./GardenList";
+import { useLocation } from "react-router-dom";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -20,6 +21,7 @@ function GardenComponent() {
   const [elementImage, setElementImage] = useState<string | null>(null);
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
   const gardenGridRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const scrollToGrid = () => {
     gardenGridRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,11 +30,12 @@ function GardenComponent() {
   async function fetchUserGardens() {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`
+        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`,
+        { withCredentials: true }
       );
       setGardens(res.data);
     } catch (error) {
-      console.error("Error fetching crops:", error);
+      console.error("Error fetching gardens:", error);
     }
   }
 
@@ -42,7 +45,7 @@ function GardenComponent() {
 
   useEffect(() => {
     if (garden) scrollToGrid();
-  }, [garden]);
+  }, [garden?._id]);
 
   useEffect(() => {
     switch (selectedElement) {
@@ -68,8 +71,6 @@ function GardenComponent() {
       return;
     }
 
-    console.log("Trying to save: ", data);
-
     const url = data._id
       ? `${import.meta.env.VITE_API_BACKEND_URL}/garden/${data._id}`
       : `${import.meta.env.VITE_API_BACKEND_URL}/garden`;
@@ -83,7 +84,6 @@ function GardenComponent() {
         data,
         withCredentials: true,
       });
-      console.log("Saved garden: ", res.data);
     } catch (error) {
       console.error("Error saving garden:", error);
     } finally {
@@ -182,15 +182,81 @@ function GardenComponent() {
     );
   };
 
+  function updateGardenField(
+    field: "location" | "latitude" | "longitude",
+    value: string
+  ) {
+    if (!garden) return;
+
+    const updatedGarden = new Garden(
+      garden.width,
+      garden.height,
+      garden.name,
+      garden.elements,
+      field === "location" ? value : garden.location,
+      field === "latitude" ? parseFloat(value) || 0 : garden.latitude,
+      field === "longitude" ? parseFloat(value) || 0 : garden.longitude,
+      garden.owner,
+      garden._id
+    );
+
+    setGarden(updatedGarden);
+  }
+
   return (
     <>
       <div className={styles.GardenComponentContainer}>
-        {user && <GardenList setGarden={setGarden} gardens={gardens} />}
+        {/* TODO Instead of full garden - put in ID and fetch it */}
+        {user && (
+          <GardenList
+            mapGarden={location.state?.garden}
+            setGarden={setGarden}
+            gardens={gardens}
+          />
+        )}
 
         {garden && (
           <div className={styles.SelectedGarden}>
             <div className={styles.GardenInfo}>
-              <span className={styles.NameInfo}>{garden?.name}</span>
+              <div className={styles.NameInfo}>{garden?.name}</div>
+
+              <div className={styles.LocationInfo}>
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>📍</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.location || ""}
+                    onChange={(e) =>
+                      updateGardenField("location", e.target.value)
+                    }
+                    placeholder="Location"
+                  />
+                </div>
+
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>🌐</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.latitude?.toString() || ""}
+                    onChange={(e) =>
+                      updateGardenField("latitude", e.target.value)
+                    }
+                    placeholder="Latitude"
+                  />
+                </div>
+
+                <div className={styles.InputWrapper}>
+                  <span className={styles.InputIcon}>🌐</span>
+                  <input
+                    className={styles.InfoText}
+                    value={garden.longitude?.toString() || ""}
+                    onChange={(e) =>
+                      updateGardenField("longitude", e.target.value)
+                    }
+                    placeholder="Longitude"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className={styles.MainLayout}>
