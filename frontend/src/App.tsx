@@ -9,6 +9,8 @@ import styles from "./App.module.css";
 import Forum from "./components/Forum/Forum";
 import AddQuestion from "./components/Forum/AddQuestion";
 import ShowQuestion from "./components/Forum/ShowQuestion";
+import WeatherForecast from "./components/WeatherForecast";
+import WeatherChart from "./components/WeatherChart";
 
 import { User } from "./types/User";
 import HomePage from "./components/HomePage";
@@ -59,9 +61,13 @@ function App() {
         }}
       >
         <div className={styles.fullScreen}>
-          <Sidebar expanded={expanded} setExpanded={setExpanded}/>
-          
-          <div className={`${styles.mainContent} ${expanded ? styles.mainContentExpanded : ""}`}>
+          <Sidebar expanded={expanded} setExpanded={setExpanded} />
+
+          <div
+            className={`${styles.mainContent} ${
+              expanded ? styles.mainContentExpanded : ""
+            }`}
+          >
             <Header title="Garden" />
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -71,6 +77,8 @@ function App() {
               <Route path="/forum" element={<Forum />} />
               <Route path="/addQuestion" element={<AddQuestion />} />
               <Route path="/showQuestion/:id" element={<ShowQuestion />} />
+              <Route path="/weather" element={<WeatherForecast />} />
+              <Route path="/weatherChart" element={<WeatherChart />} />
             </Routes>
           </div>
         </div>
