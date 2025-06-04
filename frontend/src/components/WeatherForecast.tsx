@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchWeatherApi } from "openmeteo";
+import styles from "../stylesheets/WeatherForecast.module.css";
 
-//kasneje pridobimo lat in lng od vrta
-var lat = 46.573158;
-var lng = 15.456666;
+const lat = 46.573158;
+const lng = 15.456666;
 
 interface WeatherData {
   time: Date[];
@@ -35,7 +35,6 @@ function WeatherForecast() {
           "soil_temperature_0cm",
           "soil_moisture_0_to_1cm",
         ],
-        // forecast_days: 14,
       };
 
       const url = "https://api.open-meteo.com/v1/forecast";
@@ -76,38 +75,46 @@ function WeatherForecast() {
   if (!weatherData) return <p>Nalaganje vremenskih podatkov...</p>;
 
   return (
-    <div>
-      <h2>Vremenska napoved</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th>Čas</th>
-            <th>Temp (°C)</th>
-            <th>Rel. vlaga (%)</th>
-            <th>Dež (mm)</th>
-            <th>Snežna odeja (cm)</th>
-            <th>Sneženje (cm)</th>
-            <th>Plohe (mm)</th>
-            <th>Temp. tal 0 cm (°C)</th>
-            <th>Vlaga tal 0–1 cm</th>
-          </tr>
-        </thead>
-        <tbody>
-          {weatherData.time.map((t, i) => (
-            <tr key={i}>
-              <td>{t.toLocaleString()}</td>
-              <td>{weatherData.temperature2m[i]}</td>
-              <td>{weatherData.relativeHumidity2m[i]}</td>
-              <td>{weatherData.rain[i]}</td>
-              <td>{weatherData.snowDepth[i]}</td>
-              <td>{weatherData.snowfall[i]}</td>
-              <td>{weatherData.showers[i]}</td>
-              <td>{weatherData.soilTemperature0cm[i]}</td>
-              <td>{weatherData.soilMoisture0To1cm[i]}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className={styles.container}>
+      <h2 className={styles.heading}>Vremenska napoved</h2>
+      <div className={styles.grid}>
+        {weatherData.time.map((t, i) => {
+          if (i % 3 !== 0) return null;
+          return (
+            <div className={styles.card} key={i}>
+              <h3>{t.toLocaleString()}</h3>
+              <ul className={styles.list}>
+                <li>
+                  <strong>Temp:</strong> {weatherData.temperature2m[i]} °C
+                </li>
+                <li>
+                  <strong>Vlaga:</strong> {weatherData.relativeHumidity2m[i]} %
+                </li>
+                <li>
+                  <strong>Dež:</strong> {weatherData.rain[i]} mm
+                </li>
+                <li>
+                  <strong>Sneg:</strong> {weatherData.snowDepth[i]} cm
+                </li>
+                <li>
+                  <strong>Sneženje:</strong> {weatherData.snowfall[i]} cm
+                </li>
+                <li>
+                  <strong>Plohe:</strong> {weatherData.showers[i]} mm
+                </li>
+                <li>
+                  <strong>Temp. tal:</strong>{" "}
+                  {weatherData.soilTemperature0cm[i]} °C
+                </li>
+                <li>
+                  <strong>Vlaga tal:</strong>{" "}
+                  {weatherData.soilMoisture0To1cm[i]}
+                </li>
+              </ul>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
