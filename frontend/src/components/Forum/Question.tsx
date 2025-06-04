@@ -66,26 +66,17 @@ function Question({ question }: QuestionProps) {
           <div
             className={styles.expandedTitle}
             onClick={() => setExpanded(!expanded)}
-            style={{ cursor: "pointer" }}
           >
             <div className={styles.title}>{question.title}</div>
             Posted By {question.owner.username}
           </div>
         )}
         {!expanded && (
-          <div
-            className={styles.title}
-            onClick={() => setExpanded(!expanded)}
-            style={{ cursor: "pointer" }}
-          >
+          <div className={styles.title} onClick={() => setExpanded(!expanded)}>
             {question.title}
           </div>
         )}
-        <div
-          className={styles.summary}
-          onClick={() => setExpanded(!expanded)}
-          style={{ cursor: "pointer" }}
-        >
+        <div className={styles.summary} onClick={() => setExpanded(!expanded)}>
           {question.question}
         </div>
 
@@ -100,8 +91,8 @@ function Question({ question }: QuestionProps) {
             </div>
 
             <div className={styles.comments}>
-              <div>LOGO</div>
-              <div>{question.comments.length}+</div>
+              <img className={styles.chatImage} src="/assets/chat.png" />
+              <div>{question.comments.length}</div>
             </div>
           </div>
         )}
