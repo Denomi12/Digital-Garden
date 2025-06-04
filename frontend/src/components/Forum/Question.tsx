@@ -69,7 +69,7 @@ function Question({ question }: QuestionProps) {
             style={{ cursor: "pointer" }}
           >
             <div className={styles.title}>{question.title}</div>
-            <div>img</div>
+            Posted By {question.owner.username}
           </div>
         )}
         {!expanded && (
@@ -93,7 +93,6 @@ function Question({ question }: QuestionProps) {
         {!expanded && (
           <div className={styles.footer}>
             <div className={styles.footerLeft}>
-              <div>img</div>
               <div className={styles.owner}>
                 Posted By <strong>{question.owner.username}</strong>
               </div>
