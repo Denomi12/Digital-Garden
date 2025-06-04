@@ -61,7 +61,9 @@ function Forum() {
         <button className={styles.addQuestionBtn} onClick={addQuestion}>
           + Ask Question
         </button>
-        <Chat />
+        <div className={styles.chat}>
+          <Chat />
+        </div>
       </div>
     </div>
   );
