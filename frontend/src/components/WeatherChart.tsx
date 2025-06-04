@@ -12,7 +12,6 @@ function WeatherChart() {
   const [temperature, setTemperature] = useState<number[]>([]);
   const [rain, setRain] = useState<number[]>([]);
 
-  // Pridobi koordinate
   useEffect(() => {
     if (!navigator.geolocation) {
       setError("Vaš brskalnik ne podpira geolokacije.");
@@ -92,26 +91,43 @@ function WeatherChart() {
   }, [coords]);
 
   if (loading) return <p>Nalaganje...</p>;
-  if (error) return <p>{error}</p>;
+  if (error)
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "300px",
+          display: "flex",
+          backgroundColor: "#d3d3d3",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        {error}
+      </div>
+    );
 
   return (
     <div>
-      <div>Vremenska napoved (naslednjih 24 ur)</div>
       <LineChart
         xAxis={[{ scaleType: "point", data: labels }]}
         series={[
           {
-            label: "Temperatura (°C)",
+            label: "Temperature (°C)",
             data: temperature,
             color: "#1976d2",
+            area: true,
           },
           {
-            label: "Dež (mm)",
+            label: "Rain (mm)",
             data: rain,
             color: "#4caf50",
+            area: true,
           },
         ]}
         height={300}
+        grid={{ vertical: true, horizontal: true }}
       />
     </div>
   );

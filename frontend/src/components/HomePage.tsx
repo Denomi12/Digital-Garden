@@ -1,14 +1,25 @@
 import WeatherChart from "./WeatherChart";
+import Map from "./Map";
 import styles from "../stylesheets/HomePage.module.css";
 
 function HomePage() {
   return (
     <div>
-      <h1>Welcome to home pages!</h1>
-      <div className={styles.weather}>
-        <WeatherChart />
+      <h2>Welcome to home page!</h2>
+      <div className={styles.mainContent}>
+        <div className={styles.leftSide}>
+          <div className={styles.weather}>
+            <WeatherChart />
+          </div>
+          <div className={styles.map}>
+            <Map className={styles.smallMap} showCreateButton={false} />
+          </div>
+        </div>
+        <div className={styles.rightSide}>
+          <div className={styles.alerts}>Alert</div>
+          <div className={styles.calender}>Calender</div>
+        </div>
       </div>
-      <div className={styles.map}>MAP</div>
     </div>
   );
 }
