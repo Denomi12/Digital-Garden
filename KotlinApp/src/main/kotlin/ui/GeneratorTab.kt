@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,7 +11,11 @@ import androidx.compose.material.Tab
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import api.CropApi
 import kotlinx.coroutines.launch
@@ -19,7 +24,7 @@ import models.GenerateCropResponse
 
 @Composable
 fun GeneratorTab() {
-    val tabs = listOf("Gardens", "Crops")
+    val tabs = listOf("Crops")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -39,8 +44,7 @@ fun GeneratorTab() {
         Spacer(modifier = Modifier.height(16.dp))
 
         when (selectedTabIndex) {
-            0 -> GeneratorCard(title = "Gardens", { amount -> CropApi.generateCrop(amount) })
-            1 -> GeneratorCard(title = "Crops", { amount -> CropApi.generateCrop(amount) })
+            0 -> GeneratorCard(title = "Crops", { amount -> CropApi.generateCrop(amount) })
         }
     }
 }
@@ -134,10 +138,34 @@ fun GeneratorCard(title: String, generateFun: suspend (Int) -> GenerateCropRespo
                     generatedResult!!.crops.forEachIndexed { index, crop ->
                         Column(modifier = Modifier.padding(vertical = 8.dp)) {
                             Text("🌱 Crop ${index + 1}", style = MaterialTheme.typography.subtitle1)
-                            Text("Name: ${crop.name}")
-                            Text("Latin Name: ${crop.latinName}")
-                            Text("Planting Month: ${crop.plantingMonth}")
-                            Text("Watering: ${crop.watering.frequency}, ${crop.watering.amount}L")
+
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("Name: ")
+                                }
+                                append(crop.name)
+                            })
+
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("Latin Name: ")
+                                }
+                                append(crop.latinName)
+                            })
+
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("Planting Month: ")
+                                }
+                                append(crop.plantingMonth)
+                            })
+
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("Watering: ")
+                                }
+                                append("${crop.watering.frequency}, ${crop.watering.amount}L")
+                            })
 
                             val goodNames = crop.goodCompanions.mapNotNull { id ->
                                 allCrops.find { it._id == id }?.name
@@ -147,8 +175,20 @@ fun GeneratorCard(title: String, generateFun: suspend (Int) -> GenerateCropRespo
                                 allCrops.find { it._id == id }?.name
                             }
 
-                            Text("✅ Good Companions: ${goodNames.joinToString()}")
-                            Text("❌ Bad Companions: ${badNames.joinToString()}")
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("✅ Good Companions: ")
+                                }
+                                append(goodNames.joinToString())
+                            })
+
+                            Text(buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("❌ Bad Companions: ")
+                                }
+                                append(badNames.joinToString())
+                            })
+
                             Divider(modifier = Modifier.padding(vertical = 8.dp))
                         }
                     }
@@ -170,5 +210,7 @@ fun GeneratorCard(title: String, generateFun: suspend (Int) -> GenerateCropRespo
                 }
             }
         )
+
+
     }
 }
