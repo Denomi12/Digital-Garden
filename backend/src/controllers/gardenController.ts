@@ -115,10 +115,10 @@ const update = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Optional: Ensure only the owner can update their own garden
-    if (String(garden.owner) !== String(owner)) {
-      res.status(403).json({ message: "Not authorized to update this garden" });
-      return;
-    }
+    // if (String(garden.owner) !== String(owner)) {
+    //   res.status(403).json({ message: "Not authorized to update this garden" });
+    //   return;
+    // }
 
     const { name, width, height, location, latitude, longitude, elements } =
       req.body;
