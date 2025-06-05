@@ -12,6 +12,7 @@ router.get("/", cropController.list);
  * POST
  */
 router.post("/", cropController.create);
+router.post("/bulk", cropController.createMany);
 
 router.put("/:id", cropController.update);
 

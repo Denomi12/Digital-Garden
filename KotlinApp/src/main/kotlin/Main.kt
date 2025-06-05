@@ -113,10 +113,7 @@ fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
     } else if (tab == "Scraper") {
         ScraperTab()
     } else if (tab == "Generator") {
-        Text(
-            text = "Generator",
-            modifier = Modifier.padding(16.dp)
-        )
+        GeneratorTab()
     } else {
         Text(
             text = "About",
