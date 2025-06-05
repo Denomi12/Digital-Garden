@@ -68,6 +68,17 @@ fun SideBar(setTab: (String) -> Unit) {
         )
 
         Column {
+            MenuRow("Add garden", Icons.Rounded.Add) { setTab("Add garden") }
+            MenuRow("Gardens", Icons.Rounded.List) { setTab("Gardens") }
+        }
+
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Column {
             MenuRow("Scraper", Icons.Rounded.Share) { setTab("Scraper") }
             MenuRow("Generator", Icons.Rounded.Build) { setTab("Generator") }
         }
@@ -97,6 +108,8 @@ fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
         AddCropTab(allCrops = allCrops, onCropAdded = onCropsUpdated)
     } else if (tab == "Crops") {
         CropsTab()
+    } else if (tab == "Gardens") {
+        GardensTab()
     } else if (tab == "Scraper") {
         ScraperTab()
     } else if (tab == "Generator") {
