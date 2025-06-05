@@ -8,6 +8,7 @@ import cropRoutes from "./routes/cropRoutes";
 import questionRoutes from "./routes/questionRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import storeRoutes from "./routes/storeRoutes";
+import openAIRoutes from "./routes/openAIRoutes";
 
 // import { env } from "process";
 // import dotenv from "dotenv";
@@ -33,6 +34,7 @@ app.use("/crop", cropRoutes);
 app.use("/question", questionRoutes);
 app.use("/comment", commentRoutes);
 app.use("/store", storeRoutes);
+app.use("/generate", openAIRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API is running" });
