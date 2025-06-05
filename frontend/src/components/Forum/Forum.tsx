@@ -34,14 +34,14 @@ function Forum() {
   const navigate = useNavigate();
 
   useEffect(function () {
-    const getPhotos = async function () {
+    const getQuestions = async function () {
       const res = await fetch(
         `${import.meta.env.VITE_API_BACKEND_URL}/question`
       );
       const data = await res.json();
       setQuestions(data);
     };
-    getPhotos();
+    getQuestions();
   }, []);
 
   function addQuestion() {

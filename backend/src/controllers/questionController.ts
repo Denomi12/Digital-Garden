@@ -164,10 +164,44 @@ const handleDislike = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const hotQuestion = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const questions = await Question.find()
+      .populate("owner", "username")
+      .sort({ createdAt: -1 });
+
+    const now = Date.now();
+
+    const questionsWithScore = questions.map((q) => {
+      const createdAt = new Date(q.createdAt).getTime();
+      const hoursSinceCreation = Math.max(
+        (now - createdAt) / (1000 * 60 * 60),
+        1
+      );
+      const activityScore = (100 * q.likes) / hoursSinceCreation;
+
+      return {
+        ...q.toObject(),
+        activityScore,
+      };
+    });
+
+    questionsWithScore.sort((a, b) => b.activityScore - a.activityScore);
+
+    const returnQuestions = questionsWithScore.slice(0, 3);
+    res.json(returnQuestions);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Napaka pri pridobivanju vprašanj", error });
+  }
+};
+
 export default {
   list,
   create,
   show,
   handleLike,
   handleDislike,
+  hotQuestion,
 };

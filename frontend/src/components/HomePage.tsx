@@ -1,5 +1,6 @@
 import WeatherChart from "./WeatherChart";
 import Map from "./Map";
+import HotQuestion from "./hotQuestion";
 import styles from "../stylesheets/HomePage.module.css";
 
 function HomePage() {
@@ -16,7 +17,9 @@ function HomePage() {
           </div>
         </div>
         <div className={styles.rightSide}>
-          <div className={styles.alerts}>Alert</div>
+          <div className={styles.hotQuestions}>
+            <HotQuestion />
+          </div>
           <div className={styles.calender}>Calender</div>
         </div>
       </div>
