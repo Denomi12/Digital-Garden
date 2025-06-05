@@ -1,12 +1,13 @@
 import WeatherChart from "./WeatherChart";
 import Map from "./Map";
 import HotQuestion from "./hotQuestion";
+import Calender from "./Calendar";
 import styles from "../stylesheets/HomePage.module.css";
 
 function HomePage() {
   return (
     <div>
-      <h2>Welcome to home page!</h2>
+      <div className={styles.title}>Welcome to home page!</div>
       <div className={styles.mainContent}>
         <div className={styles.leftSide}>
           <div className={styles.weather}>
@@ -20,7 +21,9 @@ function HomePage() {
           <div className={styles.hotQuestions}>
             <HotQuestion />
           </div>
-          <div className={styles.calender}>Calender</div>
+          <div className={styles.calender}>
+            <Calender />
+          </div>
         </div>
       </div>
     </div>
