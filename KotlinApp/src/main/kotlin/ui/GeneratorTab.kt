@@ -155,8 +155,18 @@ fun GeneratorCard(title: String, generateFun: suspend (Int) -> GenerateCropRespo
                 }
             },
             confirmButton = {
-                Button(onClick = { showDialog = false }) {
-                    Text("OK")
+                Button(onClick = {
+                    coroutineScope.launch {
+                        try {
+                            CropApi.saveGeneratedCrops(generatedResult!!.crops)
+                            showDialog = false
+                            successMessage = "Saved successfully!"
+                        } catch (e: Exception) {
+                            errorMessage = "Save failed: ${e.message}"
+                        }
+                    }
+                }) {
+                    Text("Save")
                 }
             }
         )

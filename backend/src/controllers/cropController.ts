@@ -160,8 +160,60 @@ const update = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+
+const createMany = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crops = req.body;
+
+    if (!Array.isArray(crops) || crops.length === 0) {
+      res.status(400).json({ message: "Invalid or empty crop list" });
+      return;
+    }
+
+    for (const crop of crops) {
+      const {
+        name,
+        latinName,
+        goodCompanions,
+        badCompanions,
+        plantingMonth,
+        watering,
+        imageSrc,
+      } = crop;
+
+      const existingCrop = await Crop.findOne({ name });
+      if (existingCrop) {
+        res
+          .status(400)
+          .json({ message: `Crop with name "${name}" already exists` });
+        return;
+      }
+
+      const validateIds = async (ids: string[], type: string) => {
+        if (ids && ids.length > 0) {
+          const found = await Crop.find({ _id: { $in: ids } });
+          if (found.length !== ids.length) {
+            throw new Error(`One or more ${type} companions not found`);
+          }
+        }
+      };
+
+      await validateIds(goodCompanions, "good");
+      await validateIds(badCompanions, "bad");
+    }
+
+    const saved = await Crop.insertMany(crops);
+    res.status(201).json({ success: true, crops: saved });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create crops", error });
+  }
+};
+
+
+
 export default {
   list,
   create,
-  update
+  update,
+  createMany
 };

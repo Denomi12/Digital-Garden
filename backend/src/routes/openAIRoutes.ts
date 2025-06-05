@@ -6,6 +6,6 @@ import { requireAuth } from "../middleware/authMiddleware";
 /*
  * POST
  */
-router.post("/", requireAuth, openAIController.generateCrop);
+router.post("/", openAIController.generateCrop);
 
 export default router;

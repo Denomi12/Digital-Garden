@@ -12,6 +12,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import models.Crop
 import models.GenerateCropResponse
+import models.GeneratedCrop
 
 object CropApi {
     private val client = OkHttpClient()
@@ -87,4 +88,22 @@ object CropApi {
             return json.decodeFromString<GenerateCropResponse>(bodyString)
         }
     }
+
+    suspend fun saveGeneratedCrops(crops: List<GeneratedCrop>) = withContext(Dispatchers.IO) {
+        val requestBody = json.encodeToString(crops).toRequestBody(JSON_MEDIA_TYPE)
+
+        val request = Request.Builder()
+            .url("http://localhost:3001/crop/bulk")
+            .post(requestBody)
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                val errorBody = response.body?.string() ?: "No error body"
+                throw Exception("Failed to save crops: ${response.code} - $errorBody")
+            }
+        }
+    }
+
 }
