@@ -5,11 +5,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import models.Amount
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import models.Crop
+import models.GenerateCropResponse
 
 object CropApi {
     private val client = OkHttpClient()
@@ -66,4 +68,23 @@ object CropApi {
         }
     }
 
+    fun generateCrop(amount: Int): GenerateCropResponse {
+        val requestBody = json.encodeToString( Amount(amount)).toRequestBody(JSON_MEDIA_TYPE)
+
+        val request = Request.Builder()
+            .url("http://localhost:3001/generate")
+            .post(requestBody)
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                val errorBody = response.body?.string() ?: "No error body"
+                throw Exception("Failed to generate crop: ${response.code} - $errorBody")
+            }
+            val bodyString = response.body?.string() ?: throw Exception("Empty response")
+            println(bodyString)
+            return json.decodeFromString<GenerateCropResponse>(bodyString)
+        }
+    }
 }

@@ -26,3 +26,26 @@ data class Crop(
     val watering: Watering,
     val imageSrc: String? = null
 )
+
+@Serializable
+data class Amount(
+    val amount: Int,
+)
+
+
+@Serializable
+data class GenerateCropResponse(
+    val success: Boolean,
+    val crops: List<GeneratedCrop>
+)
+
+@Serializable
+data class GeneratedCrop(
+    val name: String,
+    val latinName: String,
+    val goodCompanions: List<String>,
+    val badCompanions: List<String>,
+    val plantingMonth: String,
+    val watering: Watering
+)
+
