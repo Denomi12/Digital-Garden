@@ -22,12 +22,12 @@ export const tileSchema = new Schema<Tile>(
     },
     plantedDate: {
       type: Date,
-      required: function (this: Tile) {
-        return this.crop != null;
-      },
+      // required: function (this: Tile) {
+      //   return this.crop != null;
+      // },
     },
     wateredDate: {
-      type: Date,
+      // type: Date,
     },
   },
   { id: false }

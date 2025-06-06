@@ -17,11 +17,15 @@ router.get("/:id", requireAuth, gardenController.show);
 /*
  * POST
  */
-router.post("/", requireAuth, gardenController.create);
+// router.post("/", requireAuth, gardenController.create);
+router.post("/", gardenController.create);
+
 
 /*
  * PUT
  */
-router.put("/:id", requireAuth, gardenController.update);
+// router.put("/:id", requireAuth, gardenController.update);
+router.put("/:id", gardenController.update);
+
 
 export default router;
