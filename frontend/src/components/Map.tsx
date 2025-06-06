@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Garden } from "./Garden/Types/Garden";
 import { UserContext } from "../UserContext";
+import styles from "../stylesheets/Map.module.css";
 
-// Tip trgovine (pripravljen za kasnejšo uporabo)
 interface Store {
   key: number;
   name: string;
@@ -50,10 +50,16 @@ function MapClickHandler({
   return null;
 }
 
-// znotraj komponente Map
-function Map() {
+function Map({
+  className,
+  showCreateButton = true,
+}: {
+  className?: string;
+  showCreateButton?: boolean;
+}) {
   const navigate = useNavigate();
   const centerPosition: [number, number] = [46.1512, 14.9955];
+
   const [stores, setStores] = useState<Store[]>([]);
   const [addGarden, setAddGarden] = useState(false);
   const [gardens, setGardens] = useState<
@@ -61,6 +67,7 @@ function Map() {
   >([]);
   const [userGardens, setUserGardens] = useState<Garden[]>([]);
   const { user } = useContext(UserContext);
+
   const handleAddGarden = (lat: number, lng: number) => {
     setGardens((prev) => [...prev, { id: prev.length + 1, lat, lng }]);
     setAddGarden(false);
@@ -78,7 +85,7 @@ function Map() {
       );
       setStores(res.data);
     } catch (error) {
-      console.error("Error fetching crops:", error);
+      console.error("Error fetching stores:", error);
     }
   }
 
@@ -90,7 +97,7 @@ function Map() {
       );
       setUserGardens(res.data);
     } catch (error) {
-      console.error("Error fetching garden:", error);
+      console.error("Error fetching user gardens:", error);
     }
   }
 
@@ -101,8 +108,11 @@ function Map() {
 
   return (
     <>
-      <button onClick={() => setAddGarden(true)}>Create new garden</button>
-      <div style={{ height: "800px", width: "100%" }}>
+      {showCreateButton && (
+        <button onClick={() => setAddGarden(true)}>Create new garden</button>
+      )}
+
+      <div className={className ?? styles.mapWrapper}>
         <MapContainer
           center={centerPosition}
           zoom={9}

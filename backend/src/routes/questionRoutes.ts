@@ -7,6 +7,7 @@ import { requireAuth } from "../middleware/authMiddleware";
  * GET
  */
 router.get("/", questionController.list);
+router.get("/hotQuestion", questionController.hotQuestion);
 
 /*
  * GET
