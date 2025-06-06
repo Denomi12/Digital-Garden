@@ -113,13 +113,13 @@ function WeatherChart() {
           {
             label: "Temperature (°C)",
             data: temperature,
-            color: "#1976d2",
+            color: "#4caf50",
             area: true,
           },
           {
             label: "Rain (mm)",
             data: rain,
-            color: "#4caf50",
+            color: "#1976d2",
             area: true,
           },
         ]}
