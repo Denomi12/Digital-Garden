@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "../../stylesheets/Chat.module.css";
+import axios from "axios";
 
 function Chat() {
   // zacetni message chatta
@@ -8,17 +9,28 @@ function Chat() {
   ]);
   const [input, setInput] = useState("");
 
-  const handleSend = () => {
+  const askAI = async (question: String) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BACKEND_URL}/generate/chat`,
+        { question: input },
+        { withCredentials: true }
+      );
+      return res.data.response;
+    } catch (error) {
+      console.error("Generating chat response error:", error);
+    }
+  };
+
+  const handleSend = async () => {
     if (!input.trim()) return;
     setMessages([...messages, { sender: "user", text: input }]);
+
+    const chatResponse = await askAI(input);
+
     setInput("");
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "I understood that as: " + input },
-      ]);
-    }, 1000);
+    setMessages((prev) => [...prev, { sender: "bot", text: chatResponse }]);
   };
 
   return (

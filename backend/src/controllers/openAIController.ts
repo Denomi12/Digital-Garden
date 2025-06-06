@@ -161,7 +161,53 @@ const parseCrops = async (cropsData: CropData) => {
   return parsedData;
 };
 
+const generateChat = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const OPENAI_API_URL = process.env.OPENAI_API_URL;
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+    if (!OPENAI_API_URL || !OPENAI_API_KEY) {
+      res.status(500).json({ error: "OpenAI API configuration is missing." });
+      return;
+    }
+    const question = req.body.question;
+    const prompt = `Odgovori prosim na naslednje vprašanje: ${question}. 
+    `;
+
+    const response = await axios.post(
+      OPENAI_API_URL!!,
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Odgovarjaj samo na vprašanja, ki se nanašajo na vrtnarjenje. Če vprašanje nima nobene povezave z rastlinami, vrtninami, pridelavo ali nego vrta, vljudno povej, da ni relevantno. Odgovori naj bodo kratki, jasni in jedrnati – brez dolgih razlag.",
+          },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const apiResponse = response.data?.choices?.[0]?.message?.content;
+    if (!apiResponse) {
+      res.status(502).json({ error: "Invalid response from OpenAI API." });
+      return;
+    }
+    res.status(200).json({ success: true, response: apiResponse });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
 export default {
   generateCrop,
-  // parseCrops,
+  generateChat,
 };
