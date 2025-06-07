@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -67,6 +68,7 @@ function Map({
   >([]);
   const [userGardens, setUserGardens] = useState<Garden[]>([]);
   const { user } = useContext(UserContext);
+  const [selectedGarden, setSelectedGarden] = useState<Garden | null>(null);
 
   const handleAddGarden = (lat: number, lng: number) => {
     setGardens((prev) => [...prev, { id: prev.length + 1, lat, lng }]);
@@ -74,8 +76,32 @@ function Map({
   };
 
   const handleNavigation = (garden: Garden | null) => {
-    navigate("/garden", { state: { garden } });
+    setSelectedGarden(garden);
   };
+
+  function GardenNavigationHandler({ garden }: { garden: Garden | null }) {
+    const map = useMap();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      if (garden?.latitude && garden?.longitude) {
+        const onMoveEnd = () => {
+          map.off("moveend", onMoveEnd);
+          navigate("/garden", { state: { garden } });
+        };
+
+        map.on("moveend", onMoveEnd);
+
+        map.flyTo([garden.latitude, garden.longitude], 14, {
+          duration: 1.5,
+        });
+      } else {
+        navigate("/garden", { state: { garden } });
+      }
+    }, [garden]);
+
+    return null;
+  }
 
   async function fetchStores() {
     try {
@@ -109,19 +135,33 @@ function Map({
   return (
     <>
       {showCreateButton && (
-        <button onClick={() => setAddGarden(true)}>Create new garden</button>
+        <button
+          className={styles.createButton}
+          onClick={() => setAddGarden(true)}
+        >
+          Create new garden
+        </button>
       )}
 
       <div className={className ?? styles.mapWrapper}>
         <MapContainer
           center={centerPosition}
           zoom={9}
-          style={{ height: "100%", width: "100%" }}
+          maxBounds={[
+            [45.4, 13.35],
+            [46.9, 16.6],
+          ]}
+          maxBoundsViscosity={1.0}
+          className={styles.map}
         >
           <TileLayer
             attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
+
+          {selectedGarden && (
+            <GardenNavigationHandler garden={selectedGarden} />
+          )}
 
           {stores.map((store) => (
             <Marker
@@ -130,9 +170,10 @@ function Map({
               icon={customIcon}
             >
               <Popup>
-                <strong>{store.name}</strong>
-                <br />
-                {store.location}
+                <div className={styles.popupContent}>
+                  <h3>{store.name}</h3>
+                  <p>{store.location}</p>
+                </div>
               </Popup>
             </Marker>
           ))}
@@ -155,7 +196,7 @@ function Map({
                 Lat: {garden.lat.toFixed(5)}, Lng: {garden.lng.toFixed(5)}
                 <div
                   onClick={() => handleNavigation(null)}
-                  style={{ cursor: "pointer", color: "blue", marginTop: "5px" }}
+                  className={styles.createGarden}
                 >
                   Create your garden
                 </div>

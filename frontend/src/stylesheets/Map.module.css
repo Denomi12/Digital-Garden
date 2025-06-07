@@ -2,3 +2,46 @@
   height: 800px;
   width: 100%;
 }
+
+.createButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  border: none;
+  font: inherit;
+  margin-bottom: 10px;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+.createGarden {
+  cursor: pointer;
+  color: blue;
+  margin-top: 5px;
+}
+
+.popupContent {
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+}
+.popupContent h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.popupContent p {
+  margin: 0;
+  font-size: 14px;
+}

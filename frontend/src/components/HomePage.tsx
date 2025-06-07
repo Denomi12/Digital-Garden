@@ -1,6 +1,6 @@
 import WeatherChart from "./WeatherChart";
 import Map from "./Map";
-import HotQuestion from "./hotQuestion";
+import HotQuestion from "./HotQuestion";
 import Calender from "./Calendar";
 import styles from "../stylesheets/HomePage.module.css";
 
