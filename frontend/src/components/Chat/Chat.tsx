@@ -14,7 +14,7 @@ function Chat({ refreshForum }: ChatProps) {
   const [input, setInput] = useState("");
   const [savedIndexes, setSavedIndexes] = useState<number[]>([]); // shranjeni indeksi
 
-  const askAI = async (question: String) => {
+  const askAI = async () => {
     setInput("");
     try {
       const res = await axios.post(
@@ -32,7 +32,7 @@ function Chat({ refreshForum }: ChatProps) {
     if (!input.trim()) return;
     setMessages([...messages, { sender: "user", text: input }]);
 
-    const chatResponse = await askAI(input);
+    const chatResponse = await askAI();
 
     setMessages((prev) => [...prev, { sender: "bot", text: chatResponse }]);
   };
@@ -47,6 +47,7 @@ function Chat({ refreshForum }: ChatProps) {
       {
         title: question,
         questionMessage: answer,
+        botGenerated: true,
       },
       {
         withCredentials: true,

@@ -27,6 +27,7 @@ export type QuestionType = {
   dislikedBy: UserSummary[];
   createdAt: Date;
   comments: CommentType[];
+  botGenerated: any;
 };
 
 function Forum() {
