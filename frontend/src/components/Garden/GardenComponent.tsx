@@ -21,7 +21,7 @@ function GardenComponent() {
   );
   const [elementImage, setElementImage] = useState<string | null>(null);
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
-  const [selectedCell, setSelectedCell] = useState<Tile | null>(null)
+  const [selectedCell, setSelectedCell] = useState<Tile | null>(null);
 
   const gardenGridRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -47,12 +47,8 @@ function GardenComponent() {
     if (user?.id) fetchUserGardens();
   }, [user]);
 
-
   useEffect(() => {
     setSelectedCell(null);
-  }, [garden]);
-
-  useEffect(() => {
     if (garden) scrollToGrid();
   }, [garden?._id]);
 
@@ -62,15 +58,26 @@ function GardenComponent() {
         setElementImage(`/assets/Greda.png`);
         break;
       case GardenElement.RaisedBed:
-        setElementImage(null);
+        setElementImage(`/assets/VisokaGreda.png`);
         break;
       case GardenElement.Path:
-        setElementImage(null);
+        setSelectedCrop(null);
+        setElementImage(`/assets/Pot.png`);
+        break;
+      case GardenElement.Delete:
+        setSelectedCrop(null);
+        setElementImage(`/assets/Cross.png`);
         break;
       default:
         setElementImage(null);
     }
-  }, [selectedCrop, selectedElement]);
+  }, [selectedElement]);
+
+  useEffect(() => {
+    if (selectedCrop && (selectedElement == GardenElement.Delete || selectedElement == GardenElement.Path)) {
+      setSelectedElement(GardenElement.None);
+    }
+  }, [selectedCrop])
 
   async function saveGarden() {
     const data = garden?.toJson();
@@ -103,7 +110,7 @@ function GardenComponent() {
   const handleCellClick = (row: number, col: number) => {
     if (!garden) return;
 
-    garden.setElement(row, col, selectedCrop, selectedElement);
+    const tile = garden.setElement(row, col, selectedCrop, selectedElement);
     setGarden(
       new Garden(
         garden.width,
@@ -117,14 +124,14 @@ function GardenComponent() {
         garden._id
       )
     );
+    setSelectedCell(tile ? tile : null);
   };
 
   const handleCellSelect = (row: number, col: number) => {
     if (!garden) return;
 
     const cell = garden.getTile(row, col);
-    setSelectedCell(cell && cell != selectedCell? cell: null);
-    console.log(cell)
+    setSelectedCell(cell && cell != selectedCell ? cell : null);
   };
 
   const handleTopClick = () => {
@@ -278,7 +285,11 @@ function GardenComponent() {
 
             <div className={styles.MainLayout}>
               <CursorFollower
-                cropImage={selectedCrop?.imageSrc}
+                cropImage={
+                  selectedCrop
+                    ? selectedCrop.imageSrc || "/assets/Crop.png"
+                    : null
+                }
                 elementImage={elementImage}
               />
               <div className={styles.SidePanel}>
@@ -307,7 +318,7 @@ function GardenComponent() {
                     setSelectedElement={setSelectedElement}
                     saveGarden={saveGarden}
                   />
-                  <GardenCellDetails cell={selectedCell}/>
+                  <GardenCellDetails cell={selectedCell} />
                 </div>
               </div>
             </div>
