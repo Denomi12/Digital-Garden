@@ -33,14 +33,13 @@ function Forum() {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const navigate = useNavigate();
 
+  const getQuestions = async function () {
+    const res = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/question`);
+    const data = await res.json();
+    setQuestions(data);
+  };
+
   useEffect(function () {
-    const getQuestions = async function () {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BACKEND_URL}/question`
-      );
-      const data = await res.json();
-      setQuestions(data);
-    };
     getQuestions();
   }, []);
 
@@ -62,7 +61,7 @@ function Forum() {
           + Ask Question
         </button>
         <div className={styles.chat}>
-          <Chat />
+          <Chat refreshForum={getQuestions} />
         </div>
       </div>
     </div>

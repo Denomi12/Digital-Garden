@@ -182,7 +182,7 @@ const generateChat = async (req: Request, res: Response): Promise<void> => {
           {
             role: "system",
             content:
-              "Odgovarjaj samo na vprašanja, ki se nanašajo na vrtnarjenje. Če vprašanje nima nobene povezave z rastlinami, vrtninami, pridelavo ali nego vrta, vljudno povej, da ni relevantno. Odgovori naj bodo kratki, jasni in jedrnati – brez dolgih razlag.",
+              "Odgovarjaj samo na vprašanja, ki se nanašajo na vrtnarjenje. Če vprašanje nima nobene povezave z rastlinami, vrtninami, pridelavo ali nego vrta, odgovori točno to: 'Vprašanje ni povezano z vrtnarjenjem.'. Odgovori naj bodo kratki, jasni in jedrnati – brez dolgih razlag.",
           },
           { role: "user", content: prompt },
         ],
