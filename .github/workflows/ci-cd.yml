@@ -5,12 +5,12 @@ on:
 jobs:
   # PRVO OPRAVILO: Gradnja in nalaganje slik
   build-and-push:
-    # Določimo, da se bo opravilo izvajalo na virtualnem stroju z Ubuntu
+    # Določimo, da se bo opravilo izvajalo na vm Ubuntu
     runs-on: ubuntu-latest
     
-    # Določimo korake (steps), ki se bodo izvedli v tem opravilu
+    # Določimo korake, ki se bodo izvedli v tem opravilu
     steps:
-      # Korak 1: Prenos kode iz repozitorija na virtualni stroj
+      # Korak 1: Prenos kode iz repozitorija na vm
       - name: Prenos kode (Checkout)
         uses: actions/checkout@v4
 
@@ -36,14 +36,14 @@ jobs:
           context: ./frontend # Mapa, kjer je Dockerfile za frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/digital-garden-frontend:latest
-   # DRUGO OPRAVILO: Sprožitev webhooka na Azure strežniku (DODAJTE TA DEL)
-  deploy:
-    # To opravilo je odvisno od prejšnjega.
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sproži webhook za namestitev
-        uses: distributhor/webhook@v3
-        with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+  #  # DRUGO OPRAVILO: Sprožitev webhooka na Azure strežniku
+  # deploy:
+  #   # To opravilo je odvisno od prejšnjega.
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Sproži webhook za namestitev
+  #       uses: distributhor/webhook@v3
+  #       with:
+  #         webhook_url: ${{ secrets.WEBHOOK_URL }}
+  #         webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
