@@ -41,9 +41,11 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
             tile.imageSrc = `/assets/Greda.png`;
             break;
           case GardenElement.RaisedBed:
+            tile.imageSrc = `/assets/VisokaGreda.png`;
             tile.color = "#D2B48C";
             break;
           case GardenElement.Path:
+            tile.imageSrc = `/assets/Pot.png`;
             tile.color = "#F5DEB3";
             break;
           default:

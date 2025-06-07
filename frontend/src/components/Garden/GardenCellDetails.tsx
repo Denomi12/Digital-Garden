@@ -1,4 +1,4 @@
-import { Tile } from "./Types/Elements";
+import { GardenElement, Tile } from "./Types/Elements";
 import styles from "../../stylesheets/GardenCellDetails.module.css";
 import { useEffect, useState } from "react";
 import { isValidDate } from "../../utils/helpers";
@@ -57,16 +57,27 @@ export default function GardenCellDetails({ cell }: GardenCellDetailsProps) {
           </div>
         </div>
       )}
+      {cell.type != GardenElement.Path && cell.type != GardenElement.None &&(
+        <>
+          <div className={styles.DateRow}>
+            <label>🌱 Planted:</label>
+            <input
+              type="date"
+              value={plantedDate}
+              onChange={handlePlantedChange}
+            />
+          </div>
 
-      <div className={styles.DateRow}>
-        <label>🌱 Planted:</label>
-        <input type="date" value={plantedDate} onChange={handlePlantedChange} />
-      </div>
-
-      <div className={styles.DateRow}>
-        <label>🌧️ Watered:</label>
-        <input type="date" value={wateredDate} onChange={handleWateredChange} />
-      </div>
+          <div className={styles.DateRow}>
+            <label>🌧️ Watered:</label>
+            <input
+              type="date"
+              value={wateredDate}
+              onChange={handleWateredChange}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

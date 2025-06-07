@@ -3,6 +3,7 @@ export enum GardenElement {
   RaisedBed = "Visoka greda",
   Path = "Potka",
   None = "",
+  Delete= "Delete",
 }
 
 export interface Crop {

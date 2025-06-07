@@ -16,9 +16,11 @@ const GardenMenu = ({
   saveGarden: saveGarden,
 }: GardenMenuProps) => {
   const elements = [
-    GardenElement.GardenBed,
-    GardenElement.Path,
-    GardenElement.RaisedBed,
+    { gardenElement: GardenElement.GardenBed, img: "/assets/Greda.png" },
+    { gardenElement: GardenElement.RaisedBed, img: "/assets/VisokaGreda.png" },
+    { gardenElement: GardenElement.Path, img: "/assets/Pot.png" },
+    { gardenElement: GardenElement.Delete, img: "/assets/Cross.png"},
+
   ];
   const { user } = useContext(UserContext);
 
@@ -26,17 +28,30 @@ const GardenMenu = ({
     <div className={styles.GardenMenu}>
       {elements.map((element) => (
         <button
-          key={element}
+          key={element.gardenElement}
           className={`${styles.MenuButton} ${
-            selectedElement === element ? styles.SelectedButton : ""
+            selectedElement === element.gardenElement
+              ? styles.SelectedButton
+              : ""
           }`}
           onClick={() =>
             setSelectedElement(
-              element != selectedElement ? element : GardenElement.None
+              element.gardenElement != selectedElement
+                ? element.gardenElement
+                : GardenElement.None
             )
           }
         >
-          {element}
+          <div className={styles.ButtonTextContainer}>
+            {element.img && (
+              <img
+                src={element.img}
+                alt={element.gardenElement}
+                className={styles.ElementIcon}
+              />
+            )}
+            {element.gardenElement}
+          </div>
         </button>
       ))}
       {user ? (

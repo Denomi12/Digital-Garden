@@ -156,8 +156,6 @@ const parseCrops = async (cropsData: CropData) => {
     formatCrop(shuffledIds, element)
   );
 
-  console.log(parsedData);
-
   return parsedData;
 };
 
