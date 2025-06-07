@@ -1,0 +1,38 @@
+on:
+  push:
+    branches: [ "development" ]
+
+jobs:
+  # PRVO OPRAVILO: Gradnja in nalaganje slik
+  build-and-push:
+    # Določimo, da se bo opravilo izvajalo na virtualnem stroju z Ubuntu
+    runs-on: ubuntu-latest
+    
+    # Določimo korake (steps), ki se bodo izvedli v tem opravilu
+    steps:
+      # Korak 1: Prenos kode iz repozitorija na virtualni stroj
+      - name: Prenos kode (Checkout)
+        uses: actions/checkout@v4
+
+      # Korak 2: Prijava v Docker Hub z uporabo skrivnosti
+      - name: Prijava v Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Korak 3: Gradnja in nalaganje slike za backend
+      - name: Zgradi in naloži backend sliko
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend  # Mapa, kjer je Dockerfile za backend
+          push: true          # Povemo, da naj sliko tudi naloži (push)
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/digital-garden-backend:latest # Ime slike
+
+      # Korak 4: Gradnja in nalaganje slike za frontend
+      - name: Zgradi in naloži frontend sliko
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend # Mapa, kjer je Dockerfile za frontend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/digital-garden-frontend:latest
