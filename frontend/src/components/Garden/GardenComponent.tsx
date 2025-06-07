@@ -6,10 +6,11 @@ import { UserContext } from "../../UserContext";
 import ShowCrops from "./ShowCrops";
 import GardenGrid from "./GardenGrid";
 import { Garden } from "./Types/Garden";
-import { Crop, GardenElement } from "./Types/Elements";
+import { Crop, GardenElement, Tile } from "./Types/Elements";
 import CursorFollower from "../CursorFollower";
 import GardenList from "./GardenList";
 import { useLocation } from "react-router-dom";
+import GardenCellDetails from "./GardenCellDetails";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -20,6 +21,8 @@ function GardenComponent() {
   );
   const [elementImage, setElementImage] = useState<string | null>(null);
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+  const [selectedCell, setSelectedCell] = useState<Tile | null>(null)
+
   const gardenGridRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
@@ -40,8 +43,14 @@ function GardenComponent() {
   }
 
   useEffect(() => {
+    setSelectedCell(null);
     if (user?.id) fetchUserGardens();
   }, [user]);
+
+
+  useEffect(() => {
+    setSelectedCell(null);
+  }, [garden]);
 
   useEffect(() => {
     if (garden) scrollToGrid();
@@ -53,10 +62,10 @@ function GardenComponent() {
         setElementImage(`/assets/Greda.png`);
         break;
       case GardenElement.RaisedBed:
-        setElementImage(`/assets/Greda.png`);
+        setElementImage(null);
         break;
       case GardenElement.Path:
-        setElementImage(`/assets/Greda.png`);
+        setElementImage(null);
         break;
       default:
         setElementImage(null);
@@ -108,6 +117,14 @@ function GardenComponent() {
         garden._id
       )
     );
+  };
+
+  const handleCellSelect = (row: number, col: number) => {
+    if (!garden) return;
+
+    const cell = garden.getTile(row, col);
+    setSelectedCell(cell && cell != selectedCell? cell: null);
+    console.log(cell)
   };
 
   const handleTopClick = () => {
@@ -281,6 +298,8 @@ function GardenComponent() {
                   onBottomClick={handleBottomClick}
                   onLeftClick={handleLeftClick}
                   onRightClick={handleRightClick}
+                  onCellSelect={handleCellSelect}
+                  selectedCell={selectedCell}
                 />
                 <div className={styles.Menu}>
                   <GardenMenu
@@ -288,6 +307,7 @@ function GardenComponent() {
                     setSelectedElement={setSelectedElement}
                     saveGarden={saveGarden}
                   />
+                  <GardenCellDetails cell={selectedCell}/>
                 </div>
               </div>
             </div>

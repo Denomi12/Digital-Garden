@@ -142,9 +142,11 @@ export class Garden {
         break;
       case GardenElement.RaisedBed:
         tile.color = "#D2B48C";
+        tile.imageSrc = undefined;
         break;
       case GardenElement.Path:
         tile.color = "#F5DEB3";
+        tile.imageSrc = undefined;
         break;
       default:
         if (!crop) {
