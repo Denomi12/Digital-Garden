@@ -43,9 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sproži webhook za namestitev
-    run: |
-      curl -X POST \
-      -H "Content-Type: application/json" \
-      -H "X-Hub-Signature-256: sha256=$(echo -n '{"status":"success"}' | openssl sha256 -hmac "${{ secrets.WEBHOOK_SECRET }}" -binary | xxd -p -c 256)" \
-      -d '{"status":"success"}' \
-      "${{ secrets.WEBHOOK_URL }}"
+        uses: distributor/webhook@v3
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
