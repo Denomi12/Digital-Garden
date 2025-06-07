@@ -12,6 +12,7 @@ export interface QuestionInstance extends Document {
   owner: UserInstance;
   createdAt: Date;
   comments: Types.ObjectId[];
+  botGenerated: Boolean;
 }
 
 var questionSchema = new Schema<QuestionInstance>(
@@ -42,6 +43,7 @@ var questionSchema = new Schema<QuestionInstance>(
         ref: "comment",
       },
     ],
+    botGenerated: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

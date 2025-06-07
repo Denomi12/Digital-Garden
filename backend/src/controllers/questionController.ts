@@ -43,7 +43,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { title, questionMessage } = req.body;
+    const { title, questionMessage, botGenerated } = req.body;
 
     if (!title) {
       res.status(400).json({ message: "Title is required" });
@@ -63,6 +63,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
       dislikedBy: [],
       owner: owner,
       createdAt: new Date(),
+      botGenerated: !!botGenerated
     });
 
     const savedQuestion = await question.save();
