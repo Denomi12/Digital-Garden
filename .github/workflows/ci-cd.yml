@@ -36,14 +36,14 @@ jobs:
           context: ./frontend # Mapa, kjer je Dockerfile za frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/digital-garden-frontend:latest
-  #  # DRUGO OPRAVILO: Sprožitev webhooka na Azure strežniku
-  # deploy:
-  #   # To opravilo je odvisno od prejšnjega.
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Sproži webhook za namestitev
-  #       uses: distributhor/webhook@v3
-  #       with:
-  #         webhook_url: ${{ secrets.WEBHOOK_URL }}
-  #         webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+   # DRUGO OPRAVILO: Sprožitev webhooka na Azure strežniku
+  deploy:
+    # To opravilo je odvisno od prejšnjega.
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sproži webhook za namestitev
+        uses: distributhor/webhook@v3
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
