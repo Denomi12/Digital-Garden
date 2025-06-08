@@ -6,7 +6,9 @@
   align-items: center;
   width: 100px;
   transition: width 0.3s ease;
-  position: relative;
+  position: fixed; /* <--- Add this */
+  left: 0;
+  top: 0;
 }
 
 .sidebar.expanded {
@@ -24,10 +26,11 @@
   cursor: pointer;
   transition: transform 0.3s ease;
   margin-right: 5px;
+  transform: rotate(180deg);
 }
 
 .rArrow.rotated {
-  transform: rotate(180deg);
+  transform: rotate(0deg);
 }
 
 .iconContainer {

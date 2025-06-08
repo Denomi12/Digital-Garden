@@ -19,11 +19,7 @@ const listByOwner = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const gardens = await Garden.find({ owner: ownerId })
-      .populate("owner")
-      .populate({
-        path: "elements.crop",
-      });
+    const gardens = await Garden.find({ owner: ownerId }).populate("owner");
     res.json(gardens);
   } catch (error) {
     res.status(500).json({ message: "Error when getting gardens", error });
@@ -46,14 +42,13 @@ const show = async (req: Request, res: Response): Promise<void> => {
 };
 
 const create = async (req: Request, res: Response): Promise<void> => {
-  console.log(req.body);
   try {
     const owner = res.locals.user?.id;
 
-    if (!owner) {
-      res.status(400).json({ message: "Invalid garden owner" });
-      return;
-    }
+    // if (!owner) {
+    //   res.status(400).json({ message: "Invalid garden owner" });
+    //   return;
+    // }
 
     if (!req.body) {
       res.status(400).json({ message: "Request body is missing" });
@@ -137,7 +132,7 @@ const update = async (req: Request, res: Response): Promise<void> => {
     if (elements !== undefined) garden.elements = elements;
 
     const updatedGarden = await garden.save();
-    res.json({updatedGarden, message: "Garden successfully updated"});
+    res.json({ updatedGarden, message: "Garden successfully updated" });
   } catch (error) {
     res.status(500).json({ message: "Error when updating garden", error });
   }

@@ -27,22 +27,21 @@ export type QuestionType = {
   dislikedBy: UserSummary[];
   createdAt: Date;
   comments: CommentType[];
+  botGenerated: any;
 };
 
 function Forum() {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const navigate = useNavigate();
 
+  const getQuestions = async function () {
+    const res = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/question`);
+    const data = await res.json();
+    setQuestions(data);
+  };
+
   useEffect(function () {
-    const getPhotos = async function () {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BACKEND_URL}/question`
-      );
-      const data = await res.json();
-      console.log(data);
-      setQuestions(data);
-    };
-    getPhotos();
+    getQuestions();
   }, []);
 
   function addQuestion() {
@@ -62,7 +61,9 @@ function Forum() {
         <button className={styles.addQuestionBtn} onClick={addQuestion}>
           + Ask Question
         </button>
-        <Chat />
+        <div className={styles.chat}>
+          <Chat refreshForum={getQuestions} />
+        </div>
       </div>
     </div>
   );

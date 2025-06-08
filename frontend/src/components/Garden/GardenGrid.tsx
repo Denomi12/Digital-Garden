@@ -1,13 +1,16 @@
 import styles from "../../stylesheets/GardenGrid.module.css";
 import GardenCell from "./GardenCell";
+import { Tile } from "./Types/Elements";
 import { Garden } from "./Types/Garden";
 interface GardenGridProps {
   garden: Garden;
   onCellClick: (row: number, col: number) => void;
+  onCellSelect: (row: number, col: number) => void;
   onTopClick: () => void;
   onBottomClick: () => void;
   onLeftClick: () => void;
   onRightClick: () => void;
+  selectedCell: Tile | null;
 }
 
 export default function GardenGrid({
@@ -17,6 +20,8 @@ export default function GardenGrid({
   onBottomClick,
   onLeftClick,
   onRightClick,
+  onCellSelect,
+  selectedCell,
 }: GardenGridProps) {
   return (
     <div className={styles.GardenWrapper}>
@@ -55,6 +60,8 @@ export default function GardenGrid({
                     col={colIndex}
                     cell={cell}
                     handleCellClick={() => onCellClick(rowIndex, colIndex)}
+                    handleSelectCell={() => onCellSelect(rowIndex, colIndex)}
+                    selectedCell={selectedCell}
                   />
                 </span>
               ))}

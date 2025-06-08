@@ -68,6 +68,17 @@ fun SideBar(setTab: (String) -> Unit) {
         )
 
         Column {
+            MenuRow("Add garden", Icons.Rounded.Add) { setTab("Add garden") }
+            MenuRow("Gardens", Icons.Rounded.List) { setTab("Gardens") }
+        }
+
+        Divider(
+            color = Color.Gray,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Column {
             MenuRow("Scraper", Icons.Rounded.Share) { setTab("Scraper") }
             MenuRow("Generator", Icons.Rounded.Build) { setTab("Generator") }
         }
@@ -83,7 +94,7 @@ fun SideBar(setTab: (String) -> Unit) {
 
 @Composable
 @Preview
-fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
+fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit, onGardensUpdated: () -> Unit) {
     if (tab == "Home") {
         Text(
             text = "Home",
@@ -97,13 +108,17 @@ fun MainSection(tab: String, allCrops: List<Crop>, onCropsUpdated: () -> Unit) {
         AddCropTab(allCrops = allCrops, onCropAdded = onCropsUpdated)
     } else if (tab == "Crops") {
         CropsTab()
+    } else if (tab == "Gardens") {
+        GardensTab()
+    } else if (tab == "Add garden") {
+        AddGarden(onGardenAdded = { // Ali AddGarden(...
+            println("Garden added successfully. Consider refreshing garden list if needed globally.")
+            onGardensUpdated() // Kličemo nov callback
+        })
     } else if (tab == "Scraper") {
         ScraperTab()
     } else if (tab == "Generator") {
-        Text(
-            text = "Generator",
-            modifier = Modifier.padding(16.dp)
-        )
+        GeneratorTab()
     } else {
         Text(
             text = "About",
@@ -126,6 +141,18 @@ fun App() {
                 println("Crops loaded in App: ${allCrops.size} items")
             } catch (e: Exception) {
                 println("Error loading all crops in App: ${e.message}")
+            }
+        }
+    }
+
+    fun loadAllGardens() {
+        coroutineScope.launch {
+            try {
+                // Predvidevamo, da imate GardenApi.getGardens() in želite osvežiti seznam
+                // allGardens = GardenApi.getGardens() // Če bi upravljali seznam vrtov v App composable
+                println("Signal to refresh gardens received. GardensTab should handle its own refresh or observe a shared state.")
+            } catch (e: Exception) {
+                println("Error potentially reloading gardens in App: ${e.message}")
             }
         }
     }
@@ -157,7 +184,11 @@ fun App() {
                 .padding(start = 8.dp),
             shape = RoundedCornerShape(4.dp),
         ) {
-            MainSection(tab = tab, allCrops = allCrops, onCropsUpdated = { loadAllCrops() })
+            MainSection(
+                tab = tab,
+                allCrops = allCrops,
+                onCropsUpdated = { loadAllCrops() },
+                onGardensUpdated = { loadAllGardens() }            )
         }
     }
 }

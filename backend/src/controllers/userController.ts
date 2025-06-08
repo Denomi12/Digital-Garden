@@ -104,7 +104,11 @@ const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateToken({ id: user.id, username: user.username, email: user.email });
+    const token = generateToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    });
     const { password: _password, ...userWithoutPassword } = user.toObject();
     res
       .cookie("token", token, {

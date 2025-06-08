@@ -28,7 +28,8 @@ function AddCrop() {
     const fetchCrops = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BACKEND_URL}/crop`
+          `${import.meta.env.VITE_API_BACKEND_URL}/crop`,
+          { withCredentials: true }
         );
         setAvailableCrops(response.data);
         setIsLoadingCrops(false);
@@ -99,7 +100,8 @@ function AddCrop() {
         setWateringAmount("");
 
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BACKEND_URL}/crop`
+          `${import.meta.env.VITE_API_BACKEND_URL}/crop`,
+          { withCredentials: true }
         );
         setAvailableCrops(response.data);
       }

@@ -1,11 +1,15 @@
+import { useEffect, useState } from "react";
 import styles from "../../stylesheets/GardenCell.module.css";
-import { Tile } from "./Types/Elements";
+import { GardenElement, Tile } from "./Types/Elements";
+import GardenCellDetails from "./GardenCellDetails";
 
 interface GardenCellProps {
   col: number;
   row: number;
   cell: Tile;
   handleCellClick: (row: number, col: number) => void;
+  handleSelectCell: (row: number, col: number) => void;
+  selectedCell: Tile | null;
 }
 
 export default function GardenCell({
@@ -13,12 +17,24 @@ export default function GardenCell({
   row: y,
   cell,
   handleCellClick,
+  handleSelectCell,
+  selectedCell,
 }: GardenCellProps) {
+  const showDetails =
+    cell.type === GardenElement.GardenBed ||
+    cell.type === GardenElement.RaisedBed;
+  var isSelected: boolean = selectedCell == cell;
+
   return (
     <div
-      className={styles.GardenCell}
+      className={`${styles.GardenCell} ${isSelected ? styles.isSelected : ""}`}
       onClick={() => handleCellClick(y, x)}
       style={{ backgroundColor: cell.color || "transparent" }}
+      onContextMenu={(e) => {
+        e.preventDefault(); // Prevent the default browser context menu
+        isSelected = selectedCell == cell;
+        handleSelectCell(y, x);
+      }}
     >
       {/* Background Image (e.g., garden element) */}
       {cell.imageSrc && (
@@ -36,21 +52,16 @@ export default function GardenCell({
             />
           ) : (
             <div className={styles.CropInfo}>
-              🌱<br/>{cell.crop.name}
-              {/* {cell.plantedDate && (
-                <div>
-                  Planted: {new Date(cell.plantedDate).toLocaleDateString()}
-                </div>
-              )}
-              {cell.wateredDate && (
-                <div>
-                  Watered: {new Date(cell.wateredDate).toLocaleDateString()}
-                </div>
-              )} */}
+              🌱
+              <br />
+              {cell.crop.name}
             </div>
           )}
         </div>
       )}
+
+      {/* Hover effect: display extra component */}
+      {/* {showDetails && <GardenCellDetails cell={cell}></GardenCellDetails>} */}
     </div>
   );
 }

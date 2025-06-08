@@ -1,146 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Popup,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Garden } from "./Garden/Types/Garden";
+import { UserContext } from "../UserContext";
+import styles from "../stylesheets/Map.module.css";
 
-// Tip trgovine (pripravljen za kasnejšo uporabo)
 interface Store {
-  id: number;
+  key: number;
   name: string;
   location: string;
   latitude: number;
   longitude: number;
 }
-
-//potem gre to v bazo pa beremo ven
-const stores: Store[] = [
-  {
-    id: 1,
-    name: "Kalia Dobrovnik",
-    location: "Dobrovnik 255, 9223 Dobrovnik",
-    latitude: 46.65249250534264,
-    longitude: 16.347810586284975,
-  },
-  {
-    id: 2,
-    name: "Kalia Vrhnika",
-    location: "Robova cesta 6, 1360 Vrhnika",
-    latitude: 45.967650315929546,
-    longitude: 14.297217197149026,
-  },
-  {
-    id: 3,
-    name: "Kalia Beltinci",
-    location: "Gregorčičeva ulica 2, 9231 Beltinci",
-    latitude: 46.60740280584615,
-    longitude: 16.237570064713918,
-  },
-  {
-    id: 4,
-    name: "Kalia Celje",
-    location: "Teharje 7, 3000 Celje",
-    latitude: 46.232831446764806,
-    longitude: 15.297988842327026,
-  },
-  {
-    id: 5,
-    name: "Kalia Kranj",
-    location: "Bleiweisova cesta 29, 4000 Kranj",
-    latitude: 46.25636482814234,
-    longitude: 14.34938235483213,
-  },
-  {
-    id: 6,
-    name: "Kalia Lendava",
-    location: "Kolodvorska ulica 42, 9220 Lendava",
-    latitude: 46.553951144751856,
-    longitude: 16.446597295982457,
-  },
-  {
-    id: 7,
-    name: "Kalia Ljubljana Rudnik",
-    location: "Dolenjska cesta 242 A, 1000 Ljubljana",
-    latitude: 46.02309512865861,
-    longitude: 14.540108930200201,
-  },
-  {
-    id: 8,
-    name: "Kalia Murska Sobota Obrtna",
-    location: "Obrtna ulica 2, 9000 Murska Sobota",
-    latitude: 46.66795125688331,
-    longitude: 16.17608758368522,
-  },
-  {
-    id: 9,
-    name: "Kalia Maribor",
-    location: "Tržaška cesta 35, 2000 Maribor",
-    latitude: 46.5304129650721,
-    longitude: 15.646574012495869,
-  },
-  {
-    id: 10,
-    name: "Kalia Metlika",
-    location: "Cesta 15. brigade 1, 8330 Metlika",
-    latitude: 45.64708714588623,
-    longitude: 15.314947392508403,
-  },
-  {
-    id: 11,
-    name: "Kalia Murska Sobota Tišinska",
-    location: "Tišinska ulica 29e, 9000 Murska Sobota",
-    latitude: 46.65173225675397,
-    longitude: 16.14498755070838,
-  },
-  {
-    id: 12,
-    name: "Kalia Novo Mesto",
-    location: "Velika Bučna vas 3b, 8000 Novo Mesto",
-    latitude: 45.82232266032823,
-    longitude: 15.1571851548136,
-  },
-  {
-    id: 13,
-    name: "Kalia Ptuj",
-    location: "Špindlerjeva ulica 3, 2250 Ptuj",
-    latitude: 46.42728173629497,
-    longitude: 15.891418301137177,
-  },
-  {
-    id: 14,
-    name: "Kalia Šempeter",
-    location: "Vrtojbenska cesta 79, 5290 Šempeter pri Gorici",
-    latitude: 45.922027488264774,
-    longitude: 13.640727863750264,
-  },
-  {
-    id: 15,
-    name: "Kalia Slovenska Bistrica",
-    location: "Žolgerjeva ulica 4, 2310 Slovenska Bistrica",
-    latitude: 46.38691237638533,
-    longitude: 15.569766947104156,
-  },
-  {
-    id: 16,
-    name: "Kalia Slovenske Konjice",
-    location: "Liptovska ulica 8, 3210 Slovenske Konjice",
-    latitude: 46.341047643227654,
-    longitude: 15.428212486120696,
-  },
-  {
-    id: 17,
-    name: "Kalia Črnomelj",
-    location: "Majer 9, 8340 Črnomelj",
-    latitude: 45.56975005020772,
-    longitude: 15.196321696417924,
-  },
-];
 
 const customIcon = L.icon({
   iconUrl: "/assets/store.png",
@@ -149,8 +30,15 @@ const customIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
-const gardenIcon = L.icon({
+const emptyGardenIcon = L.icon({
   iconUrl: "/assets/leaves.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const gardenIcon = L.icon({
+  iconUrl: "/assets/leavesDark.png",
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
@@ -170,50 +58,131 @@ function MapClickHandler({
   return null;
 }
 
-// znotraj komponente Map
-function Map() {
+function Map({
+  className,
+  showCreateButton = true,
+}: {
+  className?: string;
+  showCreateButton?: boolean;
+}) {
   const navigate = useNavigate();
   const centerPosition: [number, number] = [46.1512, 14.9955];
 
+  const [stores, setStores] = useState<Store[]>([]);
   const [addGarden, setAddGarden] = useState(false);
   const [gardens, setGardens] = useState<
     { id: number; lat: number; lng: number }[]
   >([]);
+  const [userGardens, setUserGardens] = useState<Garden[]>([]);
+  const { user } = useContext(UserContext);
+  const [selectedGarden, setSelectedGarden] = useState<Garden | null>(null);
 
   const handleAddGarden = (lat: number, lng: number) => {
     setGardens((prev) => [...prev, { id: prev.length + 1, lat, lng }]);
     setAddGarden(false);
   };
 
-  const handleNavigation = (lat: number, lng: number) => {
-    console.log("Navigacija do:", lat, lng);
-    navigate("/garden", { state: { lat, lng } });
+  const handleNavigation = (garden: Garden | null) => {
+    setSelectedGarden(garden);
   };
+
+  function GardenNavigationHandler({ garden }: { garden: Garden | null }) {
+    const map = useMap();
+    const navigate = useNavigate();
+    useEffect(() => {
+      if (garden?.latitude && garden?.longitude) {
+        const onMoveEnd = () => {
+          map.off("moveend", onMoveEnd);
+          navigate("/garden", { state: { garden } });
+        };
+
+        map.on("moveend", onMoveEnd);
+
+        map.flyTo([garden.latitude, garden.longitude], 14, {
+          duration: 1.5,
+        });
+      } else {
+        navigate("/garden", { state: { garden } });
+      }
+    }, [garden]);
+
+    return null;
+  }
+
+  async function fetchStores() {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BACKEND_URL}/store`,
+        { withCredentials: true }
+      );
+      setStores(res.data);
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+    }
+  }
+
+  async function fetchUserGardens() {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BACKEND_URL}/garden/ownedBy/${user?.id}`,
+        { withCredentials: true }
+      );
+      setUserGardens(res.data);
+    } catch (error) {
+      console.error("Error fetching user gardens:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchStores();
+    fetchUserGardens();
+  }, []);
 
   return (
     <>
-      <button onClick={() => setAddGarden(true)}>Create new garden</button>
-      <div style={{ height: "800px", width: "100%" }}>
+      {showCreateButton && (
+        <button
+          className={styles.createButton}
+          onClick={() => setAddGarden(true)}
+        >
+          Create new garden
+        </button>
+      )}
+
+      <div className={className ?? styles.mapWrapper}>
         <MapContainer
           center={centerPosition}
-          zoom={9}
-          style={{ height: "100%", width: "100%" }}
+          zoom={9} // start zoomed in reasonably close
+          minZoom={9} // zoom out only until whole Slovenia fits
+          maxZoom={18}
+          maxBounds={[
+            [45.4, 13.35],
+            [46.9, 16.6],
+          ]}
+          maxBoundsViscosity={1.0}
+          className={styles.map}
+          attributionControl={false}
         >
           <TileLayer
             attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
 
+          {selectedGarden && (
+            <GardenNavigationHandler garden={selectedGarden} />
+          )}
+
           {stores.map((store) => (
             <Marker
-              key={store.id}
+              key={store.key}
               position={[store.latitude, store.longitude]}
               icon={customIcon}
             >
               <Popup>
-                <strong>{store.name}</strong>
-                <br />
-                {store.location}
+                <div className={styles.popupContent}>
+                  <h3>{store.name}</h3>
+                  <p>{store.location}</p>
+                </div>
               </Popup>
             </Marker>
           ))}
@@ -228,21 +197,70 @@ function Map() {
             <Marker
               key={`garden-${garden.id}`}
               position={[garden.lat, garden.lng]}
-              icon={gardenIcon}
+              icon={emptyGardenIcon}
             >
               <Popup>
-                <strong>Moj vrt #{garden.id}</strong>
-                <br />
-                Lat: {garden.lat.toFixed(5)}, Lng: {garden.lng.toFixed(5)}
-                <div
-                  onClick={() => handleNavigation(garden.lat, garden.lng)}
-                  style={{ cursor: "pointer", color: "blue", marginTop: "5px" }}
-                >
-                  Create your garden
+                <div className={styles.popupContainer}>
+                  <div className={styles.popupTitle}>🌱New Garden</div>
+                  <div className={styles.popupCoords}>
+                    📍 <strong>Lat:</strong> {garden.lat.toFixed(5)}
+                    <br />
+                    📍 <strong>Lon:</strong> {garden.lng.toFixed(5)}
+                  </div>
+                  <button
+                    onClick={() =>
+                      handleNavigation(
+                        new Garden(
+                          0,
+                          0,
+                          "",
+                          undefined,
+                          undefined,
+                          garden.lat,
+                          garden.lng
+                        )
+                      )
+                    }
+                    className={styles.createGardenButton}
+                  >
+                    Create Your Garden
+                  </button>
                 </div>
               </Popup>
             </Marker>
           ))}
+
+          {userGardens.map((garden) => {
+            if (!garden.latitude || !garden.longitude) return null;
+
+            return (
+              <Marker
+                key={`garden-${garden._id}`}
+                position={[garden.latitude, garden.longitude]}
+                icon={gardenIcon}
+              >
+                <Popup>
+                  <div className={styles.popupContainer}>
+                    <div className={styles.popupTitle}>
+                      🌱 <strong>{garden.name}</strong>
+                      <div id={garden._id}></div>
+                    </div>
+                    <div className={styles.popupCoords}>
+                      📍 <strong>Lat:</strong> {garden.latitude.toFixed(5)}
+                      <br />
+                      📍 <strong>Lon:</strong> {garden.longitude.toFixed(5)}
+                    </div>
+                    <button
+                      onClick={() => handleNavigation(garden)}
+                      className={styles.editGardenButton}
+                    >
+                      ✏️ Edit Your Garden
+                    </button>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
         </MapContainer>
       </div>
     </>

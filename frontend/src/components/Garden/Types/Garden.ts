@@ -27,7 +27,7 @@ export class Garden {
     longitude?: number,
 
     owner?: User,
-    _id?: string,
+    _id?: string
   ) {
     this.width = width;
     this.height = height;
@@ -70,17 +70,39 @@ export class Garden {
           type: tile.type,
           crop: tile.crop,
           plantedDate: isValidDate(tile.plantedDate)
-          ? new Date(tile.plantedDate).toISOString()
-          : tile.plantedDate ?? null,
-        wateredDate: isValidDate(tile.wateredDate)
-          ? new Date(tile.wateredDate).toISOString()
-          : tile.wateredDate ?? null,
+            ? new Date(tile.plantedDate).toISOString()
+            : tile.plantedDate ?? null,
+          wateredDate: isValidDate(tile.wateredDate)
+            ? new Date(tile.wateredDate).toISOString()
+            : tile.wateredDate ?? null,
         })),
     };
   }
 
   getTile(row: number, col: number): Tile | undefined {
     return this.elements?.[row]?.[col];
+  }
+
+  colorTile(element: GardenElement, tile: Tile, crop: Crop | null) {
+    switch (element) {
+      case GardenElement.GardenBed:
+        tile.color = "#8B4513";
+        tile.imageSrc = `/assets/Greda.png`;
+        break;
+      case GardenElement.RaisedBed:
+        tile.color = "#D2B48C";
+        tile.imageSrc = `/assets/VisokaGreda.png`;
+        break;
+      case GardenElement.Path:
+        tile.color = "#F5DEB3";
+        tile.imageSrc = `/assets/Pot.png`;
+        break;
+      default:
+        if (!crop) {
+          tile.color = undefined;
+          tile.imageSrc = undefined;
+        }
+    }
   }
 
   setElement(
@@ -91,12 +113,11 @@ export class Garden {
   ) {
     const tile = this.getTile(row, col);
     if (!tile) return;
-
     //TODO Upoštevaj, da ne povoziš datumov
     //TODO Dodaj gumb za brisanje
 
     // 1. Oboje prazno => pobriši vse
-    if (element == GardenElement.None && !crop) {
+    if (element == GardenElement.Delete && !crop) {
       tile.plantedDate = undefined;
       tile.wateredDate = undefined;
       tile.crop = undefined;
@@ -124,34 +145,20 @@ export class Garden {
       tile.type = element;
       tile.crop = crop;
       tile.plantedDate = new Date();
+      this.colorTile(element, tile, crop);
     }
 
     //4. Samo element
-    else if (!crop) {
+    else if (!crop && element) {
       tile.crop = undefined;
       tile.plantedDate = undefined;
       tile.wateredDate = undefined;
       tile.type = element;
       tile.color = undefined;
+      this.colorTile(element, tile, crop);
     }
 
-    switch (element) {
-      case GardenElement.GardenBed:
-        tile.color = "#8B4513";
-        tile.imageSrc = `/assets/Greda.png`;
-        break;
-      case GardenElement.RaisedBed:
-        tile.color = "#D2B48C";
-        break;
-      case GardenElement.Path:
-        tile.color = "#F5DEB3";
-        break;
-      default:
-        if (!crop) {
-          tile.color = undefined;
-          tile.imageSrc = undefined;
-        }
-    }
+    return tile;
   }
 
   addRowTop() {
