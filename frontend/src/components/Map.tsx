@@ -30,8 +30,15 @@ const customIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
-const gardenIcon = L.icon({
+const emptyGardenIcon = L.icon({
   iconUrl: "/assets/leaves.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const gardenIcon = L.icon({
+  iconUrl: "/assets/leavesDark.png",
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
@@ -82,7 +89,7 @@ function Map({
   function GardenNavigationHandler({ garden }: { garden: Garden | null }) {
     const map = useMap();
     const navigate = useNavigate();
-
+    
     useEffect(() => {
       if (garden?.latitude && garden?.longitude) {
         const onMoveEnd = () => {
@@ -188,7 +195,7 @@ function Map({
             <Marker
               key={`garden-${garden.id}`}
               position={[garden.lat, garden.lng]}
-              icon={gardenIcon}
+              icon={emptyGardenIcon}
             >
               <Popup>
                 <strong>Moj vrt #{garden.id}</strong>
@@ -215,10 +222,10 @@ function Map({
               >
                 <Popup>
                   <strong>
-                    Moj vrt <div id={garden._id}></div>
+                    {garden.name} <div id={garden._id}></div>
                   </strong>
                   <br />
-                  Lat: {garden.latitude.toFixed(5)}, Lng:{" "}
+                  Lat: {garden.latitude.toFixed(5)}, Lon:{" "}
                   {garden.longitude.toFixed(5)}
                   <div
                     onClick={() => handleNavigation(garden)}
@@ -228,7 +235,7 @@ function Map({
                       marginTop: "5px",
                     }}
                   >
-                    Create your garden
+                    Edit your garden
                   </div>
                 </Popup>
               </Marker>
