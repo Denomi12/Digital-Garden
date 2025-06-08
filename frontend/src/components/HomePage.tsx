@@ -9,13 +9,13 @@ function HomePage() {
     <div>
       <div className={styles.mainContent}>
         <div className={styles.leftSide}>
-          <div className={styles.title2}>Weather Forecast:</div>
-          <div className={styles.weather}>
-            <WeatherChart />
-          </div>
           <div className={styles.title2}>Map of gardens:</div>
           <div className={styles.map}>
             <Map className={styles.smallMap} showCreateButton={false} />
+          </div>
+          <div className={styles.title2}>Weather Forecast:</div>
+          <div className={styles.weather}>
+            <WeatherChart />
           </div>
         </div>
         <div className={styles.rightSide}>
@@ -24,7 +24,6 @@ function HomePage() {
             <HotQuestion />
           </div>
           <div className={styles.calender}>
-            <div className={styles.title2}>Calender:</div>
 
             <Calender />
           </div>

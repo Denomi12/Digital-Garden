@@ -5,18 +5,24 @@ type NewGarden = {
   width: number;
   height: number;
   name: string;
+  lat?: number;
+  lon?: number;
 };
 
 type GardenCreateModalProps = {
   onCreate: (garden: NewGarden) => void;
   onClose: () => void;
   isOpen: boolean;
+  lat?: number;
+  lon?: number;
 };
 
 const GardenCreateModal: React.FC<GardenCreateModalProps> = ({
   onCreate,
   onClose,
   isOpen,
+  lat,
+  lon
 }) => {
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
@@ -39,7 +45,7 @@ const GardenCreateModal: React.FC<GardenCreateModalProps> = ({
       return;
     }
 
-    onCreate({ width: w, height: h, name });
+    onCreate({ width: w, height: h, name, lat, lon });
     setWidth("");
     setHeight("");
     setName("");

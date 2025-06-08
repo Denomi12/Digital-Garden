@@ -26,9 +26,6 @@ function GardenComponent() {
   const gardenGridRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
-  useEffect(() => {
-    console.log(location.state);
-  });
 
   const scrollToGrid = () => {
     gardenGridRef.current?.scrollIntoView({ behavior: "smooth" });

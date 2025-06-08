@@ -70,6 +70,8 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
     width: number;
     height: number;
     name: string;
+    lat?: number;
+    lon?: number;
   }) => {
     const newGarden = new Garden(
       data.width,
@@ -77,8 +79,8 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
       data.name,
       null,
       undefined,
-      undefined,
-      undefined,
+      data.lat,
+      data.lon,
       user || undefined
     );
     setGarden(newGarden);
@@ -86,7 +88,11 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
 
   useEffect(() => {
     if (mapGarden) {
-      setSelectedGarden(mapGarden._id!!);
+      if (mapGarden._id) {
+        setSelectedGarden(mapGarden._id);
+      } else {
+        setModalOpen(true);
+      }
     }
   }, []);
 
@@ -98,6 +104,8 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onCreate={handleCreateGarden}
+        lat={mapGarden?.latitude}
+        lon={mapGarden?.longitude}
       />
       <h2 className={styles.title}>My Gardens</h2>
       <div className={styles.gardensContainer}>
