@@ -262,7 +262,7 @@ function GardenComponent() {
                   />
                 </div>
 
-                <div className={styles.InputWrapper}>
+                {/* <div className={styles.InputWrapper}>
                   <span className={styles.InputIcon}>🌐</span>
                   <input
                     className={styles.InfoText}
@@ -284,7 +284,7 @@ function GardenComponent() {
                     }
                     placeholder="Longitude"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 
