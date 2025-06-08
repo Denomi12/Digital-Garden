@@ -115,7 +115,7 @@ fun AddCropTab(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            leadingIcon = { Icon(Icons.Default.List, contentDescription = "Crop Name") }
+            leadingIcon = { Icon(Icons.Filled.Spa, contentDescription = "Crop Name") }
         )
 
         OutlinedTextField(
@@ -126,7 +126,7 @@ fun AddCropTab(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            leadingIcon = { Icon(Icons.Default.List, contentDescription = "Latin Name") }
+            leadingIcon = { Icon(Icons.Filled.Science, contentDescription = "Latin Name") }
         )
 
         ExposedDropdownMenuBox(
@@ -141,6 +141,7 @@ fun AddCropTab(
                 onValueChange = { },
                 readOnly = true,
                 label = { Text("Planting Month") },
+                leadingIcon = { Icon(Icons.Filled.DateRange, contentDescription = "Planting Month") },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = plantingMonthExpanded)
                 },
@@ -178,6 +179,7 @@ fun AddCropTab(
                     onValueChange = { },
                     readOnly = true,
                     label = { Text("Watering Frequency") },
+                    leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = "Watering frequency") },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = wateringFrequencyExpanded)
                     },
@@ -212,7 +214,7 @@ fun AddCropTab(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f),
                 singleLine = true,
-                leadingIcon = { Icon(Icons.Default.List, contentDescription = "Water Amount") }
+                leadingIcon = { Icon(Icons.Filled.WaterDrop, contentDescription = "Water Amount") }
             )
         }
 
@@ -228,7 +230,7 @@ fun AddCropTab(
                 label = { Text("Image Path") },
                 modifier = Modifier.weight(1f),
                 singleLine = true,
-                leadingIcon = { Icon(Icons.Default.List, contentDescription = "Image Path") },
+                leadingIcon = { Icon(Icons.Filled.Image, contentDescription = "Image Path") },
                 readOnly = true
             )
 
@@ -432,7 +434,6 @@ fun AddCropTab(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)),
                     modifier = Modifier.width(120.dp)
                 ) {
                     Text("Create", color = Color.White)

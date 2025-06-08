@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -151,7 +149,7 @@ fun CropCardExpandable(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Info, contentDescription = "Crop", modifier = Modifier.size(24.dp))
+                Icon(Icons.Default.Eco, contentDescription = "Crop", modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(crop.name, style = MaterialTheme.typography.h6)
             }
@@ -163,14 +161,16 @@ fun CropCardExpandable(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Filled.Spa, contentDescription = "Name") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = latinName,
                     onValueChange = { latinName = it },
                     label = { Text("Latin Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Filled.Science, contentDescription = "Latin Name") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -184,6 +184,7 @@ fun CropCardExpandable(
                         onValueChange = { },
                         readOnly = true,
                         label = { Text("Planting Month") },
+                        leadingIcon = { Icon(Icons.Filled.DateRange, contentDescription = "Planting Month") },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = plantingMonthExpanded)
                         },
@@ -219,6 +220,7 @@ fun CropCardExpandable(
                             onValueChange = { },
                             readOnly = true,
                             label = { Text("Watering Frequency") },
+                            leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = "Watering Frequency") },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = wateringFrequencyExpanded)
                             },
@@ -251,6 +253,7 @@ fun CropCardExpandable(
                         },
                         label = { Text("Watering Amount") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        leadingIcon = { Icon(Icons.Filled.WaterDrop, contentDescription = "Watering Amount") },
                         modifier = Modifier.weight(1f)
                     )
                 }

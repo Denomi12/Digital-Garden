@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -156,7 +156,7 @@ fun GardenCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Info, contentDescription = "Garden", modifier = Modifier.size(24.dp))
+                Icon(Icons.Filled.Yard, contentDescription = "Garden", modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(garden.name, style = MaterialTheme.typography.h6)
             }
@@ -168,7 +168,8 @@ fun GardenCard(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Filled.Yard, contentDescription = "Garden Name") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -181,7 +182,8 @@ fun GardenCard(
                             }
                         },
                         label = { Text("Width") },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        leadingIcon = { Icon(Icons.Filled.SwapHoriz, contentDescription = "Width") }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
@@ -192,7 +194,8 @@ fun GardenCard(
                             }
                         },
                         label = { Text("Height") },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        leadingIcon = { Icon(Icons.Filled.SwapVert, contentDescription = "Height") }
                     )
                 }
 
@@ -202,7 +205,8 @@ fun GardenCard(
                     value = location,
                     onValueChange = { location = it },
                     label = { Text("Location") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = "Location") }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -216,7 +220,8 @@ fun GardenCard(
                             }
                         },
                         label = { Text("Latitude") },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        leadingIcon = { Icon(Icons.Filled.Public, contentDescription = "Latitude") }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
@@ -227,7 +232,8 @@ fun GardenCard(
                             }
                         },
                         label = { Text("Longitude") },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        leadingIcon = { Icon(Icons.Filled.Public, contentDescription = "Longitude") }
                     )
                 }
 
@@ -268,9 +274,10 @@ fun GardenCard(
                             elements = elements
                         ))
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+                    modifier = Modifier.fillMaxWidth() 
                 ) {
-                    Text("Save", color = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Save")
                 }
             }
         }
@@ -305,7 +312,6 @@ fun TileEditor(
         Text("Tile (${tile.x}, ${tile.y})", style = MaterialTheme.typography.subtitle1)
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Type dropdown
         ExposedDropdownMenuBox(
             expanded = typeExpanded,
             onExpandedChange = { typeExpanded = !typeExpanded },
@@ -316,6 +322,7 @@ fun TileEditor(
                 onValueChange = { },
                 readOnly = true,
                 label = { Text("Type") },
+                leadingIcon = { Icon(Icons.Filled.Category, contentDescription = "Tile Type") },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded)
                 },
@@ -358,6 +365,7 @@ fun TileEditor(
                 onValueChange = { },
                 readOnly = true,
                 label = { Text("Crop") },
+                leadingIcon = { Icon(Icons.Filled.Spa, contentDescription = "Crop") },
                 trailingIcon = {
                     if (isCropFieldEnabled) {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = cropExpanded)
@@ -415,7 +423,8 @@ fun TileEditor(
             },
             label = { Text("Planted Date (dd. mm. yyyy)") },
             enabled = isCropFieldEnabled,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = { Icon(Icons.Filled.DateRange, contentDescription = "Planted Date") }
         )
 //        Spacer(modifier = Modifier.height(4.dp))
 //

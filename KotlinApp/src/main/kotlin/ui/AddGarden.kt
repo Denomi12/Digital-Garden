@@ -91,7 +91,7 @@ fun AddGarden(onGardenAdded: () -> Unit) {
             label = { Text("Garden Name") },
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             singleLine = true,
-            leadingIcon = { Icon(Icons.Default.List, contentDescription = "Garden Name") }
+            leadingIcon = { Icon(Icons.Filled.Yard, contentDescription = "Garden Name") }
         )
 
         ExposedDropdownMenuBox(
@@ -143,7 +143,7 @@ fun AddGarden(onGardenAdded: () -> Unit) {
                 label = { Text("Width (units)") },
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                leadingIcon = { Icon(Icons.Default.List, contentDescription = "Width") }
+                leadingIcon = { Icon(Icons.Default.SwapHoriz, contentDescription = "Width") }
             )
             OutlinedTextField(
                 value = heightText,
@@ -151,7 +151,7 @@ fun AddGarden(onGardenAdded: () -> Unit) {
                 label = { Text("Height (units)") },
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                leadingIcon = { Icon(Icons.Default.List, contentDescription = "Height") }
+                leadingIcon = { Icon(Icons.Default.SwapVert, contentDescription = "Height") }
             )
         }
 
@@ -161,7 +161,7 @@ fun AddGarden(onGardenAdded: () -> Unit) {
             label = { Text("Location (Optional)") },
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             singleLine = true,
-            leadingIcon = { Icon(Icons.Default.List, contentDescription = "Location") }
+            leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = "Location") }
         )
 
         Row(
@@ -177,7 +177,8 @@ fun AddGarden(onGardenAdded: () -> Unit) {
                 },
                 label = { Text("Latitude (Optional)") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                leadingIcon = { Icon(Icons.Filled.Public, contentDescription = "Latitude") }
             )
             OutlinedTextField(
                 value = longitudeText,
@@ -188,7 +189,8 @@ fun AddGarden(onGardenAdded: () -> Unit) {
                 },
                 label = { Text("Longitude (Optional)") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                leadingIcon = { Icon(Icons.Filled.Public, contentDescription = "Longitude") }
             )
         }
 
@@ -201,7 +203,7 @@ fun AddGarden(onGardenAdded: () -> Unit) {
             onClick = { showAddTileDialog = true },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Icon(Icons.Default.List, contentDescription = "Add Tile")
+            Icon(Icons.Filled.AddLocationAlt, contentDescription = "Add Tile")
             Spacer(modifier = Modifier.width(4.dp))
             Text("Add Tile Element")
         }

@@ -30,6 +30,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // za parsanje
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0") // za asinhronost
     implementation("ch.qos.logback:logback-classic:1.4.14") // logger knjižnica
+    implementation(compose.materialIconsExtended)
+
+
     implementation("it.skrape:skrapeit:1.2.2") // Skrape knjižnica za scraping
 
 }
