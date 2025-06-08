@@ -1,9 +1,10 @@
 import { Garden } from "./Types/Garden";
 import styles from "../../stylesheets/GardenList.module.css";
 import { GardenElement } from "./Types/Elements";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../UserContext";
 import axios from "axios";
+import GardenCreateModal from "./GardenCreateModal";
 
 type GardenListProps = {
   mapGarden: Garden | null;
@@ -13,6 +14,7 @@ type GardenListProps = {
 
 function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
   const { user } = useContext(UserContext);
+  const [modalOpen, setModalOpen] = useState(false);
 
   async function setSelectedGarden(gardenID: String) {
     try {
@@ -64,38 +66,33 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
     }
   }
 
-  const createGarden = () => {
-    const widthInput = prompt("Enter the width of the garden:");
-    const heightInput = prompt("Enter the height of the garden:");
-    const nameInput = prompt("Enter garden name:");
-
-    if (widthInput && heightInput) {
-      const w = parseInt(widthInput, 10);
-      const h = parseInt(heightInput, 10);
-
-      if (!isNaN(w) && !isNaN(h) && nameInput) {
-        const newGarden = new Garden(
-          w,
-          h,
-          nameInput,
-          null,
-          undefined,
-          undefined,
-          undefined,
-          user ? user : undefined
-        );
-        setGarden(newGarden);
-      } else {
-        alert("Please enter valid numbers for both width and height.");
-      }
-    } else {
-      alert("Please enter both width and height.");
-    }
+  const handleCreateGarden = (data: {
+    width: number;
+    height: number;
+    name: string;
+    lat?: number;
+    lon?: number;
+  }) => {
+    const newGarden = new Garden(
+      data.width,
+      data.height,
+      data.name,
+      null,
+      undefined,
+      data.lat,
+      data.lon,
+      user || undefined
+    );
+    setGarden(newGarden);
   };
 
   useEffect(() => {
     if (mapGarden) {
-      setSelectedGarden(mapGarden._id!!);
+      if (mapGarden._id) {
+        setSelectedGarden(mapGarden._id);
+      } else {
+        setModalOpen(true);
+      }
     }
   }, []);
 
@@ -103,6 +100,13 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
 
   return (
     <div className={styles.listContainer}>
+      <GardenCreateModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onCreate={handleCreateGarden}
+        lat={mapGarden?.latitude}
+        lon={mapGarden?.longitude}
+      />
       <h2 className={styles.title}>My Gardens</h2>
       <div className={styles.gardensContainer}>
         {gardens.map((garden, index) => (
@@ -121,7 +125,10 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
           </div>
         ))}
       </div>
-      <button onClick={createGarden} className={styles.CreateButton}>
+      <button
+        onClick={() => setModalOpen(true)}
+        className={styles.CreateButton}
+      >
         Create Garden
       </button>
     </div>

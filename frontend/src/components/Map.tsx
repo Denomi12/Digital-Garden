@@ -30,8 +30,15 @@ const customIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
-const gardenIcon = L.icon({
+const emptyGardenIcon = L.icon({
   iconUrl: "/assets/leaves.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+const gardenIcon = L.icon({
+  iconUrl: "/assets/leavesDark.png",
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
@@ -82,7 +89,6 @@ function Map({
   function GardenNavigationHandler({ garden }: { garden: Garden | null }) {
     const map = useMap();
     const navigate = useNavigate();
-
     useEffect(() => {
       if (garden?.latitude && garden?.longitude) {
         const onMoveEnd = () => {
@@ -146,13 +152,16 @@ function Map({
       <div className={className ?? styles.mapWrapper}>
         <MapContainer
           center={centerPosition}
-          zoom={9}
+          zoom={9} // start zoomed in reasonably close
+          minZoom={9} // zoom out only until whole Slovenia fits
+          maxZoom={18}
           maxBounds={[
             [45.4, 13.35],
             [46.9, 16.6],
           ]}
           maxBoundsViscosity={1.0}
           className={styles.map}
+          attributionControl={false}
         >
           <TileLayer
             attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
@@ -188,17 +197,34 @@ function Map({
             <Marker
               key={`garden-${garden.id}`}
               position={[garden.lat, garden.lng]}
-              icon={gardenIcon}
+              icon={emptyGardenIcon}
             >
               <Popup>
-                <strong>Moj vrt #{garden.id}</strong>
-                <br />
-                Lat: {garden.lat.toFixed(5)}, Lng: {garden.lng.toFixed(5)}
-                <div
-                  onClick={() => handleNavigation(null)}
-                  className={styles.createGarden}
-                >
-                  Create your garden
+                <div className={styles.popupContainer}>
+                  <div className={styles.popupTitle}>🌱New Garden</div>
+                  <div className={styles.popupCoords}>
+                    📍 <strong>Lat:</strong> {garden.lat.toFixed(5)}
+                    <br />
+                    📍 <strong>Lon:</strong> {garden.lng.toFixed(5)}
+                  </div>
+                  <button
+                    onClick={() =>
+                      handleNavigation(
+                        new Garden(
+                          0,
+                          0,
+                          "",
+                          undefined,
+                          undefined,
+                          garden.lat,
+                          garden.lng
+                        )
+                      )
+                    }
+                    className={styles.createGardenButton}
+                  >
+                    Create Your Garden
+                  </button>
                 </div>
               </Popup>
             </Marker>
@@ -214,21 +240,22 @@ function Map({
                 icon={gardenIcon}
               >
                 <Popup>
-                  <strong>
-                    Moj vrt <div id={garden._id}></div>
-                  </strong>
-                  <br />
-                  Lat: {garden.latitude.toFixed(5)}, Lng:{" "}
-                  {garden.longitude.toFixed(5)}
-                  <div
-                    onClick={() => handleNavigation(garden)}
-                    style={{
-                      cursor: "pointer",
-                      color: "blue",
-                      marginTop: "5px",
-                    }}
-                  >
-                    Create your garden
+                  <div className={styles.popupContainer}>
+                    <div className={styles.popupTitle}>
+                      🌱 <strong>{garden.name}</strong>
+                      <div id={garden._id}></div>
+                    </div>
+                    <div className={styles.popupCoords}>
+                      📍 <strong>Lat:</strong> {garden.latitude.toFixed(5)}
+                      <br />
+                      📍 <strong>Lon:</strong> {garden.longitude.toFixed(5)}
+                    </div>
+                    <button
+                      onClick={() => handleNavigation(garden)}
+                      className={styles.editGardenButton}
+                    >
+                      ✏️ Edit Your Garden
+                    </button>
                   </div>
                 </Popup>
               </Marker>

@@ -26,6 +26,7 @@ function GardenComponent() {
   const gardenGridRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
+
   const scrollToGrid = () => {
     gardenGridRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -74,10 +75,14 @@ function GardenComponent() {
   }, [selectedElement]);
 
   useEffect(() => {
-    if (selectedCrop && (selectedElement == GardenElement.Delete || selectedElement == GardenElement.Path)) {
+    if (
+      selectedCrop &&
+      (selectedElement == GardenElement.Delete ||
+        selectedElement == GardenElement.Path)
+    ) {
       setSelectedElement(GardenElement.None);
     }
-  }, [selectedCrop])
+  }, [selectedCrop]);
 
   async function saveGarden() {
     const data = garden?.toJson();
