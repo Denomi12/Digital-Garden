@@ -29,6 +29,3 @@ Izdelava domensko specifičnega jezika za opis parkov in zelenih površin v mest
 | Semantični analizator  | Semantična analiza, pomenska obdelava zapisanih tokenov in pretvorba v GeoJSON format. |
 | Prikaz parka           | Formatiran zapis in vizualni prikaz parkov v GeoJSON formatu.                          |
 
----
-
-### 1.4 Sistemske zahteve

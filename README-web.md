@@ -1,23 +1,12 @@
 # Digitalni vrt - spletna aplikacija
 
-Digitalni vrt je spletna aplikacija za načrtovanje in spremljanje domačih vrtov. Uporabnikom omogoča ustvarjanje digitalnega dvojčka svojega vrta, vizualizacijo zasaditev, sledenje pridelkom ter komunikacijo s skupnostjo drugih vrtičkarjev.
-
----
-
-## PROJEKTNE SPECIFIKACIJE
-
 ### 1.1 Namen projekta
 
-Digitalni vrt je programska rešitev, ki uporabnikom omogoča:
-
-- Načrtovanje in vizualizacijo zasaditev,
-- Sledenje rasti in pridelavi vrtnin,
-- Učenje o vrtnarskih praksah,
-- Izmenjavo mnenj, nasvetov in izkušenj z drugimi uporabniki.
+Digitalni vrt je spletna aplikacija za načrtovanje in spremljanje domačih vrtov. Uporabnikom omogoča ustvarjanje digitalnega dvojčka svojega vrta, vizualizacijo zasaditev, sledenje rasti pridelkov ter komunikacijo s skupnostjo drugih vrtičkarjev z namenom izmenjevanja mnenj, nasvetov, izkušenj ter učenja dobrih vrtnarskih praks.
 
 ---
 
-### 1.2 Ciljne skupine uporabnikov in njihove potrebe
+### 1.2 Ciljne skupine uporabnikov
 
 #### Vrtičkarji začetniki
 
@@ -63,7 +52,7 @@ Digitalni vrt je programska rešitev, ki uporabnikom omogoča:
 
 ---
 
-## NAVODILA ZA NAMESTITEV IN PRIJAVO V SISTEM
+## Navodial za namestitev
 
 ### Zahteve pred namestitvijo
 
@@ -139,7 +128,7 @@ Aplikacija dostopna na naslovu: `localhost:5173`
 
 ### 5. Zagon aplikacije (Docker)
 
-Zagon kontajneriziranje aplikacije z uporabo Docker:
+Zagon kontajnerizirane aplikacije z uporabo Docker:
 
 ```bash
 docker-compose up

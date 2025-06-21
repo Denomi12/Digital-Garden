@@ -2,7 +2,7 @@
 
 ### 1.1 Namen projekta
 
-Spletni strežnik aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in nudi RESTful API, ki omogoča komunikacijo med čelnim delom (frontend), namizno aplikacijo (kotlin) in podatkovno bazo (MongoDB).
+Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in nudi RESTful API, ki omogoča komunikacijo med čelnim delom (frontend), namizno aplikacijo (kotlin) in podatkovno bazo (MongoDB).
 
 ---
 
@@ -11,6 +11,8 @@ Spletni strežnik aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** i
 #### Gostitelji spletne aplikacije **Digitalni vrt**
 
 - Spletna storitev ponuja končne dostopne toče za pridobivanje podatkov in izvajanje akcij preko spletne ali namizne aplikacije.
+
+---
 
 ### 1.3 Funkcionalne zahteve
 
@@ -22,6 +24,8 @@ Spletni strežnik aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** i
 | OpenAI API     | Pošiljanje zahtevkov na OpenAI API                                      |
 
 ---
+
+### **Končne točke spletnega API-ja:** 
 
 ### Avtentikacija uporabnikov (`/user`)
 
@@ -106,7 +110,54 @@ Spletni strežnik aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** i
 
 ### 1.4 Sistemske zahteve
 
-- Vsi endpointi sprejemajo zahtevke in vračajo odgovore v **JSON** formatu.
-- Privzeti API base URL med razvojem je: `http://localhost:3001`
 
----
+### Zahteve pred namestitvijo
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/)
+- **MongoDB Atlas** račun _(ali lokalna namestitev MongoDB)_
+
+### Namestitev aplikacije
+
+### 1. Kloniranje projekta
+
+```bash
+git clone https://github.com/Denomi12/Digital-Garden.git
+cd Digital-Garden
+```
+
+### 2. Nastavitve okolja
+
+Kopiraj predloge `.env` datotek:
+
+```bash
+cp ./backend/.env.example ./backend/.env
+```
+
+Uredi datoteko ./backend/.env po naslednjem vzorcu:
+
+    ```env
+    PORT=3001
+    MONGO_URI=mongodb://localhost:27017/digital-garden-db
+    JWT_SECRET=secret_token
+    FRONTEND_URL=http://localhost:5173
+    OPENAI_API_URL=https://api.openai.com/v1/chat/completions
+    OPENAI_API_KEY=your_api_key_here
+    ```
+
+### 3. Namestitev odvisnosti
+
+```bash
+cd backend
+npm install
+```
+
+### 4. Zagon aplikacije
+
+```bash
+cd backend
+npm run dev
+```
+
+- Privzeti API base URL med razvojem je: `http://localhost:3001`
+- Vsi endpointi sprejemajo zahtevke in vračajo odgovore v **JSON** formatu.

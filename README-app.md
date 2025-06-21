@@ -11,7 +11,7 @@ Aplikacija omogoča interaktivno povezovanje z **RESTful API-jem** spletne stori
 
 #### Gostitelji spletne aplikacije **Digitalni vrt**
 
-- Nadzor in upravljanje podatkovne baze in podatkov preko namizne aplikacije. 
+- Nadzor in upravljanje podatkovne baze in podatkov preko namizne aplikacije.
 - Pridobivanje podatkov s spleta.
 - Generiranje podatkov.
 
@@ -33,4 +33,4 @@ Aplikacija omogoča interaktivno povezovanje z **RESTful API-jem** spletne stori
 
 ### 1.4 Sistemske zahteve
 
-<!-- Backend mora laufati! -->
+- Dostopna spletna storitev
