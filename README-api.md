@@ -1,20 +1,20 @@
 # Digitalni vrt - spletna storitev
 
-### 1.1 Namen projekta
+## 1.1 Namen projekta
 
 Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in nudi RESTful API, ki omogoča komunikacijo med čelnim delom (frontend), namizno aplikacijo (kotlin) in podatkovno bazo (MongoDB).
 
 ---
 
-### 1.2 Ciljne skupine uporabnikov in njihove potrebe
+## 1.2 Ciljne skupine uporabnikov in njihove potrebe
 
-#### Gostitelji spletne aplikacije **Digitalni vrt**
+### Gostitelji spletne aplikacije **Digitalni vrt**
 
 - Spletna storitev ponuja končne dostopne toče za pridobivanje podatkov in izvajanje akcij preko spletne ali namizne aplikacije.
 
 ---
 
-### 1.3 Funkcionalne zahteve
+## 1.3 Funkcionalne zahteve
 
 | Funkcionalnost | Opis                                                                    |
 | -------------- | ----------------------------------------------------------------------- |
@@ -25,9 +25,9 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### **Končne točke spletnega API-ja:** 
+### **Končne točke spletnega API-ja** 
 
-### Avtentikacija uporabnikov (`/user`)
+**Avtentikacija uporabnikov (`/user`)**
 
 | Metoda | Pot            | Opis                                        | Avtentikacija |
 | ------ | -------------- | ------------------------------------------- | ------------- |
@@ -43,7 +43,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### Vrtovi (`/garden`)
+**Vrtovi (`/garden`)**
 
 | Metoda | Pot                        | Opis                              | Avtentikacija |
 | ------ | -------------------------- | --------------------------------- | ------------- |
@@ -55,7 +55,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### Rastline (`/crop`)
+**Rastline (`/crop`)**
 
 | Metoda | Pot          | Opis                           | Avtentikacija |
 | ------ | ------------ | ------------------------------ | ------------- |
@@ -67,7 +67,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### OpenAI API (`/generate`)
+**OpenAI API (`/generate`)**
 
 | Metoda | Pot              | Opis                                | Avtentikacija |
 | ------ | ---------------- | ----------------------------------- | ------------- |
@@ -76,7 +76,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### Vprašanja (`/question`)
+**Vprašanja (`/question`)**
 
 | Metoda | Pot                     | Opis                                  | Avtentikacija |
 | ------ | ----------------------- | ------------------------------------- | ------------- |
@@ -89,7 +89,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### Komentarji (`/comment`)
+**Komentarji (`/comment`)**
 
 | Metoda | Pot                    | Opis                                     | Avtentikacija |
 | ------ | ---------------------- | ---------------------------------------- | ------------- |
@@ -100,7 +100,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ---
 
-### Trgovine (`/store`)
+**Trgovine (`/store`)**
 
 | Metoda | Pot       | Opis                   | Avtentikacija |
 | ------ | --------- | ---------------------- | ------------- |
@@ -108,7 +108,7 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 | POST   | `/store/` | Doda novo trgovino     | NE            |
 
 
-### 1.4 Sistemske zahteve
+## 1.4 Sistemske zahteve
 
 
 ### Zahteve pred namestitvijo
@@ -119,14 +119,14 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 ### Namestitev aplikacije
 
-### 1. Kloniranje projekta
+#### 1. Kloniranje projekta
 
 ```bash
 git clone https://github.com/Denomi12/Digital-Garden.git
 cd Digital-Garden
 ```
 
-### 2. Nastavitve okolja
+#### 2. Nastavitve okolja
 
 Kopiraj predloge `.env` datotek:
 
@@ -145,14 +145,14 @@ Uredi datoteko ./backend/.env po naslednjem vzorcu:
     OPENAI_API_KEY=your_api_key_here
     ```
 
-### 3. Namestitev odvisnosti
+#### 3. Namestitev odvisnosti
 
 ```bash
 cd backend
 npm install
 ```
 
-### 4. Zagon aplikacije
+#### 4. Zagon aplikacije
 
 ```bash
 cd backend

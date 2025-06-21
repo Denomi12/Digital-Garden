@@ -1,15 +1,15 @@
 # Digitalni vrt - namizna aplikacija
 
-### 1.1 Namen projekta
+## 1.1 Namen projekta
 
 Namizna aplikacija **Digitalni vrt** je zgrajena z uporabo programskega jezika **Kotlin** in omogoča uporabnikom uporabo funkcionalnosti sistema neposredno iz njihovega operacijskega sistema, brez uporabe spletne aplikacije.
 Aplikacija omogoča interaktivno povezovanje z **RESTful API-jem** spletne storitve, shranjevanje, urejanje in prikaz podatkov o vrtovih, rastlinah ter uporabniških profilih, ter generiranje podatkov s pomočjo umetne inteligence (OpenAI API).
 
 ---
 
-### 1.2 Ciljne skupine uporabnikov in njihove potrebe
+## 1.2 Ciljne skupine uporabnikov in njihove potrebe
 
-#### Gostitelji spletne aplikacije **Digitalni vrt**
+### Gostitelji spletne aplikacije **Digitalni vrt**
 
 - Nadzor in upravljanje podatkovne baze in podatkov preko namizne aplikacije.
 - Pridobivanje podatkov s spleta.
@@ -17,7 +17,7 @@ Aplikacija omogoča interaktivno povezovanje z **RESTful API-jem** spletne stori
 
 ---
 
-### 1.3 Funkcionalne zahteve
+## 1.3 Funkcionalne zahteve
 
 | Funkcionalnost                          | Opis                                                                                |
 | --------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -31,6 +31,6 @@ Aplikacija omogoča interaktivno povezovanje z **RESTful API-jem** spletne stori
 
 ---
 
-### 1.4 Sistemske zahteve
+## 1.4 Sistemske zahteve
 
-- Dostopna spletna storitev
+- Dostopna spletna storitev in ustrezno določene poti (API endpoints)

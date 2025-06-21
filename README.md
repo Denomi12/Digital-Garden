@@ -4,9 +4,9 @@
 
 ---
 
-## PROJEKTNE SPECIFIKACIJE
+## Projektne specifikacije
 
-**Struktura**
+**Struktura repozitorija**
 ```
 Digital-Garden/
 ├── backend/             # Express.js API

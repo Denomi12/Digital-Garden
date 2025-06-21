@@ -1,32 +1,32 @@
 # Digitalni vrt - spletna aplikacija
 
-### 1.1 Namen projekta
+## 1.1 Namen projekta
 
 Digitalni vrt je spletna aplikacija za načrtovanje in spremljanje domačih vrtov. Uporabnikom omogoča ustvarjanje digitalnega dvojčka svojega vrta, vizualizacijo zasaditev, sledenje rasti pridelkov ter komunikacijo s skupnostjo drugih vrtičkarjev z namenom izmenjevanja mnenj, nasvetov, izkušenj ter učenja dobrih vrtnarskih praks.
 
 ---
 
-### 1.2 Ciljne skupine uporabnikov
+## 1.2 Ciljne skupine uporabnikov
 
-#### Vrtičkarji začetniki
+### Vrtičkarji začetniki
 
 - Preprost vstop v svet vrtnarjenja (osnove, dobri/slabi sosedi, čas setve).
 - Uporaba intuitivnega vmesnika za načrtovanje gredic.
 
-#### Izkušeni vrtičkarji
+### Izkušeni vrtičkarji
 
 - Vizualno spremljanje in natančno načrtovanje vrtov
 - Komunikacija z drugimi uporabniki prek foruma.
 - Vremenska napoved in statistika zasaditev.
 
-#### Šole in organizacije
+### Šole in organizacije
 
 - Skupinsko upravljanje vrtov.
 - Pregledno beleženje posajenih rastlin.
 
 ---
 
-### 1.3 Funkcionalne zahteve
+## 1.3 Funkcionalne zahteve
 
 | Funkcionalnost                 | Opis                                                                 |
 | ------------------------------ | -------------------------------------------------------------------- |
@@ -39,7 +39,7 @@ Digitalni vrt je spletna aplikacija za načrtovanje in spremljanje domačih vrto
 | Seznam lokalnih trgovin        | Prikaz bližnjih trgovin s semeni in orodjem glede na lokacijo.       |
 | Avtentikacija uporabnikov      | Registracija, prijava, zaščiten dostop (JWT).                        |
 
-### 1.4 Sistemske zahteve
+## 1.4 Sistemske zahteve
 
 | Komponenta                | Tehnologija                      |
 | ------------------------- | -------------------------------- |
@@ -52,25 +52,25 @@ Digitalni vrt je spletna aplikacija za načrtovanje in spremljanje domačih vrto
 
 ---
 
-## Navodial za namestitev
+### Navodila za namestitev
 
-### Zahteve pred namestitvijo
+#### Zahteve pred namestitvijo
 
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
 - **MongoDB Atlas** račun _(ali lokalna namestitev MongoDB)_
 
-### Namestitev aplikacije
+#### Namestitev aplikacije
 
-### 1. Kloniranje projekta
+##### 1. Kloniranje projekta
 
 ```bash
 git clone https://github.com/Denomi12/Digital-Garden.git
 cd Digital-Garden
 ```
 
-### 2. Nastavitve okolja
+##### 2. Nastavitve okolja
 
 Kopiraj predloge `.env` datotek:
 
@@ -96,7 +96,7 @@ Uredi datoteko ./frontend/.env po naslednjem vzorcu:
     VITE_API_BACKEND_URL=http://localhost:3001
     ```
 
-### 3. Namestitev odvisnosti
+##### 3. Namestitev odvisnosti
 
 ```bash
 cd backend
@@ -106,7 +106,7 @@ cd ../frontend
 npm install
 ```
 
-### 4. Zagon aplikacije
+##### 4. Zagon aplikacije
 
 V dveh ločenih terminalih
 
@@ -126,7 +126,7 @@ npm run dev
 
 Aplikacija dostopna na naslovu: `localhost:5173`
 
-### 5. Zagon aplikacije (Docker)
+##### 5. Zagon aplikacije (Docker)
 
 Zagon kontajnerizirane aplikacije z uporabo Docker:
 
