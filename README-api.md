@@ -29,17 +29,19 @@ Spletna storitev aplikacije Digitalni vrt je zgrajen z uporabo **Express.js** in
 
 **Avtentikacija uporabnikov (`/user`)**
 
-| Metoda | Pot            | Opis                                        | Avtentikacija |
-| ------ | -------------- | ------------------------------------------- | ------------- |
-| POST   | `/user/`       | Registracija novega uporabnika              | NE            |
-| POST   | `/user/login`  | Prijava uporabnika in pridobitev JWT        | NE            |
-| POST   | `/user/logout` | Odjava uporabnika                           | NE            |
-| GET    | `/user/verify` | Preveri veljavnost JWT žetona               | DA            |
-| GET    | `/user/me`     | Pridobi trenutnega prijavljenega uporabnika | DA            |
-| GET    | `/user/`       | Pridobi seznam vseh uporabnikov             | NE            |
-| GET    | `/user/:id`    | Pridobi podatke za določenega uporabnika    | NE            |
-| PUT    | `/user/:id`    | Posodobi podatke uporabnika                 | NE            |
-| DELETE | `/user/:id`    | Izbriše uporabnika                          | NE            |
+
+
+| Metoda | Pot            | Opis                                        | Avtentikacija | JSON Telo                                                                                |
+| ------ | -------------- | ------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| POST   | `/user/`       | Registracija novega uporabnika              | NE            | `{ "username": "ime", "email": "email@example.com", "password": "geslo" }`               |
+| POST   | `/user/login`  | Prijava uporabnika in pridobitev JWT        | NE            | `{ "username": "ime", "password": "geslo" }`                                             |
+| POST   | `/user/logout` | Odjava uporabnika                           | NE            |                                                                                          |
+| GET    | `/user/verify` | Preveri veljavnost JWT žetona               | DA            |                                                                                          |
+| GET    | `/user/me`     | Pridobi trenutnega prijavljenega uporabnika | DA            |                                                                                          |
+| GET    | `/user/`       | Pridobi seznam vseh uporabnikov             | NE            |                                                                                          |
+| GET    | `/user/:id`    | Pridobi podatke za določenega uporabnika    | NE            |                                                                                          |
+| PUT    | `/user/:id`    | Posodobi podatke uporabnika                 | NE            | `{ "username": "novo_ime", "email": "nov_email@example.com", "password": "novo_geslo" }` |
+| DELETE | `/user/:id`    | Izbriše uporabnika                          | NE            |                                                                                          |
 
 ---
 
@@ -161,3 +163,4 @@ npm run dev
 
 - Privzeti API base URL med razvojem je: `http://localhost:3001`
 - Vsi endpointi sprejemajo zahtevke in vračajo odgovore v **JSON** formatu.
+

@@ -26,7 +26,7 @@ Digital-Garden/
 
 ---
 
-### Spletna aplikacija (React)
+### [Spletna aplikacija (React)](https://github.com/Denomi12/Digital-Garden/wiki/Spletna-aplikacija)
 
 - Načrtovanje zasaditev z vizualnim vmesnikom
 - Geolokacija vrta
@@ -36,14 +36,14 @@ Digital-Garden/
 - Avtentikacija z JWT
 
 
-### Spletna storitev (Express.js)
+### [Spletna storitev (Express.js)](https://github.com/Denomi12/Digital-Garden/wiki/Spletna-storitev)
 
 - Celovit CRUD sistem za uporabnike, vrtove, rastline, trgovine, vprašanja in komentarje
 - JWT avtentikacija
 - Endpoints za OpenAI API (generacija vsebine)
 - JSON komunikacija
 
-### Namizna aplikacija (Kotlin)
+### [Namizna aplikacija (Kotlin)](https://github.com/Denomi12/Digital-Garden/wiki/Namizna-aplikacija)
 
 - Upravljanje uporabnikov, rastlin in vrtov
 - Strganje podatkov o rastlinah s spletnih virov (scraper)
@@ -51,7 +51,7 @@ Digital-Garden/
 - Povezava z REST API
 - Vizualna tabularna navigacija
 
-### Domensko specifični jezik
+### [Domensko specifični jezik](https://github.com/Denomi12/Digital-Garden/wiki/Domensko-specifi%C4%8Dni-jezik)
 
 - DSL za opis parkov in zelenih površin
 - Gramatika v BNF notaciji
