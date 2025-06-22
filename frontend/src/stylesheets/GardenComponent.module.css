@@ -42,10 +42,27 @@
 
 }
 .InputWrapper {
+  display: flex;
   position: relative;
   margin-top: 0.5rem;
   width: 100%;
 }
+
+.LocationRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  flex-wrap: wrap; /* Optional for responsiveness */
+}
+
+.GraphWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .InputIcon {
   position: absolute;

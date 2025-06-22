@@ -130,13 +130,14 @@ function Map({
       setUserGardens(res.data);
     } catch (error) {
       console.error("Error fetching user gardens:", error);
+      setUserGardens([]);
     }
   }
 
   useEffect(() => {
     fetchStores();
     fetchUserGardens();
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -159,6 +160,7 @@ function Map({
             [45.4, 13.35],
             [46.9, 16.6],
           ]}
+          zoomControl={false}
           maxBoundsViscosity={1.0}
           className={styles.map}
           attributionControl={false}

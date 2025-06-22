@@ -11,6 +11,7 @@ import CursorFollower from "../CursorFollower";
 import GardenList from "./GardenList";
 import { useLocation } from "react-router-dom";
 import GardenCellDetails from "./GardenCellDetails";
+import GardenGraph from "./GardenGraph";
 
 function GardenComponent() {
   const { user } = useContext(UserContext);
@@ -261,8 +262,12 @@ function GardenComponent() {
                     placeholder="Location"
                   />
                 </div>
+                <div>
+                    <GardenGraph garden={garden}/>
 
-                <div className={styles.InputWrapper}>
+                </div>
+
+                {/* <div className={styles.InputWrapper}>
                   <span className={styles.InputIcon}>🌐</span>
                   <input
                     className={styles.InfoText}
@@ -284,7 +289,7 @@ function GardenComponent() {
                     }
                     placeholder="Longitude"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 

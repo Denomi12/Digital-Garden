@@ -115,12 +115,12 @@ function GardenList({ mapGarden, setGarden, gardens }: GardenListProps) {
             className={styles.gardenCard}
             onClick={() => setSelectedGarden(garden._id!!)}
           >
-            <div className={styles.gardenName}>{garden.name}</div>
-            <div className={styles.gardenOwner}>
+            <div className={styles.gardenName}><b>{garden.name}</b></div>
+            {/* <div className={styles.gardenOwner}>
               Owner: {garden.owner?.username}
-            </div>
+            </div> */}
             <div className={styles.gardenLocation}>
-              Location: {garden.location}
+              <b>Location:</b> {garden.location}
             </div>
           </div>
         ))}
