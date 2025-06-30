@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1751291866220" clover="3.2.0">
-  <project timestamp="1751291866221" name="All files">
-    <metrics statements="69" coveredstatements="21" conditionals="24" coveredconditionals="3" methods="18" coveredmethods="8" elements="111" coveredelements="32" complexity="0" loc="69" ncloc="69" packages="1" files="1" classes="1"/>
+<coverage generated="1751292421911" clover="3.2.0">
+  <project timestamp="1751292421911" name="All files">
+    <metrics statements="83" coveredstatements="31" conditionals="24" coveredconditionals="3" methods="22" coveredmethods="10" elements="129" coveredelements="44" complexity="0" loc="83" ncloc="83" packages="1" files="2" classes="2"/>
+    <file name="storeController.ts" path="C:\ProjectRIT\Digital-Garden\backend\src\controllers\storeController.ts">
+      <metrics statements="14" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="2"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="0" type="stmt"/>
+      <line num="7" count="0" type="stmt"/>
+      <line num="8" count="0" type="stmt"/>
+      <line num="10" count="0" type="stmt"/>
+      <line num="15" count="2" type="stmt"/>
+      <line num="16" count="2" type="stmt"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="18" count="2" type="stmt"/>
+      <line num="19" count="2" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+      <line num="26" count="1" type="stmt"/>
+    </file>
     <file name="userController.ts" path="C:\ProjectRIT\Digital-Garden\backend\src\controllers\userController.ts">
       <metrics statements="69" coveredstatements="21" conditionals="24" coveredconditionals="3" methods="18" coveredmethods="8"/>
       <line num="3" count="1" type="stmt"/>
