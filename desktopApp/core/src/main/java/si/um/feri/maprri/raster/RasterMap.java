@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -18,10 +19,12 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.io.IOException;
 
+import si.um.feri.maprri.raster.backendCalls.FetchGardens;
 import si.um.feri.maprri.raster.utils.Constants;
 import si.um.feri.maprri.raster.utils.Geolocation;
 import si.um.feri.maprri.raster.utils.MapRasterTiles;
@@ -43,11 +46,17 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
 
     // test marker
-    private final Geolocation MARKER_GEOLOCATION = new Geolocation(46.559070, 15.638100);
+    private final Geolocation MARKER_GEOLOCATION = new Geolocation(46.559080, 15.618100);
+
+    private SpriteBatch batch;
+    private Texture markerTexture;
+
+    private Array<Garden> userGardens;
 
     @Override
     public void create() {
         shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
@@ -85,6 +94,23 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         layers.add(layer);
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        markerTexture = new Texture(Gdx.files.internal("marker.png"));
+
+        String backendUrl = "http://localhost:3001";
+        FetchGardens.getAllGardens(backendUrl, new FetchGardens.GardensCallback() {
+            @Override
+            public void onSuccess(Array<Garden> gardens) {
+                userGardens = gardens;
+                System.out.println("Pridobljeno vrtov: " + gardens.size);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.err.println("Napaka pri pridobivanju vrtov: " + t.getMessage());
+            }
+        });
+
+
     }
 
     @Override
@@ -98,22 +124,29 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
-        drawMarkers();
+        drawGardens();
     }
 
-    private void drawMarkers() {
-        Vector2 marker = MapRasterTiles.getPixelPosition(MARKER_GEOLOCATION.lat, MARKER_GEOLOCATION.lng, beginTile.x, beginTile.y);
+    private void drawGardens() {
+        if (userGardens == null) return;
 
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.circle(marker.x, marker.y, 10);
-        shapeRenderer.end();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        for (Garden g : userGardens) {
+            Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
+            batch.draw(markerTexture,
+                    pos.x - markerTexture.getWidth() / 2f,
+                    pos.y - markerTexture.getHeight() / 2f);
+        }
+        batch.end();
     }
+
 
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        batch.dispose();
+        markerTexture.dispose();
     }
 
     @Override
