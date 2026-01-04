@@ -1,1 +1,7 @@
+comicSkin/comic-ui.atlas
+comicSkin/comic-ui.json
+comicSkin/comic-ui.png
+comicSkin/font-button-export.fnt
+comicSkin/font-export.fnt
+comicSkin/font-title-export.fnt
 marker.png

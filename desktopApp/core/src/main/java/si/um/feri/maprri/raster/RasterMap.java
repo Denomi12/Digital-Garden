@@ -3,7 +3,7 @@ package si.um.feri.maprri.raster;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,16 +19,19 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-
-import java.io.IOException;
-
 import si.um.feri.maprri.raster.backendCalls.FetchGardens;
 import si.um.feri.maprri.raster.utils.Constants;
 import si.um.feri.maprri.raster.utils.Geolocation;
 import si.um.feri.maprri.raster.utils.MapRasterTiles;
 import si.um.feri.maprri.raster.utils.ZoomXY;
+
+import java.io.IOException;
 
 public class RasterMap extends ApplicationAdapter implements GestureDetector.GestureListener {
 
@@ -45,13 +48,21 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     // center geolocation
     private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
 
-    // test marker
-    private final Geolocation MARKER_GEOLOCATION = new Geolocation(46.559080, 15.618100);
-
     private SpriteBatch batch;
     private Texture markerTexture;
 
     private Array<Garden> userGardens;
+
+    private Stage stage;
+    private Skin skin;
+
+    private boolean isZoomingToMarker = false;
+    private Vector2 zoomTargetPos = new Vector2();
+    private float zoomTarget = 1f;
+    private float zoomSpeed = 1.5f;  // hitrost zooma
+    private float moveSpeed = 3f;    // hitrost premikanja kamere
+    private Dialog currentDialog = null;
+
 
     @Override
     public void create() {
@@ -110,6 +121,12 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             }
         });
 
+        skin = new Skin(Gdx.files.internal("comicSkin/comic-ui.json"));
+
+        stage = new Stage();
+        GestureDetector gestureDetector = new GestureDetector(this);
+        Gdx.input.setInputProcessor(new InputMultiplexer(stage, gestureDetector));
+//        Gdx.input.setInputProcessor(stage);
 
     }
 
@@ -122,9 +139,28 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         camera.update();
 
         tiledMapRenderer.setView(camera);
-        tiledMapRenderer.render();
 
+        tiledMapRenderer.render();
         drawGardens();
+
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+
+        if (isZoomingToMarker) {
+            camera.position.x += (zoomTargetPos.x - camera.position.x) * Gdx.graphics.getDeltaTime() * moveSpeed;
+            camera.position.y += (zoomTargetPos.y - camera.position.y - 140) * Gdx.graphics.getDeltaTime() * moveSpeed;
+
+            camera.zoom += (zoomTarget - camera.zoom) * Gdx.graphics.getDeltaTime() * zoomSpeed;
+
+            if (Math.abs(camera.position.x - zoomTargetPos.x) < 1f &&
+                    Math.abs(camera.position.y - zoomTargetPos.y) < 1f &&
+                    Math.abs(camera.zoom - zoomTarget) < 0.01f) {
+                camera.position.set(zoomTargetPos.x, zoomTargetPos.y, 0);
+                camera.zoom = zoomTarget;
+                isZoomingToMarker = false;
+            }
+        }
+
     }
 
     private void drawGardens() {
@@ -158,7 +194,75 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        return false;
+        touchPosition.set(x, y, 0);
+        camera.unproject(touchPosition);
+
+        if (userGardens != null) {
+            for (Garden g : userGardens) {
+                Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
+
+                float radius = markerTexture.getWidth() / 2f;
+
+                if (touchPosition.dst(pos.x, pos.y, 0) <= radius) {
+                    zoomToMarker(pos, 0.5f);
+                    showPopup(g);
+                    break;
+                }
+
+            }
+        }
+
+        return true;
+    }
+
+    private void zoomToMarker(Vector2 markerPos, float zoom) {
+        zoomTargetPos.set(markerPos);
+        zoomTarget = zoom;
+        isZoomingToMarker = true;
+    }
+
+    private void showPopup(Garden garden) {
+        if (currentDialog != null) {
+            currentDialog.hide();
+        }
+
+        currentDialog = new Dialog("", skin) {
+            @Override
+            protected void result(Object object) {
+                if (object.equals("visit")) {
+                    Gdx.app.log("Popup", "Visit clicked");
+                } else if (object.equals("back")) {
+                    Gdx.app.log("Popup", "Back clicked");
+                }
+                isZoomingToMarker = false;
+                currentDialog = null;
+            }
+        };
+
+        currentDialog.setModal(false);
+        currentDialog.text(garden.name);
+        currentDialog.getContentTable().pad(30);
+        currentDialog.getButtonTable().pad(20);
+
+        currentDialog.button("Visit", "visit");
+        currentDialog.button("Back", "back");
+
+        for (int i = 0; i < currentDialog.getButtonTable().getChildren().size; i++) {
+            TextButton btn = (TextButton) currentDialog.getButtonTable().getChildren().get(i);
+            btn.getLabel().setFontScale(0.7f);
+            btn.pad(5, 10, 5, 10);
+            currentDialog.getButtonTable().getCell(btn).width(120).height(40);
+        }
+
+        float dialogWidth = Gdx.graphics.getWidth() * 0.7f;
+        float dialogHeight = Gdx.graphics.getHeight() * 0.6f;
+        currentDialog.setSize(dialogWidth, dialogHeight);
+        currentDialog.setPosition(
+                (Gdx.graphics.getWidth() - currentDialog.getWidth()) / 2f,
+                (Gdx.graphics.getHeight() - currentDialog.getHeight()) / 2f
+        );
+
+        currentDialog.show(stage);
     }
 
     @Override
