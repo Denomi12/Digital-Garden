@@ -23,6 +23,17 @@ class AddExtremeEventFragment : Fragment() {
     private val fileName = "extreme_events.json"
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
+    private var selectedLat: Double = 0.0
+    private var selectedLon: Double = 0.0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            selectedLat = it.getDouble("arg_lat", 0.0)
+            selectedLon = it.getDouble("arg_lon", 0.0)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,11 +46,17 @@ class AddExtremeEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val eventTypes = listOf("Mraz", "Vročinski val", "Toča", "Drugo")
-
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, eventTypes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
         binding.spEventType.adapter = adapter
+
+        if (selectedLat != 0.0 && selectedLon != 0.0) {
+            Toast.makeText(context, "Lokacija izbrana iz zemljevida!", Toast.LENGTH_SHORT).show()
+
+            if (binding.etEventLocation.text.isEmpty()) {
+                binding.etEventLocation.setText("Označen položaj na zemljevidu")
+            }
+        }
 
         binding.btnSaveEvent.setOnClickListener {
             val type = binding.spEventType.selectedItem.toString()
@@ -55,8 +72,8 @@ class AddExtremeEventFragment : Fragment() {
                     level = 1,
                     description = desc,
                     locationName = loc,
-                    latitude = 0.0,
-                    longitude = 0.0
+                    latitude = selectedLat,
+                    longitude = selectedLon
                 )
 
                 saveEventToFile(newEvent)
