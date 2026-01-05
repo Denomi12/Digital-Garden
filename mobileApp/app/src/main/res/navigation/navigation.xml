@@ -20,5 +20,5 @@
         android:id="@+id/extremeEventFragment"
         android:name="si.um.feri.mobilegarden.fragments.ExtremeEventFragment"
         android:label="Extreme Event Fragment"
-        tools:layout="@layout/fragment_fragment_extreme_event" />
+        tools:layout="@layout/fragment_extreme_event" />
 </navigation>
