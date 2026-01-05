@@ -12,13 +12,24 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_extremeEventFragment"
-            app:destination="@id/extremeEventFragment" />
+            android:id="@+id/action_homeFragment_to_generateExtremeEventFragment"
+            app:destination="@id/generateExtremeEventFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addExtremeEventFragment"
+            app:destination="@id/addExtremeEventFragment"
+            />
     </fragment>
 
     <fragment
-        android:id="@+id/extremeEventFragment"
-        android:name="si.um.feri.mobilegarden.fragments.ExtremeEventFragment"
+        android:id="@+id/generateExtremeEventFragment"
+        android:name="si.um.feri.mobilegarden.fragments.GenerateExtremeEventFragment"
         android:label="Extreme Event Fragment"
-        tools:layout="@layout/fragment_extreme_event" />
+        tools:layout="@layout/fragment_generate_extreme_event" />
+
+    <fragment
+        android:id="@+id/addExtremeEventFragment"
+        android:name="si.um.feri.mobilegarden.fragments.AddExtremeEventFragment"
+        android:label="Add Extreme Event"
+        tools:layout="@layout/fragment_add_extreme_event" />
 </navigation>

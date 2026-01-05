@@ -33,8 +33,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnGoToExtremeEvent.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_extremeEventFragment)
+        binding.btnGoToGenerateExtremeEvent.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_generateExtremeEventFragment)
+        }
+
+        binding.btnAddExtremeEvent.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addExtremeEventFragment)
         }
 
         binding.btnCapturePhoto.setOnClickListener {
