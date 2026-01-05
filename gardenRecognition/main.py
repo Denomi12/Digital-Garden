@@ -1,13 +1,15 @@
 from utilScripts.imageUtils import *
-from utilScripts import GardenUtils as gu
+from utilScripts import *
 
 if __name__ == '__main__':
     print("--- Garden Recognition ---")
-    img = load_image("./assets/image_examples/test_random.png")
+    img = load_image("./assets/image_examples/vrt_3.png")
 
-    garden, mask, contour = extract_garden(img, sat_low=70, sat_high=90, smoothing_factor=0.004)
-    display_images(garden, mask)
+    garden, mask, contour = extract_garden(img)
 
+    blocks = create_blocks(mask, height=20, width=40)
+
+    display_images(garden, blocks)
 
 def demo(img: np.ndarray):
     blur = cv2.GaussianBlur(img, (7, 7), 0)
