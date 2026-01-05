@@ -97,10 +97,18 @@ def extract_garden(img: np.ndarray,
                    sat_low = 0,
                    sat_high = 40,
                    smoothing_factor = 0):
+    """
+    This function extracts garden from an image, returns a binary mask of the garden and a list of contours of that garden.
+    :param img:
+    :param sat_low:
+    :param sat_high:
+    :param smoothing_factor:
+    """
 
     mask, contour = _extract_garden_base(img, sat_low, sat_high, smoothing_factor)
 
     garden = cv2.bitwise_and(img, img, mask=mask)
+
     return garden, mask, contour
 
 
