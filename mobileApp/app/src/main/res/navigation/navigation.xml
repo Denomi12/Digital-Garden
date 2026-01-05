@@ -19,6 +19,9 @@
             android:id="@+id/action_homeFragment_to_addExtremeEventFragment"
             app:destination="@id/addExtremeEventFragment"
             />
+        <action
+            android:id="@+id/action_homeFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
 
     <fragment
@@ -32,4 +35,10 @@
         android:name="si.um.feri.mobilegarden.fragments.AddExtremeEventFragment"
         android:label="Add Extreme Event"
         tools:layout="@layout/fragment_add_extreme_event" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="si.um.feri.mobilegarden.fragments.MapFragment"
+        android:label="Map Overview"
+        tools:layout="@layout/fragment_map" />
 </navigation>
