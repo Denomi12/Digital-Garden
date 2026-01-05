@@ -6,4 +6,4 @@ if __name__ == '__main__':
 
     grid = gu.Grid(img, 10, 10)
 
-    display_grid(grid)
+    display_grid_with_gaps(grid)

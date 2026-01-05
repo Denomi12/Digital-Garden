@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-from utilScripts import GardenUtils
+from .gardenUtils import GardenUtils
 
 """
     Utility functions for loading, converting, and displaying images.
@@ -115,6 +115,43 @@ def display_grid(grid: GardenUtils.Grid):
     plt.axis('off')  # Hide axes for a cleaner view
 
     plt.tight_layout()
+    plt.show()
+
+def display_grid_with_gaps(grid, gap=5, gap_value=0):
+    """
+    Display a grid of images with gaps between cells.
+
+    gap: number of pixels between tiles
+    gap_value: pixel value for gaps (0 = black, 255 = white)
+    """
+
+    rows, cols = grid.rows, grid.cols
+    tiles = grid.grid
+
+    tile_h, tile_w = tiles[0].shape[:2]
+    is_color = tiles[0].ndim == 3
+    channels = tiles[0].shape[2] if is_color else None
+
+    H = rows * tile_h + (rows - 1) * gap
+    W = cols * tile_w + (cols - 1) * gap
+
+    if is_color:
+        canvas = np.full((H, W, channels), gap_value, dtype=tiles[0].dtype)
+    else:
+        canvas = np.full((H, W), gap_value, dtype=tiles[0].dtype)
+
+    for idx, tile in enumerate(tiles):
+        r = idx // cols
+        c = idx % cols
+
+        y = r * (tile_h + gap)
+        x = c * (tile_w + gap)
+
+        canvas[y:y + tile_h, x:x + tile_w] = tile
+
+    plt.figure(figsize=(6 * cols, 6 * rows))
+    plt.imshow(canvas, cmap='gray' if not is_color else None)
+    plt.axis("off")
     plt.show()
 
 
