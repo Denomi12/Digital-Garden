@@ -17,12 +17,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnGoToExtremeEvent"
+        android:id="@+id/btnGoToGenerateExtremeEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to Extreme Event Fragment"
+        android:text="Go to generate extreme event"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnAddExtremeEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Extreme Event"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnGoToGenerateExtremeEvent"
+        app:layout_constraintBottom_toTopOf="@+id/btnCapturePhoto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -32,7 +43,7 @@
         android:layout_height="wrap_content"
         android:text="Capture Photo"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/btnGoToExtremeEvent"
+        app:layout_constraintTop_toBottomOf="@id/btnAddExtremeEvent"
         app:layout_constraintBottom_toTopOf="@+id/ivCapturedPhoto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

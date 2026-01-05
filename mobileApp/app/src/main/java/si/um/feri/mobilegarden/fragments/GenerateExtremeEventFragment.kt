@@ -8,16 +8,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import si.um.feri.mobilegarden.databinding.FragmentExtremeEventBinding
+import si.um.feri.mobilegarden.databinding.FragmentGenerateExtremeEventBinding
 import si.um.feri.mobilegarden.models.CityLocation
 import si.um.feri.mobilegarden.models.ExtremeEvent
 import java.io.File
 import java.util.UUID
 import kotlin.random.Random
 
-class ExtremeEventFragment : Fragment() {
+class GenerateExtremeEventFragment : Fragment() {
 
-    private var _binding: FragmentExtremeEventBinding? = null
+    private var _binding: FragmentGenerateExtremeEventBinding? = null
     private val binding get() = _binding!!
 
     private val fileName = "extreme_events.json"
@@ -27,7 +27,7 @@ class ExtremeEventFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentExtremeEventBinding.inflate(inflater, container, false)
+        _binding = FragmentGenerateExtremeEventBinding.inflate(inflater, container, false)
         return binding.root
     }
 
