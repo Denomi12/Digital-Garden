@@ -1,6 +1,7 @@
 package si.um.feri.mobilegarden.fragments
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -32,7 +34,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val fileName = "extreme_events.json"
     private val gson = Gson()
-    private var eventsList: List<ExtremeEvent> = listOf()
+    private var eventsList: MutableList<ExtremeEvent> = mutableListOf()
+
+    private val markerMap = mutableMapOf<Marker, ExtremeEvent>()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -79,11 +83,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         if (file.exists()) {
             try {
                 val content = file.readText()
-                val listType = object : TypeToken<List<ExtremeEvent>>() {}.type
-                eventsList = gson.fromJson(content, listType) ?: listOf()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+                val listType = object : TypeToken<MutableList<ExtremeEvent>>() {}.type
+                eventsList = gson.fromJson(content, listType) ?: mutableListOf()
+            } catch (e: Exception) { e.printStackTrace() }
         }
     }
 
@@ -91,8 +93,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         val slovenia = LatLng(46.1512, 14.9955)
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(slovenia, 8f))
+
         enableMyLocation()
         refreshMapMarkers()
+
+        googleMap?.setOnMarkerClickListener { marker ->
+            val event = markerMap[marker]
+            if (event != null) {
+                showEventDetailsDialog(event)
+            }
+            true
+        }
 
         googleMap?.setOnMapClickListener { latLng ->
             if (isPickingLocation) {
@@ -100,27 +111,79 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     putDouble("arg_lat", latLng.latitude)
                     putDouble("arg_lon", latLng.longitude)
                 }
-
                 isPickingLocation = false
                 updateButtonState()
-
                 findNavController().navigate(R.id.action_mapFragment_to_addExtremeEventFragment, bundle)
             }
         }
     }
 
+    private fun showEventDetailsDialog(event: ExtremeEvent) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(event.type)
+            .setMessage("Lokacija: ${event.locationName}\nOpis: ${event.description}")
+            .setPositiveButton("Uredi") { _, _ ->
+                // Pripravimo Bundle z ID-jem dogodka
+                val bundle = Bundle().apply {
+                    putString("arg_event_id", event.id)
+                }
+                // Navigiramo na AddFragment z ID-jem
+                findNavController().navigate(R.id.action_mapFragment_to_addExtremeEventFragment, bundle)
+            }
+            .setNegativeButton("Izbriši") { _, _ ->
+                confirmDelete(event)
+            }
+            .setNeutralButton("Zapri", null)
+            .show()
+    }
+
+    private fun confirmDelete(event: ExtremeEvent) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Izbris dogodka")
+            .setMessage("Ali ste prepričani, da želite izbrisati ta dogodek?")
+            .setPositiveButton("Da") { _, _ ->
+                deleteEventFromFile(event)
+            }
+            .setNegativeButton("Ne", null)
+            .show()
+    }
+
+    private fun deleteEventFromFile(eventToDelete: ExtremeEvent) {
+        try {
+            eventsList.removeAll { it.id == eventToDelete.id }
+
+            val file = File(requireContext().filesDir, fileName)
+            val jsonString = gson.toJson(eventsList)
+            file.writeText(jsonString)
+
+            refreshMapMarkers()
+            Toast.makeText(context, "Dogodek izbrisan.", Toast.LENGTH_SHORT).show()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Napaka pri brisanju: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
     private fun refreshMapMarkers() {
         googleMap?.clear()
+        markerMap.clear()
 
         for (event in eventsList) {
             val position = LatLng(event.latitude, event.longitude)
 
-            googleMap?.addMarker(
+            val marker = googleMap?.addMarker(
                 MarkerOptions()
                     .position(position)
                     .title(event.type)
                     .snippet("${event.locationName}: ${event.description}")
             )
+
+            if (marker != null) {
+                markerMap[marker] = event
+            }
         }
     }
 
