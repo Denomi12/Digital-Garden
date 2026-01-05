@@ -41,6 +41,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_addExtremeEventFragment)
         }
 
+        binding.btnOpenMap.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_mapFragment)
+        }
+
         binding.btnCapturePhoto.setOnClickListener {
             try {
                 takePicture.launch(null)
