@@ -9,7 +9,13 @@ if __name__ == '__main__':
 
     blocks = create_blocks(mask, height=20, width=40)
 
-    display_images(garden, blocks)
+
+
+    elements = blocks_to_elements(blocks)
+
+
+    g = create_garden(elements=elements)
+    print(g)
 
 def demo(img: np.ndarray):
     blur = cv2.GaussianBlur(img, (7, 7), 0)
