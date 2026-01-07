@@ -1,9 +1,12 @@
+from typing import Any
+
 import numpy as np
 import json
 
 
 
-def create_blocks(mask: np.ndarray, height: int = 5, width: int = 5) -> np.ndarray:
+def create_tilemap(mask: np.ndarray, height: int = 5, width: int = 5) -> np.ndarray:
+    """Returns a binary garden tilemap of width and height."""
     mask = mask/mask.max()
     mask_height, mask_width = mask.shape
 
@@ -34,7 +37,18 @@ def create_blocks(mask: np.ndarray, height: int = 5, width: int = 5) -> np.ndarr
 
     return tilemap
 
-def create_garden(name="Default name", width=5, height=5, location=None, latitude=None, longitude=None, elements=[]):
+def create_garden(name="Default name", width=5, height=5, location=None, latitude=None, longitude=None, elements=[]) -> str:
+    """
+    Returns a JSON string formatted to represend a Garden suitable for sending to the backend.
+    :param name:
+    :param width:
+    :param height:
+    :param location:
+    :param latitude:
+    :param longitude:
+    :param elements:
+    :return:
+    """
     garden_dict = {}
     garden_dict["name"] = name
 
@@ -60,7 +74,8 @@ def create_garden(name="Default name", width=5, height=5, location=None, latitud
     garden_json = json.dumps(garden_dict)
     return garden_json
 
-def blocks_to_elements(blocks: np.ndarray) -> dict:
+def blocks_to_elements(blocks: np.ndarray) -> list[Any]:
+    """Returns a list of elements corresponding to each block."""
     h, w, = blocks.shape[:2]
 
     elements = []
