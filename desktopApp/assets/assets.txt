@@ -4,4 +4,7 @@ comicSkin/comic-ui.png
 comicSkin/font-button-export.fnt
 comicSkin/font-export.fnt
 comicSkin/font-title-export.fnt
+greda.png
 marker.png
+pot.png
+visokaGreda.png

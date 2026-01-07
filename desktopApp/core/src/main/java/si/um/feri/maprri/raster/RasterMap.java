@@ -1,9 +1,6 @@
 package si.um.feri.maprri.raster;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import si.um.feri.maprri.raster.backendCalls.FetchGardens;
+import si.um.feri.maprri.raster.screens.Simple3DScreen;
 import si.um.feri.maprri.raster.utils.Constants;
 import si.um.feri.maprri.raster.utils.Geolocation;
 import si.um.feri.maprri.raster.utils.MapRasterTiles;
@@ -63,6 +61,12 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private float moveSpeed = 3f;    // hitrost premikanja kamere
     private Dialog currentDialog = null;
 
+
+    private Game game;
+
+    public RasterMap(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void create() {
@@ -230,7 +234,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             @Override
             protected void result(Object object) {
                 if (object.equals("visit")) {
-                    Gdx.app.log("Popup", "Visit clicked");
+                    game.setScreen(new Simple3DScreen(game));
                 } else if (object.equals("back")) {
                     Gdx.app.log("Popup", "Back clicked");
                 }

@@ -3,6 +3,7 @@ package si.um.feri.maprri.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
+import si.um.feri.maprri.raster.MyGame;
 import si.um.feri.maprri.raster.RasterMap;
 
 /** Launches the desktop (LWJGL3) application. */
@@ -13,7 +14,7 @@ public class Lwjgl3LauncherRasterMap {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new RasterMap(), getDefaultConfiguration());
+        return new Lwjgl3Application(new MyGame(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
