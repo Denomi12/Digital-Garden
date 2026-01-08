@@ -33,6 +33,7 @@ import si.um.feri.maprri.raster.utils.Constants;
 import si.um.feri.maprri.raster.utils.Geolocation;
 import si.um.feri.maprri.raster.utils.MapRasterTiles;
 import si.um.feri.maprri.raster.utils.ZoomXY;
+import si.um.feri.maprri.raster.utils.uiUtils.Sidebar;
 
 import java.io.IOException;
 
@@ -70,6 +71,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
 
     private MyGame game;
+    private Sidebar sidebar;
 
     public RasterMap(MyGame game) {
         this.game = game;
@@ -137,6 +139,11 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
         stage = new Stage();
+        stage.setDebugAll(false);
+
+        sidebar = new Sidebar(skin);
+        sidebar.addTo(stage);
+
         GestureDetector gestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, gestureDetector));
 //        Gdx.input.setInputProcessor(stage);
