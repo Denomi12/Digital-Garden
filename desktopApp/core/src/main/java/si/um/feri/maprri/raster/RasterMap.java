@@ -261,7 +261,6 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
         for (int i = 0; i < currentDialog.getButtonTable().getChildren().size; i++) {
             TextButton btn = (TextButton) currentDialog.getButtonTable().getChildren().get(i);
-            btn.getLabel().setFontScale(0.7f);
             btn.pad(5, 10, 5, 10);
             currentDialog.getButtonTable().getCell(btn).width(120).height(40);
         }
