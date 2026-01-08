@@ -56,9 +56,6 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
     private SpriteBatch batch;
     private TextureRegion markerTexture;
-
-    private Array<Garden> userGardens;
-
     private Stage stage;
     private Skin skin;
 
@@ -126,7 +123,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         FetchGardens.getAllGardens(backendUrl, new FetchGardens.GardensCallback() {
             @Override
             public void onSuccess(Array<Garden> gardens) {
-                userGardens = gardens;
+                GameManager.setGardens(gardens);
                 System.out.println("Pridobljeno vrtov: " + gardens.size);
             }
 
@@ -184,11 +181,11 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     }
 
     private void drawGardens() {
-        if (userGardens == null) return;
+        if (GameManager.getGardens() == null) return;
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (Garden g : userGardens) {
+        for (Garden g : GameManager.getGardens()) {
             Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
             batch.draw(markerTexture,
                     pos.x - markerTexture.getRegionWidth() / 2f,
@@ -216,8 +213,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         touchPosition.set(x, y, 0);
         camera.unproject(touchPosition);
 
-        if (userGardens != null) {
-            for (Garden g : userGardens) {
+        if (GameManager.getGardens() != null) {
+            for (Garden g : GameManager.getGardens()) {
                 Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
 
                 float radius = markerTexture.getRegionWidth() / 2f;
