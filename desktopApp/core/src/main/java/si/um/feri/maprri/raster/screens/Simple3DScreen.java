@@ -1,13 +1,14 @@
 package si.um.feri.maprri.raster.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -22,9 +23,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import si.um.feri.assets.AssetDescriptors;
+import si.um.feri.assets.RegionNames;
+import si.um.feri.maprri.raster.MyGame;
+
 public class Simple3DScreen implements Screen {
 
-    private final Game game;
+    private final MyGame game;
+    private final TextureAtlas gameAtlas;
+    private final AssetManager assetManager;
     private Stage stage;
     private Skin skin;
 
@@ -32,12 +39,14 @@ public class Simple3DScreen implements Screen {
     private ModelBuilder modelBuilder;
     private ModelInstance instance;
     private ModelBatch batch;
-    private Texture texture;
+    private TextureRegion texture;
     private PerspectiveCamera camera;
     private FirstPersonCameraController controller;
 
-    public Simple3DScreen(Game game) {
+    public Simple3DScreen(MyGame game) {
         this.game = game;
+        this.assetManager = game.getAssetManager();
+        this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);
     }
 
     @Override
@@ -57,7 +66,7 @@ public class Simple3DScreen implements Screen {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
         //Model kocke
-        texture = new Texture(Gdx.files.internal("greda.png"));
+        texture = gameAtlas.findRegion(RegionNames.GREDA);
         modelBuilder = new ModelBuilder();
         Material material = new Material(TextureAttribute.createDiffuse(texture));
         long attributes = VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates;
@@ -66,10 +75,10 @@ public class Simple3DScreen implements Screen {
         batch = new ModelBatch();
 
         stage = new Stage();
-        skin = new Skin(Gdx.files.internal("comicSkin/comic-ui.json"));
+        skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
         stage = new Stage();
-        skin = new Skin(Gdx.files.internal("comicSkin/comic-ui.json"));
+        skin = assetManager.get(AssetDescriptors.UI_SKIN);
         TextButton backButton = new TextButton("Back", skin);
         backButton.setSize(120, 45);
         backButton.setPosition(
@@ -145,7 +154,6 @@ public class Simple3DScreen implements Screen {
         stage.dispose();
         skin.dispose();
         model.dispose();
-        texture.dispose();
         batch.dispose();
     }
 }

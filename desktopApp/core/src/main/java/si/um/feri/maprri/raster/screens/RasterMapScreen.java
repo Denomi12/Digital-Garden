@@ -1,16 +1,15 @@
 package si.um.feri.maprri.raster.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import si.um.feri.maprri.raster.MyGame;
 import si.um.feri.maprri.raster.RasterMap;
 
 public class RasterMapScreen implements Screen {
 
-    private final Game game;
+    private final MyGame game;
     private RasterMap rasterMap;
 
-    public RasterMapScreen(Game game) {
+    public RasterMapScreen(MyGame game) {
         this.game = game;
     }
 

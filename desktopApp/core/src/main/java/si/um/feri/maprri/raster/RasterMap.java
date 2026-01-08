@@ -1,9 +1,11 @@
 package si.um.feri.maprri.raster;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -22,6 +24,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import si.um.feri.assets.AssetDescriptors;
+import si.um.feri.assets.RegionNames;
 import si.um.feri.maprri.raster.backendCalls.FetchGardens;
 import si.um.feri.maprri.raster.screens.Simple3DScreen;
 import si.um.feri.maprri.raster.utils.Constants;
@@ -33,6 +38,8 @@ import java.io.IOException;
 
 public class RasterMap extends ApplicationAdapter implements GestureDetector.GestureListener {
 
+    private final AssetManager assetManager;
+    private final TextureAtlas gameAtlas;
     private ShapeRenderer shapeRenderer;
     private Vector3 touchPosition;
 
@@ -47,7 +54,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
 
     private SpriteBatch batch;
-    private Texture markerTexture;
+    private TextureRegion markerTexture;
 
     private Array<Garden> userGardens;
 
@@ -62,10 +69,12 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private Dialog currentDialog = null;
 
 
-    private Game game;
+    private MyGame game;
 
-    public RasterMap(Game game) {
+    public RasterMap(MyGame game) {
         this.game = game;
+        this.assetManager = game.getAssetManager();
+        this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);
     }
 
     @Override
@@ -109,7 +118,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         layers.add(layer);
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        markerTexture = new Texture(Gdx.files.internal("marker.png"));
+        markerTexture = gameAtlas.findRegion(RegionNames.MARKER);
 
         String backendUrl = "http://localhost:3001";
         FetchGardens.getAllGardens(backendUrl, new FetchGardens.GardensCallback() {
@@ -125,7 +134,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             }
         });
 
-        skin = new Skin(Gdx.files.internal("comicSkin/comic-ui.json"));
+        skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
         stage = new Stage();
         GestureDetector gestureDetector = new GestureDetector(this);
@@ -175,8 +184,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         for (Garden g : userGardens) {
             Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
             batch.draw(markerTexture,
-                    pos.x - markerTexture.getWidth() / 2f,
-                    pos.y - markerTexture.getHeight() / 2f);
+                    pos.x - markerTexture.getRegionWidth() / 2f,
+                    pos.y - markerTexture.getRegionHeight() / 2f);
         }
         batch.end();
     }
@@ -186,7 +195,6 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     public void dispose() {
         shapeRenderer.dispose();
         batch.dispose();
-        markerTexture.dispose();
     }
 
     @Override
@@ -205,7 +213,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             for (Garden g : userGardens) {
                 Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
 
-                float radius = markerTexture.getWidth() / 2f;
+                float radius = markerTexture.getRegionWidth() / 2f;
 
                 if (touchPosition.dst(pos.x, pos.y, 0) <= radius) {
                     zoomToMarker(pos, 0.5f);
