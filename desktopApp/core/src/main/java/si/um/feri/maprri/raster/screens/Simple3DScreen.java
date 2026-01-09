@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import si.um.feri.assets.AssetDescriptors;
 import si.um.feri.assets.RegionNames;
+import si.um.feri.maprri.raster.Garden;
 import si.um.feri.maprri.raster.MyGame;
 
 public class Simple3DScreen implements Screen {
@@ -43,7 +44,7 @@ public class Simple3DScreen implements Screen {
     private PerspectiveCamera camera;
     private FirstPersonCameraController controller;
 
-    public Simple3DScreen(MyGame game) {
+    public Simple3DScreen(MyGame game, Garden garden) {
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);

@@ -245,7 +245,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             @Override
             protected void result(Object object) {
                 if (object.equals("visit")) {
-                    game.setScreen(new Simple3DScreen(game));
+                    game.setScreen(new Simple3DScreen(game, garden));
                 } else if (object.equals("back")) {
                     Gdx.app.log("Popup", "Back clicked");
                 }
