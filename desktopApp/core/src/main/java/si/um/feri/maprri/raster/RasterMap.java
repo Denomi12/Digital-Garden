@@ -41,19 +41,15 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
     private final AssetManager assetManager;
     private final TextureAtlas gameAtlas;
+    // center geolocation
+    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
     private ShapeRenderer shapeRenderer;
     private Vector3 touchPosition;
-
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
     private OrthographicCamera camera;
-
     private Texture[] mapTiles;
     private ZoomXY beginTile;   // top left tile
-
-    // center geolocation
-    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.557314, 15.637771);
-
     private SpriteBatch batch;
     private TextureRegion markerTexture;
     private Stage stage;
@@ -120,18 +116,21 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         markerTexture = gameAtlas.findRegion(RegionNames.MARKER);
 
         String backendUrl = "http://localhost:3001";
-        FetchGardens.getAllGardens(backendUrl, new FetchGardens.GardensCallback() {
-            @Override
-            public void onSuccess(Array<Garden> gardens) {
-                GameManager.setGardens(gardens);
-                System.out.println("Pridobljeno vrtov: " + gardens.size);
-            }
+        if (GameManager.getGardens() == null) {
 
-            @Override
-            public void onError(Throwable t) {
-                System.err.println("Napaka pri pridobivanju vrtov: " + t.getMessage());
-            }
-        });
+            FetchGardens.getAllGardens(backendUrl, new FetchGardens.GardensCallback() {
+                @Override
+                public void onSuccess(Array<Garden> gardens) {
+                    GameManager.setGardens(gardens);
+                    System.out.println("Pridobljeno vrtov: " + gardens.size);
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    System.err.println("Napaka pri pridobivanju vrtov: " + t.getMessage());
+                }
+            });
+        }
 
         skin = assetManager.get(AssetDescriptors.UI_SKIN);
 

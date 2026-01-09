@@ -3,7 +3,7 @@ package si.um.feri.maprri.raster;
 import com.badlogic.gdx.utils.Array;
 
 public class GameManager {
-    private static Array<Garden> gardens;
+    private static Array<Garden> gardens = null;
 
     public static void setGardens(Array<Garden> gardens_list) {
         gardens = gardens_list;
