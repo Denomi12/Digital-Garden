@@ -70,6 +70,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);
+        skin = assetManager.get(AssetDescriptors.UI_SKIN);
+
     }
 
     @Override
@@ -115,6 +117,15 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         markerTexture = gameAtlas.findRegion(RegionNames.MARKER);
 
+        stage = new Stage();
+        stage.setDebugAll(false);
+
+        sidebar = new Sidebar(skin);
+        sidebar.addTo(stage);
+
+        TextureRegion gardenIcon = gameAtlas.findRegion(RegionNames.GARDEN_ICON);
+
+
         String backendUrl = "http://localhost:3001";
         if (GameManager.getGardens() == null) {
 
@@ -123,6 +134,10 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                 public void onSuccess(Array<Garden> gardens) {
                     GameManager.setGardens(gardens);
                     System.out.println("Pridobljeno vrtov: " + gardens.size);
+
+                    Gdx.app.postRunnable(() -> {
+                        sidebar.addGardens(gardens, gardenIcon);
+                    });
                 }
 
                 @Override
@@ -130,15 +145,12 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                     System.err.println("Napaka pri pridobivanju vrtov: " + t.getMessage());
                 }
             });
+        } else {
+            sidebar.addGardens(GameManager.getGardens(), gardenIcon);
         }
 
-        skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
-        stage = new Stage();
-        stage.setDebugAll(false);
 
-        sidebar = new Sidebar(skin);
-        sidebar.addTo(stage);
 
         GestureDetector gestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, gestureDetector));
