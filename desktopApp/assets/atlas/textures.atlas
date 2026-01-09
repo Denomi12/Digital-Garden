@@ -1,40 +1,47 @@
 
 textures.png
-size: 256, 128
+size: 1024, 512
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
+backgroundImg
+  rotate: false
+  xy: 2, 134
+  size: 736, 368
+  orig: 736, 368
+  offset: 0, 0
+  index: -1
 gardenIcon
   rotate: false
-  xy: 200, 76
+  xy: 740, 404
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 greda
   rotate: false
-  xy: 2, 44
+  xy: 2, 68
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 marker
   rotate: false
-  xy: 2, 2
+  xy: 68, 92
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 pot
   rotate: false
-  xy: 68, 44
+  xy: 740, 438
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 visokaGreda
   rotate: false
-  xy: 134, 44
+  xy: 2, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

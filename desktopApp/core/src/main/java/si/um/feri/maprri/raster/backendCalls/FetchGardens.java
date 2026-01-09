@@ -27,7 +27,7 @@ public class FetchGardens {
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 try {
                     String json = httpResponse.getResultAsString();
-                    System.out.println("Prejeli JSON: " + json);
+//                    System.out.println("Prejeli JSON: " + json);
 
                     Json gdxJson = new Json();
 
