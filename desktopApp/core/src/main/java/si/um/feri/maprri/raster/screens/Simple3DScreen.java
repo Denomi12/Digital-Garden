@@ -23,10 +23,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import com.badlogic.gdx.utils.Array;
 import si.um.feri.assets.AssetDescriptors;
 import si.um.feri.assets.RegionNames;
 import si.um.feri.maprri.raster.Garden;
 import si.um.feri.maprri.raster.MyGame;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Simple3DScreen implements Screen {
 
@@ -36,22 +40,36 @@ public class Simple3DScreen implements Screen {
     private Stage stage;
     private Skin skin;
 
-    private Model model;
-    private ModelBuilder modelBuilder;
+    private Model gredaModel;
+    private Model potkaModel;
+    private Model visokaGredaModel;
+
     private ModelInstance instance;
     private ModelBatch batch;
-    private TextureRegion texture;
     private PerspectiveCamera camera;
     private FirstPersonCameraController controller;
+    private final Garden garden;
+
+    private Array<ModelInstance> instances;
 
     public Simple3DScreen(MyGame game, Garden garden) {
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);
+        this.garden = garden;
+        for(Garden.Element g : garden.elements){
+            System.out.println("Element: " + g.type);
+            System.out.println("gx: " + g.x);
+            System.out.println("gy: " + g.y);
+        }
     }
 
     @Override
     public void show() {
+        TextureRegion gredaTexture = gameAtlas.findRegion(RegionNames.GREDA);
+        TextureRegion potkaTexture = gameAtlas.findRegion(RegionNames.POT);
+        TextureRegion visokaGredaTexture = gameAtlas.findRegion(RegionNames.VISOKA_GREDA);
+
         //Kamera
         camera = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(0, 0, 5);
@@ -67,19 +85,70 @@ public class Simple3DScreen implements Screen {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
         //Model kocke
-        texture = gameAtlas.findRegion(RegionNames.GREDA);
-        modelBuilder = new ModelBuilder();
-        Material material = new Material(TextureAttribute.createDiffuse(texture));
+        instances = new Array<>();
+        Map<String, Model> modelMap = new HashMap<>();
+
+        ModelBuilder modelBuilder = new ModelBuilder();
         long attributes = VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates;
-        model = modelBuilder.createBox(1f, 1f, 1f, material, attributes);
-        instance = new ModelInstance(model);
+
+        gredaModel = modelBuilder.createBox(
+                1f, 1f, 1f,
+                new Material(TextureAttribute.createDiffuse(gredaTexture)),
+                attributes
+        );
+
+        potkaModel = modelBuilder.createBox(
+                1f, 1f, 1f,
+                new Material(TextureAttribute.createDiffuse(potkaTexture)),
+                attributes
+        );
+
+        visokaGredaModel = modelBuilder.createBox(
+                1f, 1.5f, 1f,
+                new Material(TextureAttribute.createDiffuse(visokaGredaTexture)),
+                attributes
+        );
+
+        modelMap.put("Greda", gredaModel);
+        modelMap.put("Potka", potkaModel);
+        modelMap.put("Visoka greda", visokaGredaModel);
+
+
+        float cellSize = 1f;
+
+        for (Garden.Element g : garden.elements) {
+            Model model = modelMap.get(g.type);
+            if (model == null) continue;
+
+            ModelInstance instance = new ModelInstance(model);
+
+            float worldX = g.x * cellSize;
+            float worldZ = g.y * cellSize;
+
+            switch (g.type) {
+                case "Potka":
+                    instance.transform
+                            .setToTranslation(worldX, 0.25f, worldZ)
+                            .scale(1f, 0.5f, 1f);
+                    break;
+                case "Greda":
+                    instance.transform.setToTranslation(worldX, 0.5f, worldZ);
+                    break;
+                case "Visoka greda":
+                    instance.transform.setToTranslation(worldX, 1f, worldZ);
+                    break;
+            }
+
+            instances.add(instance);
+        }
+
+
         batch = new ModelBatch();
 
-        stage = new Stage();
-        skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
         stage = new Stage();
         skin = assetManager.get(AssetDescriptors.UI_SKIN);
+
         TextButton backButton = new TextButton("Back", skin);
         backButton.setSize(120, 45);
         backButton.setPosition(
@@ -124,7 +193,9 @@ public class Simple3DScreen implements Screen {
         camera.update();
 
         batch.begin(camera);
-        batch.render(instance);
+        for (ModelInstance instance : instances) {
+            batch.render(instance);
+        }
         batch.end();
 
         stage.act(delta);
@@ -154,7 +225,11 @@ public class Simple3DScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
-        model.dispose();
+        gredaModel.dispose();
+        potkaModel.dispose();
+        visokaGredaModel.dispose();
+        batch.dispose();
+        stage.dispose();
         batch.dispose();
     }
 }
