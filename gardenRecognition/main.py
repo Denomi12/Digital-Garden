@@ -10,8 +10,12 @@ if __name__ == '__main__':
     tilemap = create_tilemap(mask, height=20, width=40)
     elements = blocks_to_elements(tilemap)
 
+    display_images(garden, tilemap)
+
     garden_json = create_garden(elements=elements)
 
-    display_images(tilemap)
+    conn = GardenConnection("1","1")
+    conn.login()
+    print(conn.post_garden(garden_json))
 
 

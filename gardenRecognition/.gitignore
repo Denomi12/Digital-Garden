@@ -3,4 +3,4 @@ __pycache__/
 /*.pyc
 *.pyc
 /utilScripts/__pycache__/*
-/utilScripts/uploads/*
+/uploads/*
