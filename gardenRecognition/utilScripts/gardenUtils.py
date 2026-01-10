@@ -37,7 +37,7 @@ def create_tilemap(mask: np.ndarray, height: int = 5, width: int = 5) -> np.ndar
 
     return tilemap
 
-def create_garden(name="Default name", width=5, height=5, location=None, latitude=None, longitude=None, elements=[]) -> str:
+def create_garden(name="Default name", width=5, height=5, location=None, latitude=None, longitude=None, elements=[]) -> dict:
     """
     Returns a JSON string formatted to represend a Garden suitable for sending to the backend.
     :param name:
@@ -71,8 +71,7 @@ def create_garden(name="Default name", width=5, height=5, location=None, latitud
     garden_dict["elements"] = elements
 
 
-    garden_json = json.dumps(garden_dict)
-    return garden_json
+    return garden_dict
 
 def blocks_to_elements(blocks: np.ndarray) -> list[Any]:
     """Returns a list of elements corresponding to each block."""

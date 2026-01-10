@@ -23,9 +23,10 @@ class GardenConnection:
         r = self.session.get(url=endpoint)
         return r.json()
 
-    def post_garden(self, garden_data: str):
+    def post_garden(self, garden_data: dict):
         endpoint = self.URL + "/garden"
-        r = self.session.post(url=endpoint, data=garden_data)
+        headers = {"Content-Type": "application/json"}
+        r = self.session.post(url=endpoint, headers=headers, json=garden_data)
         return r.json()
 
 
