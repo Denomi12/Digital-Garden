@@ -5,7 +5,7 @@ class GardenConnection:
     def __init__(self, username: str, password: str):
         self.username = username
         self.password = password
-        self.URL = "http://localhost:3001"
+        self.URL = "http://backend:3001"
         self.session = requests.Session()
 
 

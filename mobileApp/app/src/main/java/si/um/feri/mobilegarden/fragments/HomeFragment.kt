@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
         return stream.toByteArray()
     }
 
-    private fun uploadImage(bitmap: Bitmap, url: String, username: String, password: String, gardenName: String) {
+    private fun uploadImage(bitmap: Bitmap, url: String, username: String, password: String, gardenName: String, width: Number, height: Number) {
 
         Thread {
             try {
@@ -102,6 +102,8 @@ class HomeFragment : Fragment() {
                     )
                     .addFormDataPart("username", username)
                     .addFormDataPart("password", password)
+                    .addFormDataPart("width", width.toString())
+                    .addFormDataPart("height", height.toString())
                     .build()
 
                 val request = Request.Builder()
@@ -142,7 +144,7 @@ class HomeFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_upload, null)
 
         val etUrl = dialogView.findViewById<EditText>(R.id.etUrl)
-        etUrl.setText("http://10.77.233.73:5000/upload")
+        etUrl.setText("http://10.77.233.73:8000/upload")
         val etUsername = dialogView.findViewById<EditText>(R.id.etUsername)
         val etPassword = dialogView.findViewById<EditText>(R.id.etPassword)
         val etGardenName = dialogView.findViewById<EditText>(R.id.etGardenName)
@@ -154,7 +156,7 @@ class HomeFragment : Fragment() {
             .setView(dialogView)
             .setPositiveButton("Send") { _, _ ->
 
-                val url = etUrl.text.toString().trim()    .ifEmpty { "http://10.77.233.73:5000" }
+                val url = etUrl.text.toString().trim()
                 val username = etUsername.text.toString().trim()
                 val password = etPassword.text.toString()
                 val gardenName = etGardenName.text.toString().trim()
@@ -174,7 +176,7 @@ class HomeFragment : Fragment() {
                     return@setPositiveButton
                 }
 
-                uploadImage(bitmap, url, username, password, gardenName)
+                uploadImage(bitmap, url, username, password, gardenName, width, height)
             }
             .setNegativeButton("Cancel", null)
             .show()

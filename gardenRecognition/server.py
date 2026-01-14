@@ -44,6 +44,11 @@ def upload_image():
         print({"error": "Invalid file type"})
         return jsonify({"error": "Invalid file type"}), 400
 
+    try:
+        width, height = int(request.form["width"]), int(request.form["height"])
+    except KeyError:
+        width = 10
+        height = 20
     conn = GardenConnection(username, password)
     print("Establishing connection with USER")
     try:
@@ -60,7 +65,7 @@ def upload_image():
 
     print("Saving image file")
 
-    response = process_image(conn, path, garden_name)
+    response = process_image(conn, path, garden_name, width, height)
     print("Sent response: ", response)
     return jsonify({
         "status": "ok",
@@ -68,16 +73,16 @@ def upload_image():
         "response": response
     })
 
-def process_image(conn: GardenConnection, path, garden_name):
+def process_image(conn: GardenConnection, path, garden_name, width, height):
     garden_image = load_image(path)
 
     garden, mask, contour = extract_garden(garden_image)
-    tilemap = create_tilemap(mask, height=20, width=40)
+    tilemap = create_tilemap(mask, height=width, width=height)
     elements = blocks_to_elements(tilemap)
 
-    garden_json = create_garden(name=garden_name, elements=elements)
+    garden_json = create_garden(name=garden_name, elements=elements, width=width, height=height)
     res = conn.post_garden(garden_json)
     return res
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)

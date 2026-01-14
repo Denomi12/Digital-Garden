@@ -24,3 +24,17 @@ services:
       - ./frontend/.env
     depends_on:
       - backend
+
+  py-backend:
+    build: ./gardenRecognition   
+    ports:
+      - "8000:8000"       
+    volumes:
+      - ./gardenRecognition:/app
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - backend
+
+
+
