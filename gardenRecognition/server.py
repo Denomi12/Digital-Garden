@@ -16,11 +16,16 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route("/", methods=["GET"])
+def helllo():
+    return jsonify({"Hello": "You exist!"}), 200
+
 
 @app.route("/upload", methods=["POST"])
 def upload_image():
-    print("Received GET /upload")
+    print("Received POST /upload")
     if "image" not in request.files:
+        print({"error": "No image field"})
         return jsonify({"error": "No image field"}), 400
 
     file = request.files["image"]
@@ -28,12 +33,15 @@ def upload_image():
     try:
         username, password = request.form["username"], request.form["password"]
     except KeyError:
+        print({"error": "No username or password field"})
         return jsonify({"error": "No username or password field"}), 400
 
     if file.filename == "":
+        print({"error": "Empty filename"})
         return jsonify({"error": "Empty filename"}), 400
 
     if not allowed_file(file.filename):
+        print({"error": "Invalid file type"})
         return jsonify({"error": "Invalid file type"}), 400
 
     conn = GardenConnection(username, password)
@@ -41,7 +49,8 @@ def upload_image():
     try:
         conn.login()
 
-    except:
+    except Exception as e:
+        print({"error": f"Login error: {e}"})
         return jsonify({"error": "Login error"}), 400
 
     filename = file.filename

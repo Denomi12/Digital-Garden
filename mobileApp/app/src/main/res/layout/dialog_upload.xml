@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/etUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="URL"
+            android:inputType="textUri"
+            app:layout_constraintBottom_toTopOf="@+id/etHeight"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            tools:layout_editor_absoluteX="20dp" />
+
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Username"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/etPassword"
+            app:layout_constraintTop_toBottomOf="@+id/etGardenName"
+            tools:layout_editor_absoluteX="20dp" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etUsername"
+            tools:layout_editor_absoluteX="20dp" />
+
+        <EditText
+            android:id="@+id/etGardenName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Garden name"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@+id/etUsername"
+            app:layout_constraintTop_toBottomOf="@+id/etWidth"
+            tools:layout_editor_absoluteX="20dp" />
+
+        <EditText
+            android:id="@+id/etWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Width (1–40)"
+            android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/etGardenName"
+            app:layout_constraintTop_toBottomOf="@+id/etHeight"
+            tools:layout_editor_absoluteX="20dp" />
+
+        <EditText
+            android:id="@+id/etHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Height (1–40)"
+            android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/etWidth"
+            app:layout_constraintTop_toBottomOf="@+id/etUrl"
+            tools:layout_editor_absoluteX="20dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
