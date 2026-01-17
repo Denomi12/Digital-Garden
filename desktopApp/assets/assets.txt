@@ -1,5 +1,11 @@
 atlas/textures.atlas
 atlas/textures.png
+skybox/nx.png
+skybox/ny.png
+skybox/nz.png
+skybox/px.png
+skybox/py.png
+skybox/pz.png
 ui/comicSkin/comic-ui.atlas
 ui/comicSkin/comic-ui.json
 ui/comicSkin/comic-ui.png
