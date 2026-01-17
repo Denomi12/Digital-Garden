@@ -37,10 +37,6 @@ class GenerateExtremeEventFragment : Fragment() {
         binding.btnGenerate.setOnClickListener {
             generateAndSaveEvent()
         }
-
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
     }
 
     private fun generateAndSaveEvent() {
