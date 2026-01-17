@@ -2,6 +2,9 @@
 eclipse.project.name = appName + '-core'
 
 dependencies {
+  implementation 'org.json:json:20240303'
+
+  api "com.badlogicgames.ashley:ashley:$ashleyVersion"
   api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
