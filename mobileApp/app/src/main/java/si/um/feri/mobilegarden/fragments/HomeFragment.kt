@@ -118,9 +118,9 @@ class HomeFragment : Fragment() {
 
                 requireActivity().runOnUiThread {
                     val message = if (response.isSuccessful) {
-                        "Upload OK:\n$responseText"
+                        "Upload OK"
                     } else {
-                        "Upload FAILED (${response.code}):\n$responseText"
+                        "Upload FAILED (${response.code})"
                     }
 
                     Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
@@ -146,10 +146,15 @@ class HomeFragment : Fragment() {
         val etUrl = dialogView.findViewById<EditText>(R.id.etUrl)
         etUrl.setText("http://10.77.233.73:8000/upload")
         val etUsername = dialogView.findViewById<EditText>(R.id.etUsername)
+        etUsername.setText("1")
         val etPassword = dialogView.findViewById<EditText>(R.id.etPassword)
+        etPassword.setText("1")
         val etGardenName = dialogView.findViewById<EditText>(R.id.etGardenName)
+        etGardenName.setText("Garden")
         val etWidth = dialogView.findViewById<EditText>(R.id.etWidth)
+        etWidth.setText("4")
         val etHeight = dialogView.findViewById<EditText>(R.id.etHeight)
+        etHeight.setText("4")
 
         AlertDialog.Builder(requireContext())
             .setTitle("Upload image")
