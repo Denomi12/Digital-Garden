@@ -8,8 +8,12 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import si.um.feri.mobilegarden.databinding.FragmentAddExtremeEventBinding
 import si.um.feri.mobilegarden.models.ExtremeEvent
 import java.io.File
@@ -86,6 +90,12 @@ class AddExtremeEventFragment : Fragment() {
                 )
 
                 saveOrUpdateEvent(newEvent)
+
+                Thread {
+                    sendToBlockchain(newEvent)
+                }.start()
+                Toast.makeText(context, "Uspešno shranjeno!", Toast.LENGTH_SHORT).show()
+
                 findNavController().popBackStack()
             } else {
                 Toast.makeText(context, "Prosim vnesite opis", Toast.LENGTH_SHORT).show()
@@ -117,6 +127,24 @@ class AddExtremeEventFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private fun sendToBlockchain(event: ExtremeEvent) {
+        val brokerUrl = "tcp://10.0.2.2:1883"
+        val clientId = "MobileGardenClient"
+        val topic = "mobilegarden/events"
+
+        try {
+            val client = MqttClient(brokerUrl, clientId, MemoryPersistence())
+            client.connect()
+            val content = Gson().toJson(event)
+            val message = MqttMessage(content.toByteArray())
+            message.qos = 2
+            client.publish(topic, message)
+            client.disconnect()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

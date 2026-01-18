@@ -14,6 +14,6 @@ def on_message(client, userdata, msg):
 
 client = mqtt.Client()
 client.on_message = on_message
-client.connect("127.0.0.1", 1883)
+client.connect("localhost", 1883)
 client.subscribe("mobilegarden/events")
 client.loop_forever()
