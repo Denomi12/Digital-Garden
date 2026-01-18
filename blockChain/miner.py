@@ -40,7 +40,7 @@ def mine_block_parallel(blockchain, miner_name, num_threads, rank, size):
     for i in range(num_threads):
         global_thread_id = (rank * num_threads) + i
         t = threading.Thread(target=mine_thread, args=(
-            index, timestamp.isoformat(), f"Blok {index}", last_block.hash, 
+            index, timestamp.isoformat(), data, last_block.hash, # 'data' namesto fiksnega niza
             difficulty, global_thread_id, total_threads, miner_name, timestamp
         ))
         threads.append(t)
