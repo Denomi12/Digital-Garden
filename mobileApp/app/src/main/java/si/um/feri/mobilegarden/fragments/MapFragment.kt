@@ -237,26 +237,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 var windTomorrow = 0.0
                 Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
 
+                val calendar = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
                 val sdfDay = SimpleDateFormat("yyyy-MM-dd", Locale.US)
                 sdfDay.timeZone = TimeZone.getTimeZone("UTC")
-                val tomorrowStr = sdfDay.format(System.currentTimeMillis() + 24 * 60 * 60 * 1000)
+                val tomorrowStr = sdfDay.format(calendar.time)
 
+                var maxPrecip = 0.0
+                var maxWind = 0.0
                 for (i in 0 until timeArray.length()) {
                     val timeStr = timeArray.getString(i)
                     if (timeStr.startsWith(tomorrowStr)) {
-                        precipTomorrow = precipArray.getDouble(i)
-                        windTomorrow = windArray.getDouble(i)
-                        break
+                        val precip = precipArray.getDouble(i)
+                        val wind = windArray.getDouble(i)
+                        if (precip > maxPrecip) maxPrecip = precip
+                        if (wind > maxWind) maxWind = wind
                     }
                 }
 
-//                val isStorm = precipTomorrow >= 10.0 || windTomorrow >= 15.0
+//                val isStorm = maxPrecip >= 10.0 || maxWind >= 15.0
                 val isStorm = true;
                 Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
 
                 if (isStorm) {
                     requireActivity().runOnUiThread {
-                        showWeatherNotification(requireContext(), event, precipTomorrow, windTomorrow)
+                        showWeatherNotification(requireContext(), event, maxPrecip, maxWind)
                     }
                 }
 
