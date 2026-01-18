@@ -1,4 +1,3 @@
-# blockchain.py
 import threading
 import json
 from datetime import datetime, timedelta

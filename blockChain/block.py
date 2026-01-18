@@ -1,4 +1,3 @@
-# block.py
 import hashlib
 from datetime import datetime
 
@@ -15,11 +14,15 @@ class Block:
 
     @staticmethod
     def calculate_hash(index, timestamp_iso, data, prev_hash, difficulty, nonce):
-        """
-        Izračuna SHA-256 hash za dane parametre.
-        """
         raw = f"{index}{timestamp_iso}{data}{prev_hash}{difficulty}{nonce}"
         return hashlib.sha256(raw.encode()).hexdigest()
+
+    @staticmethod
+    def get_hash_object(index, timestamp_iso, data, prev_hash, difficulty):
+        prefix = f"{index}{timestamp_iso}{data}{prev_hash}{difficulty}"
+        h = hashlib.sha256()
+        h.update(prefix.encode())
+        return h
 
     def to_dict(self):
         return {
@@ -32,7 +35,6 @@ class Block:
             'nonce': self.nonce,
             'miner': self.miner
         }
-
     @staticmethod
     def from_dict(d):
         return Block(
