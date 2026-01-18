@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -206,6 +207,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun fetchWeatherForAllGardensTomorrow() {
+        Log.d("nevem", "${eventsList.size} nevem ")
+        //todo to morejo bit gardeni in ne eventsList
         for (event in eventsList) {
             val lat = event.latitude
             val lon = event.longitude
@@ -232,6 +235,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                 var precipTomorrow = 0.0
                 var windTomorrow = 0.0
+                Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
 
                 val sdfDay = SimpleDateFormat("yyyy-MM-dd", Locale.US)
                 sdfDay.timeZone = TimeZone.getTimeZone("UTC")
@@ -248,6 +252,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
 //                val isStorm = precipTomorrow >= 10.0 || windTomorrow >= 15.0
                 val isStorm = true;
+                Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
 
                 if (isStorm) {
                     requireActivity().runOnUiThread {
