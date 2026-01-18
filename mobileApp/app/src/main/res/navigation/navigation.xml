@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment" />
     </fragment>
 
     <fragment
@@ -45,4 +48,9 @@
             android:id="@+id/action_mapFragment_to_addExtremeEventFragment"
             app:destination="@id/addExtremeEventFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/eventListFragment"
+        android:name="si.um.feri.mobilegarden.fragments.EventListFragment"
+        android:label="fragment_event_list"
+        tools:layout="@layout/fragment_event_list" />
 </navigation>

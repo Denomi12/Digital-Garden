@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.btnGenerate.setOnClickListener {
-            findNavController(R.id.navHostFragment).popBackStack(R.id.generateExtremeEventFragment, true)
-            findNavController(R.id.navHostFragment).navigate(R.id.generateExtremeEventFragment)
+            findNavController(R.id.navHostFragment).popBackStack(R.id.eventListFragment, true)
+            findNavController(R.id.navHostFragment).navigate(R.id.eventListFragment)
 
         }
         binding.btnHome.setOnClickListener {
