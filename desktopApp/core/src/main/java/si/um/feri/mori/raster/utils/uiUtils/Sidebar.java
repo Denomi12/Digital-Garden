@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import si.um.feri.mori.raster.Garden;
+import si.um.feri.mori.raster.RasterMap;
+import si.um.feri.mori.raster.utils.MapRasterTiles;
 
 public class Sidebar {
     private Window sidebar;
@@ -28,6 +31,7 @@ public class Sidebar {
         this.skin = skin;
         sidebar = createSidebarUI();
     }
+
 
     private Window createSidebarUI() {
         Window sidebar = new Window("", skin, "dialog");
@@ -144,11 +148,10 @@ public class Sidebar {
         stage.addActor(hoverArea);
     }
 
-    public void addGardens(Array<Garden> gardens, TextureRegion gardenIcon) {
+    public void addGardens(Array<Garden> gardens, TextureRegion gardenIcon, RasterMap rasterMap) {
         if (gardens == null) return;
 
         Color hoverColor = skin.getColor("button");
-
         Pixmap pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
@@ -156,6 +159,8 @@ public class Sidebar {
         pixmap.dispose();
 
         for (Garden g : gardens) {
+            if (!rasterMap.isGardenVisible(g)) continue;
+
             pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
             pixmap.setColor(hoverColor);
             pixmap.fill();
@@ -177,6 +182,16 @@ public class Sidebar {
             btn.getLabel().setAlignment(Align.left);
             btn.getLabel().setFontScale(0.85f);
             btn.padLeft(15);
+
+            btn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Vector2 targetPos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude,
+                            rasterMap.beginTile.x, rasterMap.beginTile.y);
+
+                    rasterMap.zoomToMarker(targetPos, 0.5f);
+                }
+            });
 
             scrollContent.add(btn).expandX().fillX().minHeight(52).row();
         }

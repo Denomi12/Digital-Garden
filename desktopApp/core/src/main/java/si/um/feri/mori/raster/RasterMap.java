@@ -51,7 +51,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private TiledMapRenderer tiledMapRenderer;
     private OrthographicCamera camera;
     private Texture[] mapTiles;
-    private ZoomXY beginTile;   // top left tile
+    public ZoomXY beginTile;   // top left tile
     private SpriteBatch batch;
     private TextureRegion markerTexture;
     private Stage stage;
@@ -75,6 +75,15 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         skin = assetManager.get(AssetDescriptors.UI_SKIN);
 
     }
+
+    public boolean isGardenVisible(Garden g) {
+        Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
+        float mapWidth = MapRasterTiles.TILE_SIZE * Constants.NUM_TILES;
+        float mapHeight = MapRasterTiles.TILE_SIZE * Constants.NUM_TILES;
+
+        return pos.x >= 0 && pos.x <= mapWidth && pos.y >= 0 && pos.y <= mapHeight;
+    }
+
 
     @Override
     public void create() {
@@ -138,7 +147,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                     System.out.println("Pridobljeno vrtov: " + gardens.size);
 
                     Gdx.app.postRunnable(() -> {
-                        sidebar.addGardens(gardens, gardenIcon);
+                        sidebar.addGardens(gardens, gardenIcon, RasterMap.this);
                     });
                 }
 
@@ -148,7 +157,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                 }
             });
         } else {
-            sidebar.addGardens(GameManager.getGardens(), gardenIcon);
+            sidebar.addGardens(GameManager.getGardens(), gardenIcon, this);
         }
 
 
@@ -244,7 +253,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         return true;
     }
 
-    private void zoomToMarker(Vector2 markerPos, float zoom) {
+    public void zoomToMarker(Vector2 markerPos, float zoom) {
         zoomTargetPos.set(markerPos);
         zoomTarget = zoom;
         isZoomingToMarker = true;
