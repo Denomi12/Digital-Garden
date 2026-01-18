@@ -22,9 +22,17 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONObject
 import si.um.feri.mobilegarden.R
 import si.um.feri.mobilegarden.models.ExtremeEvent
+import si.um.feri.mobilegarden.utils.showWeatherNotification
 import java.io.File
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.util.TimeZone
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -58,6 +66,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadEventsFromFile()
+
+        fetchWeatherForAllGardensTomorrow()
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -123,11 +133,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .setTitle(event.type)
             .setMessage("Lokacija: ${event.locationName}\nOpis: ${event.description}")
             .setPositiveButton("Uredi") { _, _ ->
-                // Pripravimo Bundle z ID-jem dogodka
                 val bundle = Bundle().apply {
                     putString("arg_event_id", event.id)
                 }
-                // Navigiramo na AddFragment z ID-jem
                 findNavController().navigate(R.id.action_mapFragment_to_addExtremeEventFragment, bundle)
             }
             .setNegativeButton("Izbriši") { _, _ ->
@@ -196,4 +204,61 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
+
+    private fun fetchWeatherForAllGardensTomorrow() {
+        for (event in eventsList) {
+            val lat = event.latitude
+            val lon = event.longitude
+            fetchTomorrowWeather(lat, lon, event)
+        }
+    }
+
+    private fun fetchTomorrowWeather(latitude: Double, longitude: Double, event: ExtremeEvent) {
+        Thread {
+            try {
+                val urlString =
+                    "https://api.open-meteo.com/v1/forecast" +
+                            "?latitude=$latitude" +
+                            "&longitude=$longitude" +
+                            "&hourly=precipitation,windspeed" +
+                            "&forecast_days=2"
+
+                val response = URL(urlString).readText()
+                val json = JSONObject(response)
+                val hourly = json.getJSONObject("hourly")
+                val precipArray = hourly.getJSONArray("precipitation")
+                val windArray = hourly.getJSONArray("windspeed")
+                val timeArray = hourly.getJSONArray("time")
+
+                var precipTomorrow = 0.0
+                var windTomorrow = 0.0
+
+                val sdfDay = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                sdfDay.timeZone = TimeZone.getTimeZone("UTC")
+                val tomorrowStr = sdfDay.format(System.currentTimeMillis() + 24 * 60 * 60 * 1000)
+
+                for (i in 0 until timeArray.length()) {
+                    val timeStr = timeArray.getString(i)
+                    if (timeStr.startsWith(tomorrowStr)) {
+                        precipTomorrow = precipArray.getDouble(i)
+                        windTomorrow = windArray.getDouble(i)
+                        break
+                    }
+                }
+
+//                val isStorm = precipTomorrow >= 10.0 || windTomorrow >= 15.0
+                val isStorm = true;
+
+                if (isStorm) {
+                    requireActivity().runOnUiThread {
+                        showWeatherNotification(requireContext(), event, precipTomorrow, windTomorrow)
+                    }
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }.start()
+    }
+
 }
