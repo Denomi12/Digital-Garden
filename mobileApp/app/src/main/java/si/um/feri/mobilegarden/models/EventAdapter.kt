@@ -6,10 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import si.um.feri.mobilegarden.databinding.EventRowItemBinding
 
-class EventAdapter(private val events: MutableList<ExtremeEvent>):
+class EventAdapter(
+    private val events: MutableList<ExtremeEvent>,
+    private val onItemClick: (ExtremeEvent) -> Unit
+) :
     RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
-    class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = EventRowItemBinding.bind(view)
     }
 
@@ -29,7 +32,10 @@ class EventAdapter(private val events: MutableList<ExtremeEvent>):
         holder: EventViewHolder,
         position: Int
     ) {
-
+        val event = events[position]
+        holder.binding.tvName.text = event.type
+        holder.binding.tvLocation.text = event.locationName
+        holder.itemView.setOnClickListener { onItemClick(event) }
     }
 
     override fun getItemCount(): Int {

@@ -52,5 +52,9 @@
         android:id="@+id/eventListFragment"
         android:name="si.um.feri.mobilegarden.fragments.EventListFragment"
         android:label="fragment_event_list"
-        tools:layout="@layout/fragment_event_list" />
+        tools:layout="@layout/fragment_event_list" >
+        <action
+            android:id="@+id/action_eventListFragment_to_addExtremeEventFragment"
+            app:destination="@id/addExtremeEventFragment" />
+    </fragment>
 </navigation>
