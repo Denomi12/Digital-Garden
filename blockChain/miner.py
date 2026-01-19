@@ -24,14 +24,13 @@ def mine_thread(index, timestamp_iso, data, prev_hash, difficulty, start_nonce, 
             break
         nonce += step
 
-def mine_block_parallel(blockchain, miner_name, num_threads, rank, size):
+def mine_block_parallel(blockchain, miner_name, num_threads, rank, size, data=None):
     global found_event, found_block_result
     last_block = blockchain.get_last_block()
     index = last_block.index + 1
     difficulty = blockchain.get_difficulty()
     timestamp = datetime.now()
 
-    # Če data ni podan preko MQTT, uporabi privzeto ime bloka
     if data is None:
         data = f"Blok {index}"
 
@@ -43,7 +42,7 @@ def mine_block_parallel(blockchain, miner_name, num_threads, rank, size):
     for i in range(num_threads):
         global_thread_id = (rank * num_threads) + i
         t = threading.Thread(target=mine_thread, args=(
-            index, timestamp.isoformat(), data, last_block.hash, # 'data' namesto fiksnega niza
+            index, timestamp.isoformat(), data, last_block.hash, 
             difficulty, global_thread_id, total_threads, miner_name, timestamp
         ))
         threads.append(t)
