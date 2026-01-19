@@ -30,6 +30,8 @@ class AddExtremeEventFragment : Fragment() {
     private var eventIdToEdit: String? = null
 
     private val fileName = "extreme_events.json"
+    private val brokerUrl = "tcp://10.0.2.2:1883"
+    private val mqttTopic = "mobilegarden/events"
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
