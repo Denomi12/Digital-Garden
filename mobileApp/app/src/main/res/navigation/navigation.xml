@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="si.um.feri.mobilegarden.fragments.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_generateExtremeEventFragment"
+            app:destination="@id/generateExtremeEventFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addExtremeEventFragment"
+            app:destination="@id/addExtremeEventFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/generateExtremeEventFragment"
+        android:name="si.um.feri.mobilegarden.fragments.GenerateExtremeEventFragment"
+        android:label="Extreme Event Fragment"
+        tools:layout="@layout/fragment_generate_extreme_event" />
+
+    <fragment
+        android:id="@+id/addExtremeEventFragment"
+        android:name="si.um.feri.mobilegarden.fragments.AddExtremeEventFragment"
+        android:label="Add Extreme Event"
+        tools:layout="@layout/fragment_add_extreme_event" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="si.um.feri.mobilegarden.fragments.MapFragment"
+        android:label="Map Overview"
+        tools:layout="@layout/fragment_map">
+        <action
+            android:id="@+id/action_mapFragment_to_addExtremeEventFragment"
+            app:destination="@id/addExtremeEventFragment" />
+    </fragment>
+</navigation>
