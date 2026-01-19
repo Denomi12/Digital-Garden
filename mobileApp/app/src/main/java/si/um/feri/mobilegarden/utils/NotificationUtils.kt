@@ -12,29 +12,34 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import si.um.feri.mobilegarden.MainActivity
-import si.um.feri.mobilegarden.models.ExtremeEvent
+import si.um.feri.mobilegarden.models.Garden
 
 private const val TAG = "NotificationDebug"
-
 fun showWeatherNotification(
     context: Context,
-    event: ExtremeEvent,
+    garden: Garden,
     precip: Double,
     wind: Double
 ) {
-    Log.d(TAG, "showWeatherNotification called for event: ${event.locationName}")
+
+    Log.d(TAG, "Weather notification for garden: ${garden.name}")
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Permission POST_NOTIFICATIONS is not granted. Aborting.")
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "POST_NOTIFICATIONS not granted")
             return
         }
-        Log.d(TAG, "Permission POST_NOTIFICATIONS is granted.")
     }
 
     val channelId = "weather_alert_channel"
     val channelName = "Vremenska opozorila"
-    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
@@ -42,36 +47,43 @@ fun showWeatherNotification(
             channelName,
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Kanal za pomembna vremenska opozorila."
+            description = "Opozorila za nevarne vremenske razmere"
         }
         notificationManager.createNotificationChannel(channel)
-        Log.d(TAG, "Notification channel '$channelId' created or already exists.")
     }
 
     val intent = Intent(context, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         putExtra("NAVIGATE_TO_MAP", true)
     }
+
+    val notificationId = (garden.name + garden.latitude).hashCode()
+
     val pendingIntent = PendingIntent.getActivity(
         context,
-        event.id.hashCode(),
+        notificationId,
         intent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    val title = "Vremensko opozorilo za ${event.locationName}"
-    val message = "Možnost nevihte: Padavine ${precip}mm, Veter ${wind}km/h"
+
+    val title = "⚠️ Vremensko opozorilo"
+    val message = buildString {
+        append("Vrt: ${garden.name}\n")
+        append("Padavine: %.1f mm, ".format(precip))
+        append("Veter: %.1f km/h".format(wind))
+    }
 
     val notification = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(android.R.drawable.ic_dialog_alert)
         .setContentTitle(title)
-        .setContentText(message)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(message))
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)
         .setContentIntent(pendingIntent)
         .build()
 
-    Log.d(TAG, "Notification built. Notifying with ID: ${event.id.hashCode()}")
-    notificationManager.notify(event.id.hashCode(), notification)
-    Log.d(TAG, "Notification sent.")
+    notificationManager.notify(notificationId, notification)
+
+    Log.d(TAG, "Notification sent (fixed ID)")
 }

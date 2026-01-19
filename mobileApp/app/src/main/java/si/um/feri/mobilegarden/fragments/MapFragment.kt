@@ -26,6 +26,8 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 import si.um.feri.mobilegarden.R
 import si.um.feri.mobilegarden.models.ExtremeEvent
+import si.um.feri.mobilegarden.models.Garden
+import si.um.feri.mobilegarden.utils.FetchGardens
 import si.um.feri.mobilegarden.utils.showWeatherNotification
 import java.io.File
 import java.net.URL
@@ -68,7 +70,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         loadEventsFromFile()
 
-        fetchWeatherForAllGardensTomorrow()
+        FetchGardens.getAllGardens(
+            backendUrl = "http://10.0.2.2:3001",
+            callback = object : FetchGardens.GardensCallback {
+
+                override fun onSuccess(gardens: List<Garden>) {
+                    requireActivity().runOnUiThread {
+                        fetchWeatherForAllGardensTomorrow(gardens)
+                    }
+                }
+
+                override fun onError(e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        )
+
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -206,17 +223,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun fetchWeatherForAllGardensTomorrow() {
-        Log.d("nevem", "${eventsList.size} nevem ")
-        //todo to morejo bit gardeni in ne eventsList
-        for (event in eventsList) {
-            val lat = event.latitude
-            val lon = event.longitude
-            fetchTomorrowWeather(lat, lon, event)
+    private fun fetchWeatherForAllGardensTomorrow(gardens: List<Garden>) {
+        Log.d("WeatherDebug", "Fetching weather for ${gardens.size} gardens")
+
+        for (garden in gardens) {
+            fetchTomorrowWeather(
+                latitude = garden.latitude,
+                longitude = garden.longitude,
+                garden = garden
+            )
         }
     }
 
-    private fun fetchTomorrowWeather(latitude: Double, longitude: Double, event: ExtremeEvent) {
+
+    private fun fetchTomorrowWeather(
+        latitude: Double,
+        longitude: Double,
+        garden: Garden
+    ) {
         Thread {
             try {
                 val urlString =
@@ -229,39 +253,39 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val response = URL(urlString).readText()
                 val json = JSONObject(response)
                 val hourly = json.getJSONObject("hourly")
+
                 val precipArray = hourly.getJSONArray("precipitation")
                 val windArray = hourly.getJSONArray("windspeed")
                 val timeArray = hourly.getJSONArray("time")
 
-                var precipTomorrow = 0.0
-                var windTomorrow = 0.0
-                Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
-
                 val calendar = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                 calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+
                 val sdfDay = SimpleDateFormat("yyyy-MM-dd", Locale.US)
                 sdfDay.timeZone = TimeZone.getTimeZone("UTC")
                 val tomorrowStr = sdfDay.format(calendar.time)
 
                 var maxPrecip = 0.0
                 var maxWind = 0.0
+
                 for (i in 0 until timeArray.length()) {
                     val timeStr = timeArray.getString(i)
                     if (timeStr.startsWith(tomorrowStr)) {
-                        val precip = precipArray.getDouble(i)
-                        val wind = windArray.getDouble(i)
-                        if (precip > maxPrecip) maxPrecip = precip
-                        if (wind > maxWind) maxWind = wind
+                        maxPrecip = maxOf(maxPrecip, precipArray.getDouble(i))
+                        maxWind = maxOf(maxWind, windArray.getDouble(i))
                     }
                 }
 
-//                val isStorm = maxPrecip >= 10.0 || maxWind >= 15.0
-                val isStorm = true;
-                Log.d("nevem", "${windTomorrow} nevem ${precipTomorrow}")
-
+                val isStorm = maxPrecip >= 10.0 || maxWind >= 15.0
+//                val isStorm = true;
                 if (isStorm) {
                     requireActivity().runOnUiThread {
-                        showWeatherNotification(requireContext(), event, maxPrecip, maxWind)
+                        showWeatherNotification(
+                            requireContext(),
+                            garden,
+                            maxPrecip,
+                            maxWind
+                        )
                     }
                 }
 
@@ -270,5 +294,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }.start()
     }
+
 
 }
