@@ -27,11 +27,17 @@ public class Sidebar {
     private Image toggleButton;
     private boolean isAnimating = false;
 
+    private boolean showVisokaGreda = true;
+    private boolean showGreda = true;
+    private boolean showPotka = true;
+
+    private RasterMap currentRasterMap;
+    private Array<Garden> allGardens;
+
     public Sidebar(Skin skin) {
         this.skin = skin;
         sidebar = createSidebarUI();
     }
-
 
     private Window createSidebarUI() {
         Window sidebar = new Window("", skin, "dialog");
@@ -71,7 +77,6 @@ public class Sidebar {
         header.add(toggleButton).size(32,32).padRight(10).top().right();
 
         widgetContainer.add(header).expandX().fillX().top().row();
-
         scrollContent = new Table(skin);
         scrollContent.top();
         scrollContent.defaults().expandX().fillX().pad(5);
@@ -82,7 +87,6 @@ public class Sidebar {
 
         return widgetContainer;
     }
-
 
     private ScrollPane createGardenScrollPane(Table content) {
         ScrollPane.ScrollPaneStyle style = new ScrollPane.ScrollPaneStyle();
@@ -105,7 +109,6 @@ public class Sidebar {
         gardenScroll.setScrollingDisabled(true, false);
         return gardenScroll;
     }
-
 
     private void toggleSidebar() {
         if (isAnimating) return;
@@ -149,7 +152,22 @@ public class Sidebar {
     }
 
     public void addGardens(Array<Garden> gardens, TextureRegion gardenIcon, RasterMap rasterMap) {
-        if (gardens == null) return;
+        this.allGardens = gardens;
+        this.currentRasterMap = rasterMap;
+        refreshGardenList();
+    }
+
+    public void updateFilters(boolean visokaGreda, boolean greda, boolean potka) {
+        this.showVisokaGreda = visokaGreda;
+        this.showGreda = greda;
+        this.showPotka = potka;
+        refreshGardenList();
+    }
+
+    private void refreshGardenList() {
+        scrollContent.clearChildren();
+
+        if (allGardens == null || currentRasterMap == null) return;
 
         Color hoverColor = skin.getColor("button");
         Pixmap pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
@@ -158,8 +176,29 @@ public class Sidebar {
         TextureRegionDrawable whiteBackground = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
         pixmap.dispose();
 
-        for (Garden g : gardens) {
-            if (!rasterMap.isGardenVisible(g)) continue;
+        for (Garden g : allGardens) {
+            if (!currentRasterMap.isGardenVisible(g)) continue;
+
+            boolean matchesFilter = false;
+
+            if (g.elements != null) {
+                for (Garden.Element element : g.elements) {
+                    if (showVisokaGreda && isTypeVisokaGreda(element.type)) {
+                        matchesFilter = true;
+                        break;
+                    }
+                    if (showGreda && isTypeGreda(element.type)) {
+                        matchesFilter = true;
+                        break;
+                    }
+                    if (showPotka && isTypePotka(element.type)) {
+                        matchesFilter = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!matchesFilter) continue;
 
             pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
             pixmap.setColor(hoverColor);
@@ -187,9 +226,8 @@ public class Sidebar {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     Vector2 targetPos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude,
-                            rasterMap.beginTile.x, rasterMap.beginTile.y);
-
-                    rasterMap.zoomToMarker(targetPos, 0.5f);
+                            currentRasterMap.beginTile.x, currentRasterMap.beginTile.y);
+                    currentRasterMap.zoomToMarker(targetPos, 0.5f);
                 }
             });
 
@@ -197,5 +235,18 @@ public class Sidebar {
         }
     }
 
+    private boolean isTypeVisokaGreda(String type) {
+        if (type == null) return false;
+        return type.equalsIgnoreCase("Visoka Greda");
+    }
 
+    private boolean isTypeGreda(String type) {
+        if (type == null) return false;
+        return type.equalsIgnoreCase("Greda");
+    }
+
+    private boolean isTypePotka(String type) {
+        if (type == null) return false;
+        return type.equalsIgnoreCase("Potka");
+    }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -21,10 +22,15 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import si.um.feri.mori.assets.AssetDescriptors;
@@ -64,16 +70,18 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     private float moveSpeed = 3f;    // hitrost premikanja kamere
     private Dialog currentDialog = null;
 
-
     private MyGame game;
     private Sidebar sidebar;
+
+    private boolean filterVisokaGreda = true;
+    private boolean filterGreda = true;
+    private boolean filterPotka = true;
 
     public RasterMap(MyGame game) {
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.gameAtlas = assetManager.get(AssetDescriptors.GAME_ATLAS);
         skin = assetManager.get(AssetDescriptors.UI_SKIN);
-
     }
 
     public boolean isGardenVisible(Garden g) {
@@ -83,7 +91,6 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
         return pos.x >= 0 && pos.x <= mapWidth && pos.y >= 0 && pos.y <= mapHeight;
     }
-
 
     @Override
     public void create() {
@@ -101,10 +108,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         touchPosition = new Vector3();
 
         try {
-            //in most cases, geolocation won't be in the center of the tile because tile borders are predetermined (geolocation can be at the corner of a tile)
             ZoomXY centerTile = MapRasterTiles.getTileNumber(CENTER_GEOLOCATION.lat, CENTER_GEOLOCATION.lng, Constants.ZOOM);
             mapTiles = MapRasterTiles.getRasterTileZone(centerTile, Constants.NUM_TILES);
-            //you need the beginning tile (tile on the top left corner) to convert geolocation to a location in pixels.
             beginTile = new ZoomXY(Constants.ZOOM, centerTile.x - ((Constants.NUM_TILES - 1) / 2), centerTile.y - ((Constants.NUM_TILES - 1) / 2));
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,8 +139,50 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         sidebar = new Sidebar(skin);
         sidebar.addTo(stage);
 
-        TextureRegion gardenIcon = gameAtlas.findRegion(RegionNames.GARDEN_ICON);
+        Table layersTable = new Table();
+        layersTable.top().right();
+        layersTable.setFillParent(true);
+        layersTable.padRight(20).padTop(20);
 
+        Pixmap p = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        p.setColor(0, 0, 0, 0.5f);
+        p.fill();
+        TextureRegionDrawable bg = new TextureRegionDrawable(new TextureRegion(new Texture(p)));
+        p.dispose();
+
+        Table contentTable = new Table(skin);
+        contentTable.setBackground(bg);
+        contentTable.pad(10);
+
+        CheckBox cbVisoka = new CheckBox(" Visoke grede", skin);
+        cbVisoka.setChecked(true);
+        CheckBox cbGreda = new CheckBox(" Grede", skin);
+        cbGreda.setChecked(true);
+        CheckBox cbPotka = new CheckBox(" Potke", skin);
+        cbPotka.setChecked(true);
+
+        ChangeListener filterListener = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                filterVisokaGreda = cbVisoka.isChecked();
+                filterGreda = cbGreda.isChecked();
+                filterPotka = cbPotka.isChecked();
+                sidebar.updateFilters(filterVisokaGreda, filterGreda, filterPotka);
+            }
+        };
+
+        cbVisoka.addListener(filterListener);
+        cbGreda.addListener(filterListener);
+        cbPotka.addListener(filterListener);
+
+        contentTable.add(cbVisoka).left().row();
+        contentTable.add(cbGreda).left().padTop(5).row();
+        contentTable.add(cbPotka).left().padTop(5).row();
+
+        layersTable.add(contentTable);
+        stage.addActor(layersTable);
+
+        TextureRegion gardenIcon = gameAtlas.findRegion(RegionNames.GARDEN_ICON);
 
         String backendUrl = "http://localhost:3001";
         if (GameManager.getGardens() == null) {
@@ -160,13 +207,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
             sidebar.addGardens(GameManager.getGardens(), gardenIcon, this);
         }
 
-
-
-
         GestureDetector gestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, gestureDetector));
-//        Gdx.input.setInputProcessor(stage);
-
     }
 
     @Override
@@ -199,7 +241,6 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                 isZoomingToMarker = false;
             }
         }
-
     }
 
     private void drawGardens() {
@@ -208,6 +249,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (Garden g : GameManager.getGardens()) {
+            if (!shouldShowGarden(g)) continue;
+
             Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
             batch.draw(markerTexture,
                     pos.x - markerTexture.getRegionWidth() / 2f,
@@ -216,6 +259,26 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
         batch.end();
     }
 
+    private boolean shouldShowGarden(Garden g) {
+        if (g.elements != null) {
+            for (Garden.Element element : g.elements) {
+                if (filterVisokaGreda && isTypeVisokaGreda(element.type)) return true;
+                if (filterGreda && isTypeGreda(element.type)) return true;
+                if (filterPotka && isTypePotka(element.type)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isTypeVisokaGreda(String type) {
+        return type != null && type.equalsIgnoreCase("Visoka Greda");
+    }
+    private boolean isTypeGreda(String type) {
+        return type != null && type.equalsIgnoreCase("Greda");
+    }
+    private boolean isTypePotka(String type) {
+        return type != null && type.equalsIgnoreCase("Potka");
+    }
 
     @Override
     public void dispose() {
@@ -237,8 +300,9 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
 
         if (GameManager.getGardens() != null) {
             for (Garden g : GameManager.getGardens()) {
-                Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
+                if (!shouldShowGarden(g)) continue;
 
+                Vector2 pos = MapRasterTiles.getPixelPosition(g.latitude, g.longitude, beginTile.x, beginTile.y);
                 float radius = markerTexture.getRegionWidth() / 2f;
 
                 if (touchPosition.dst(pos.x, pos.y, 0) <= radius) {
@@ -246,10 +310,8 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
                     showPopup(g);
                     break;
                 }
-
             }
         }
-
         return true;
     }
 
@@ -303,14 +365,10 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     }
 
     @Override
-    public boolean longPress(float x, float y) {
-        return false;
-    }
+    public boolean longPress(float x, float y) { return false; }
 
     @Override
-    public boolean fling(float velocityX, float velocityY, int button) {
-        return false;
-    }
+    public boolean fling(float velocityX, float velocityY, int button) { return false; }
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
@@ -319,9 +377,7 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     }
 
     @Override
-    public boolean panStop(float x, float y, int pointer, int button) {
-        return false;
-    }
+    public boolean panStop(float x, float y, int pointer, int button) { return false; }
 
     @Override
     public boolean zoom(float initialDistance, float distance) {
@@ -333,34 +389,18 @@ public class RasterMap extends ApplicationAdapter implements GestureDetector.Ges
     }
 
     @Override
-    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-        return false;
-    }
+    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) { return false; }
 
     @Override
-    public void pinchStop() {
-
-    }
+    public void pinchStop() {}
 
     private void handleInput() {
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.zoom += 0.02;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            camera.zoom -= 0.02;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            camera.translate(-3, 0, 0);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            camera.translate(3, 0, 0);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            camera.translate(0, -3, 0);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            camera.translate(0, 3, 0);
-        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) { camera.zoom += 0.02; }
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) { camera.zoom -= 0.02; }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) { camera.translate(-3, 0, 0); }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) { camera.translate(3, 0, 0); }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) { camera.translate(0, -3, 0); }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) { camera.translate(0, 3, 0); }
 
         camera.zoom = MathUtils.clamp(camera.zoom, 0.5f, 2f);
 
